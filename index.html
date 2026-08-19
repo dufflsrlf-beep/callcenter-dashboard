@@ -33,20 +33,317 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--nav:#173d73;--nav2:#102f5d;--darkblue:#0b2b59;--blue:#1767d9;--gold:#f4b400;--red:#ef3340;--bg:#f5f6f8;--card:#fff;--line:#e5e9ef;--text:#0e1d38;--muted:#6b788c;--shadow:0 5px 16px rgba(26,44,74,.08)}
-*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif;color:var(--text)} button,input,select{font:inherit}
-.app{display:grid;grid-template-columns:214px 1fr;min-height:100vh}.side{background:linear-gradient(180deg,var(--nav),var(--nav2));color:#fff;padding:14px 12px}.brand{height:55px;display:flex;align-items:center;gap:9px;font-weight:900;padding:0 7px 12px}.brand small{font-size:12px}.brand b{color:#4d8cff;font-size:22px}
-.menu{display:flex;flex-direction:column;gap:5px}.menu button{border:0;background:transparent;color:#fff;padding:12px 13px;border-radius:8px;text-align:left;font-weight:800;cursor:pointer}.menu button.active{background:#2e79ee}.menu .sep{height:1px;background:rgba(255,255,255,.2);margin:13px 7px}
-.main{min-width:0;padding:0 12px 22px}.top{height:70px;margin:0 -12px 12px;padding:0 16px;background:#fff;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px}.title{font-size:22px;font-weight:900}.filters{display:flex;align-items:center;gap:9px}.datebox{display:flex;align-items:center;gap:7px;border:1px solid #dfe4ea;border-radius:8px;padding:8px 10px}.datebox input{border:0;outline:0;font-weight:800}.btn{height:38px;border:0;border-radius:8px;padding:0 13px;font-weight:800;cursor:pointer}.primary{background:var(--blue);color:#fff}.secondary{background:#f1f4f8;color:#42506a;border:1px solid #dfe4ea}.danger{background:#feecec;color:#c92a2a;border:1px solid #fecaca}.base{font-size:11px;color:var(--muted)}
-.section{display:none}.section.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
-.kpis{display:grid;grid-template-columns:repeat(9,1fr);gap:10px;margin-bottom:12px}.kpi{padding:14px;min-height:158px}.kh{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:800}.ico{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#eef4ff;color:var(--blue)}.kv{font-size:26px;font-weight:900;text-align:center;margin-top:15px}.ks{font-size:10px;color:var(--muted);margin-top:15px}.up{color:var(--red);font-weight:900}.down{color:var(--blue);font-weight:900}
-.mid{display:grid;grid-template-columns:minmax(0,1.72fr) minmax(330px,.75fr);gap:12px;margin-bottom:12px}.chart-card,.side-card{padding:16px}.chart-card h3,.side-card h3,.mini h3{margin:0;font-size:15px}.sub{font-size:10.5px;color:var(--muted);margin-top:5px}.chartbox{height:380px;margin-top:8px}
-.channel{display:grid;grid-template-columns:34px 1fr auto 60px;gap:9px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}.channel:last-child{border-bottom:0}.cicon{width:32px;height:32px;border-radius:9px;background:#f1f5ff;display:grid;place-items:center;color:var(--blue);font-weight:900}.cname{font-size:12px;font-weight:800}.cval{font-size:18px;font-weight:900}.cpct{text-align:right;font-size:11px;color:var(--muted)}
-.bottom{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.mini{padding:14px;min-height:205px}.mv{font-size:26px;font-weight:900;margin-top:13px}.ms{font-size:10.5px;color:var(--muted);margin-top:8px}.spark{height:75px;margin-top:7px}
-.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}.stat{padding:16px}.stat .lab{font-size:11px;color:var(--muted);font-weight:800}.stat .val{font-size:24px;font-weight:900;margin-top:8px}.large{height:340px;padding:16px}
-.adminbox{padding:18px}.notice{background:#fff8e6;border:1px solid #f2d58c;color:#7d5a00;padding:11px 13px;border-radius:8px;font-size:11px;line-height:1.5;margin:11px 0}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions input,.actions select{height:38px;border:1px solid #dfe4ea;border-radius:8px;padding:0 10px}.uploadgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}.upload{padding:15px}.drop{border:2px dashed #ccd5e0;background:#fafcff;border-radius:10px;padding:18px;text-align:center;margin-top:9px}.status{font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5}.hidden{display:none!important}
-.tableWrap{overflow:auto;max-height:500px;border:1px solid var(--line);border-radius:8px;margin-top:12px}table{width:100%;border-collapse:collapse;min-width:1100px}th,td{padding:8px 10px;border-bottom:1px solid #edf1f6;font-size:10.5px;white-space:nowrap;text-align:left}th{position:sticky;top:0;background:#f8fafc}
-@media(max-width:1450px){.kpis{grid-template-columns:repeat(5,1fr)}.bottom{grid-template-columns:repeat(3,1fr)}}@media(max-width:1050px){.app{grid-template-columns:76px 1fr}.brand small,.menu span{display:none}.mid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,1fr)}.bottom{grid-template-columns:repeat(2,1fr)}}@media(max-width:700px){.app{display:block}.side{position:relative}.menu{display:grid;grid-template-columns:repeat(4,1fr)}.main{padding:0 8px 15px}.top{margin:0 -8px 10px;height:auto;padding:10px;align-items:flex-start;flex-direction:column}.kpis,.bottom,.statgrid,.uploadgrid{grid-template-columns:1fr}.chartbox{height:290px}}
+:root{
+  --nav:#052b63;
+  --nav2:#073b7c;
+  --blue:#0d6efd;
+  --blue2:#1767d9;
+  --green:#2fa64a;
+  --purple:#7d3fc7;
+  --gold:#f4b000;
+  --red:#ef3340;
+  --ink:#12213d;
+  --muted:#76839a;
+  --bg:#f3f6fa;
+  --card:#ffffff;
+  --line:#dfe6ef;
+  --soft:#f7f9fc;
+  --shadow:0 6px 18px rgba(30,55,90,.08);
+}
+*{box-sizing:border-box}
+html,body,button,input,select,table,canvas{
+  font-family:"Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",Arial,sans-serif;
+}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-size:13px;
+  letter-spacing:-.15px;
+}
+button,input,select{font:inherit}
+.app{
+  display:grid;
+  grid-template-columns:192px minmax(0,1fr);
+  min-height:100vh;
+}
+.side{
+  position:sticky;
+  top:0;
+  height:100vh;
+  background:linear-gradient(180deg,#03265a 0%,#073b7c 55%,#062d65 100%);
+  color:#fff;
+  padding:14px 10px;
+  box-shadow:4px 0 16px rgba(3,32,71,.08);
+  z-index:5;
+}
+.brand{
+  height:56px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:0 10px 10px;
+  font-size:14px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.brand small{font-size:12px;font-weight:800}
+.brand b{font-size:23px;color:#3f8dff}
+.menu{display:flex;flex-direction:column;gap:7px}
+.menu button{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#fff;
+  text-align:left;
+  padding:13px 14px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+  letter-spacing:-.35px;
+}
+.menu button.active{background:#1673f8}
+.menu .sep{height:1px;background:rgba(255,255,255,.22);margin:8px 5px}
+.main{min-width:0;padding:0 14px 20px}
+.top{
+  height:68px;
+  margin:0 -14px 12px;
+  padding:0 16px;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.title{
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:-.8px;
+  white-space:nowrap;
+}
+.filters{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.datebox{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:310px;
+  padding:8px 12px;
+  border:1px solid #d7e0eb;
+  border-radius:9px;
+  background:#fff;
+}
+.datebox input{
+  border:0;
+  outline:0;
+  font-weight:800;
+  color:var(--ink);
+  background:transparent;
+}
+.btn{
+  height:40px;
+  border:0;
+  border-radius:8px;
+  padding:0 15px;
+  font-weight:800;
+  cursor:pointer;
+}
+.primary{background:#0f6fe8;color:#fff}
+.secondary{background:#f1f4f8;color:#42506a;border:1px solid #dfe4ea}
+.danger{background:#feecec;color:#c92a2a;border:1px solid #fecaca}
+.base{font-size:10.5px;color:var(--muted);white-space:nowrap}
+.section{display:none}.section.active{display:block}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+.kpi-groups{
+  display:grid;
+  grid-template-columns:1.08fr 1.35fr 1.08fr;
+  gap:12px;
+  margin-bottom:12px;
+}
+.kpi-group{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:11px;
+}
+.kpi-group-title{
+  display:inline-block;
+  margin:0 0 10px;
+  padding:5px 10px;
+  border-radius:7px;
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
+.kpi-group.core .kpi-group-title{background:#1673f8}
+.kpi-group.call .kpi-group-title{background:#32a852}
+.kpi-group.digital .kpi-group-title{background:#7d3fc7}
+.kpi-group-grid{display:grid;gap:8px}
+.kpi-group.core .kpi-group-grid{grid-template-columns:repeat(3,1fr)}
+.kpi-group.call .kpi-group-grid{grid-template-columns:repeat(4,1fr)}
+.kpi-group.digital .kpi-group-grid{grid-template-columns:repeat(3,1fr)}
+.kpi{
+  min-height:188px;
+  padding:13px 12px 10px;
+  box-shadow:none;
+  background:#fff;
+  border-radius:10px;
+}
+.kh{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:11.5px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.ico{
+  width:31px;
+  height:31px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:13px;
+  background:#eef4ff;
+  color:#1470ed;
+}
+.kpi-group.call .ico{background:#edf9ef;color:#2fa64a}
+.kpi-group.digital .ico{background:#f3edff;color:#7d3fc7}
+.kv{
+  margin-top:15px;
+  text-align:center;
+  font-size:27px;
+  line-height:1.1;
+  font-weight:900;
+  letter-spacing:-.8px;
+}
+.ks{
+  margin-top:17px;
+  font-size:9.6px;
+  color:#6f7d92;
+  line-height:1.65;
+}
+.up{color:var(--red);font-weight:900}
+.down{color:#1267de;font-weight:900}
+.mid{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(480px,.95fr);
+  gap:12px;
+  margin-bottom:12px;
+}
+.chart-card,.side-card{padding:16px}
+.chart-card h3,.side-card h3,.mini h3{
+  margin:0;
+  font-size:14.5px;
+  font-weight:900;
+  letter-spacing:-.35px;
+}
+.sub{font-size:10px;color:var(--muted);margin-top:4px}
+.chartbox{height:348px;margin-top:8px}
+.side-card{min-width:0}
+.channel{
+  display:grid;
+  grid-template-columns:34px 1fr 85px 62px;
+  gap:9px;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.channel:last-of-type{border-bottom:0}
+.cicon{
+  width:30px;height:30px;border-radius:50%;
+  display:grid;place-items:center;
+  background:#f0f5ff;color:#1767d9;font-weight:900;
+}
+.cname{font-size:11.5px;font-weight:800}
+.cval{text-align:right;font-size:16px;font-weight:900}
+.cpct{text-align:right;font-size:10px;color:var(--muted)}
+.channel-chart-wrap{
+  height:235px;
+  margin-top:11px;
+  padding-top:10px;
+  border-top:1px solid var(--line);
+}
+.channel-chart-title{font-size:10.5px;font-weight:800;color:var(--muted);margin-bottom:5px}
+.bottom{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
+}
+.mini{
+  min-height:180px;
+  padding:14px;
+}
+.mv{
+  margin-top:11px;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.6px;
+}
+.ms{font-size:10px;color:var(--muted);margin-top:6px}
+.spark{height:70px;margin-top:6px}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.stat{padding:16px}
+.stat .lab{font-size:11px;color:var(--muted);font-weight:800}
+.stat .val{font-size:24px;font-weight:900;margin-top:8px}
+.large{height:340px;padding:16px}
+.adminbox{padding:18px}
+.notice{
+  background:#fff8e6;border:1px solid #f2d58c;color:#7d5a00;
+  padding:11px 13px;border-radius:8px;font-size:11px;line-height:1.5;margin:11px 0
+}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.actions input,.actions select{
+  height:38px;border:1px solid #dfe4ea;border-radius:8px;padding:0 10px
+}
+.uploadgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+.upload{padding:15px}
+.drop{border:2px dashed #ccd5e0;background:#fafcff;border-radius:10px;padding:18px;text-align:center;margin-top:9px}
+.status{font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.hidden{display:none!important}
+.tableWrap{overflow:auto;max-height:500px;border:1px solid var(--line);border-radius:8px;margin-top:12px}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+th,td{padding:8px 10px;border-bottom:1px solid #edf1f6;font-size:10.5px;white-space:nowrap;text-align:left}
+th{position:sticky;top:0;background:#f8fafc}
+@media(max-width:1500px){
+  .kpi-groups{grid-template-columns:1fr}
+  .mid{grid-template-columns:1fr}
+  .bottom{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:1050px){
+  .app{grid-template-columns:78px 1fr}
+  .brand small,.menu span{display:none}
+  .kpi-group.call .kpi-group-grid{grid-template-columns:repeat(2,1fr)}
+  .bottom{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .app{display:block}
+  .side{position:relative;height:auto}
+  .menu{display:grid;grid-template-columns:repeat(4,1fr)}
+  .main{padding:0 8px 15px}
+  .top{margin:0 -8px 10px;height:auto;padding:10px;align-items:flex-start;flex-direction:column}
+  .filters{width:100%;justify-content:flex-start}
+  .datebox{min-width:0;width:100%}
+  .kpi-group.core .kpi-group-grid,
+  .kpi-group.call .kpi-group-grid,
+  .kpi-group.digital .kpi-group-grid,
+  .bottom,.statgrid,.uploadgrid{grid-template-columns:1fr}
+  .chartbox{height:290px}
+}
 </style>
 </head>
 <body>
@@ -56,11 +353,11 @@
   <div class="menu">
     <button class="active" data-target="overview">⌂　<span>통합현황</span></button>
     <button data-target="call">☎　<span>콜</span></button>
-    <button data-target="erms">✉　<span>ERMS · 스마트러닝</span></button>
-    <button data-target="chat">💬　<span>챗봇</span></button>
-    <button data-target="book">▣　<span>교재</span></button>
-    <button data-target="cph">♟　<span>CPH</span></button>
-    <button data-target="refund">↺　<span>환불</span></button>
+    <button data-target="erms">✉　<span>ERMS 스마트러닝</span></button>
+    <button data-target="chat">💬　<span>챗봇 이용</span></button>
+    <button data-target="book">▣　<span>교재 구매</span></button>
+    <button data-target="cph">♟　<span>CPH 현황</span></button>
+    <button data-target="refund">↺　<span>환불 현황</span></button>
     <div class="sep"></div>
     <button data-target="admin">🔒　<span>관리자</span></button>
   </div>
@@ -77,28 +374,50 @@
 </div>
 
 <section id="overview" class="section active">
-  <div class="kpis">
-    <div class="card kpi"><div class="kh"><div class="ico">☎</div>총 문의량</div><div class="kv" id="kpiTotalQ">-</div><div class="ks" id="trTotalQ">선택기간 합계</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">🎧</div>총 답변량</div><div class="kv" id="kpiTotalA">-</div><div class="ks" id="trTotalA">선택기간 합계</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks" id="trPhoneIn">선택기간 합계</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks" id="trPhoneAns">선택기간 합계</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">↗</div>답변률</div><div class="kv" id="kpiAnswerPct">-</div><div class="ks" id="trAnswerPct">선택기간 전체</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">💬</div>챗봇 이용</div><div class="kv" id="kpiChatUse">-</div><div class="ks" id="trChatUse">선택기간 합계</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks" id="trCph">선택기간 평균</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">✉</div>ERMS 건수</div><div class="kv" id="kpiErms">-</div><div class="ks" id="trErms">선택기간 합계</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">▣</div>스마트러닝앱</div><div class="kv" id="kpiSmart">-</div><div class="ks" id="trSmart">선택기간 합계</div></div>
+  <div class="kpi-groups">
+    <div class="kpi-group core">
+      <div class="kpi-group-title">전체현황</div>
+      <div class="kpi-group-grid">
+        <div class="card kpi"><div class="kh"><div class="ico">☎</div>총 문의량</div><div class="kv" id="kpiTotalQ">-</div><div class="ks"><div id="trTotalQ">직전 동기간 대비 -</div><div id="yrTotalQ" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">🎧</div>총 답변량</div><div class="kv" id="kpiTotalA">-</div><div class="ks"><div id="trTotalA">직전 동기간 대비 -</div><div id="yrTotalA" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">↗</div>답변률</div><div class="kv" id="kpiAnswerPct">-</div><div class="ks"><div id="trAnswerPct">직전 동기간 대비 -</div><div id="yrAnswerPct" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+      </div>
+    </div>
+
+    <div class="kpi-group call">
+      <div class="kpi-group-title">Call 현황</div>
+      <div class="kpi-group-grid">
+        <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks"><div id="trPhoneIn">직전 동기간 대비 -</div><div id="yrPhoneIn" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks"><div id="trPhoneAns">직전 동기간 대비 -</div><div id="yrPhoneAns" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">％</div>응답률</div><div class="kv" id="kpiPhoneRate">-</div><div class="ks"><div id="trPhoneRate">직전 동기간 대비 -</div><div id="yrPhoneRate" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks"><div id="trCph">직전 동기간 대비 -</div><div id="yrCph" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+      </div>
+    </div>
+
+    <div class="kpi-group digital">
+      <div class="kpi-group-title">채널 현황</div>
+      <div class="kpi-group-grid">
+        <div class="card kpi"><div class="kh"><div class="ico">✉</div>ERMS</div><div class="kv" id="kpiErms">-</div><div class="ks"><div id="trErms">직전 동기간 대비 -</div><div id="yrErms" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">💬</div>챗봇 이용</div><div class="kv" id="kpiChatUse">-</div><div class="ks"><div id="trChatUse">직전 동기간 대비 -</div><div id="yrChatUse" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">▣</div>스마트러닝</div><div class="kv" id="kpiSmart">-</div><div class="ks"><div id="trSmart">직전 동기간 대비 -</div><div id="yrSmart" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+      </div>
+    </div>
   </div>
 
   <div class="mid">
     <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="sub">선택 기간 일일 운영실적</div><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
     <div class="card side-card">
-      <h3 id="channelTitle">채널별 선택기간 현황</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center"><h3 id="channelTitle">채널별 선택기간 현황</h3><span style="font-size:9.5px;color:#8a96a8">(단위 : 건, %)</span></div>
       <div class="channel"><div class="cicon">☎</div><div class="cname">전화인입</div><div class="cval" id="chPhone">-</div><div class="cpct" id="pctPhone"></div></div>
       <div class="channel"><div class="cicon">✉</div><div class="cname">ERMS 건수</div><div class="cval" id="chErms">-</div><div class="cpct" id="pctErms"></div></div>
       <div class="channel"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div><div class="cval" id="chSmart">-</div><div class="cpct" id="pctSmart"></div></div>
-      <div class="channel"><div class="cicon">💬</div><div class="cname">챗봇접속</div><div class="cval" id="chChatAccess">-</div><div class="cpct" id="pctChatAccess"></div></div>
+      <div class="channel"><div class="cicon">💬</div><div class="cname">챗봇 이용</div><div class="cval" id="chChatAccess">-</div><div class="cpct" id="pctChatAccess"></div></div>
       <div class="channel"><div class="cicon">▣</div><div class="cname">교재구매</div><div class="cval" id="chBook">-</div><div class="cpct"></div></div>
       <div class="channel"><div class="cicon">×</div><div class="cname">바로취소</div><div class="cval" id="chCancel">-</div><div class="cpct"></div></div>
+      <div class="channel-chart-wrap">
+        <div class="channel-chart-title">주요 채널 비교</div>
+        <canvas id="channelCompareChart"></canvas>
+      </div>
     </div>
   </div>
 
@@ -202,6 +521,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const auth = getAuth(app);
+
+// Chart.js 글꼴을 대시보드 본문과 통일
+Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+Chart.defaults.color = "#536178";
+Chart.defaults.font.size = 11;
+Chart.defaults.borderColor = "#e6ebf2";
 
 const $ = id => document.getElementById(id);
 
@@ -350,6 +675,44 @@ function previousDay(latest){
   return idx>0?daily[idx-1]:null;
 }
 
+function dateShift(dateStr, days){
+  const d=new Date(dateStr+"T00:00:00");
+  d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
+}
+function yearShift(dateStr, years){
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const targetY=y+years;
+  const lastDay=new Date(targetY,m,0).getDate();
+  return `${targetY}-${String(m).padStart(2,"0")}-${String(Math.min(d,lastDay)).padStart(2,"0")}`;
+}
+function periodMetrics(rows){
+  return {
+    totalQ:sum(rows,"totalQ"), totalA:sum(rows,"totalA"),
+    phoneIn:sum(rows,"phoneIn"), phoneAns:sum(rows,"phoneAns"),
+    phoneRate:pct(sum(rows,"phoneAns"),sum(rows,"phoneIn")),
+    answerPct:pct(sum(rows,"totalA"),sum(rows,"totalQ")),
+    chatUse:sum(rows,"chatUse"), cph:mean(rows,"cphDay"),
+    erms:sum(rows,"ermsCount"), smart:sum(rows,"smart")
+  };
+}
+function setComparison(id, label, cur, prev, mode="pct"){
+  const el=$(id); if(!el) return;
+  if(prev===null || prev===undefined){
+    el.textContent=label+" - 데이터 없음";
+    return;
+  }
+  if(mode==="pp"){
+    const d=(Number(cur)||0)-(Number(prev)||0);
+    el.innerHTML=label+"　"+(d>=0?`<span class="up">▲ ${Math.abs(d).toFixed(2)}%p</span>`:`<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`);
+  }else if(mode==="num"){
+    const d=(Number(cur)||0)-(Number(prev)||0);
+    el.innerHTML=label+"　"+(d>=0?`<span class="up">▲ ${Math.abs(d).toFixed(2)}</span>`:`<span class="down">▼ ${Math.abs(d).toFixed(2)}</span>`);
+  }else{
+    el.innerHTML=label+"　"+trend(cur,prev);
+  }
+}
+
 async function applyFilter(){
   await reload();
 
@@ -365,67 +728,57 @@ async function applyFilter(){
   const prev=previousDay(latest);
 
   // 상단 KPI = 선택기간 기준
-  const firstIdx=daily.findIndex(r=>r.date===rows[0].date);
-  const prevRows=firstIdx>0 ? daily.slice(Math.max(0,firstIdx-rows.length), firstIdx) : [];
+  const days=rows.length;
+  const prevEnd=dateShift(s,-1);
+  const prevStart=dateShift(prevEnd,-(days-1));
+  const prevRows=daily.filter(r=>r.date>=prevStart&&r.date<=prevEnd);
 
-  const cur={
-    totalQ:sum(rows,"totalQ"),
-    totalA:sum(rows,"totalA"),
-    phoneIn:sum(rows,"phoneIn"),
-    phoneAns:sum(rows,"phoneAns"),
-    answerPct:pct(sum(rows,"totalA"),sum(rows,"totalQ")),
-    chatUse:sum(rows,"chatUse"),
-    cph:mean(rows,"cphDay"),
-    erms:sum(rows,"ermsCount"),
-    smart:sum(rows,"smart")
-  };
+  const yoyStart=yearShift(s,-1);
+  const yoyEnd=yearShift(e,-1);
+  const yoyRows=daily.filter(r=>r.date>=yoyStart&&r.date<=yoyEnd);
 
-  const prv=prevRows.length?{
-    totalQ:sum(prevRows,"totalQ"),
-    totalA:sum(prevRows,"totalA"),
-    phoneIn:sum(prevRows,"phoneIn"),
-    phoneAns:sum(prevRows,"phoneAns"),
-    answerPct:pct(sum(prevRows,"totalA"),sum(prevRows,"totalQ")),
-    chatUse:sum(prevRows,"chatUse"),
-    cph:mean(prevRows,"cphDay"),
-    erms:sum(prevRows,"ermsCount"),
-    smart:sum(prevRows,"smart")
-  }:null;
+  const cur=periodMetrics(rows);
+  const prv=prevRows.length?periodMetrics(prevRows):null;
+  const yoy=yoyRows.length?periodMetrics(yoyRows):null;
 
   $("kpiTotalQ").textContent=fmt(cur.totalQ);
   $("kpiTotalA").textContent=fmt(cur.totalA);
   $("kpiPhoneIn").textContent=fmt(cur.phoneIn);
   $("kpiPhoneAns").textContent=fmt(cur.phoneAns);
+  $("kpiPhoneRate").textContent=cur.phoneRate.toFixed(2)+"%";
   $("kpiAnswerPct").textContent=cur.answerPct.toFixed(2)+"%";
   $("kpiChatUse").textContent=fmt(cur.chatUse);
   $("kpiCph").textContent=cur.cph.toFixed(2);
   $("kpiErms").textContent=fmt(cur.erms);
   $("kpiSmart").textContent=fmt(cur.smart);
 
+  // 직전 동기간 대비
   if(prv){
-    $("trTotalQ").innerHTML="직전 동기간 대비　"+trend(cur.totalQ,prv.totalQ);
-    $("trTotalA").innerHTML="직전 동기간 대비　"+trend(cur.totalA,prv.totalA);
-    $("trPhoneIn").innerHTML="직전 동기간 대비　"+trend(cur.phoneIn,prv.phoneIn);
-    $("trPhoneAns").innerHTML="직전 동기간 대비　"+trend(cur.phoneAns,prv.phoneAns);
-    const pp=cur.answerPct-prv.answerPct;
-    $("trAnswerPct").innerHTML="직전 동기간 대비　"+(
-      pp>=0
-        ? `<span class="up">▲ ${Math.abs(pp).toFixed(2)}%p</span>`
-        : `<span class="down">▼ ${Math.abs(pp).toFixed(2)}%p</span>`
-    );
-    $("trChatUse").innerHTML="직전 동기간 대비　"+trend(cur.chatUse,prv.chatUse);
-    const cd=cur.cph-prv.cph;
-    $("trCph").innerHTML="직전 동기간 대비　"+(
-      cd>=0
-        ? `<span class="up">▲ ${Math.abs(cd).toFixed(2)}</span>`
-        : `<span class="down">▼ ${Math.abs(cd).toFixed(2)}</span>`
-    );
-    $("trErms").innerHTML="직전 동기간 대비　"+trend(cur.erms,prv.erms);
-    $("trSmart").innerHTML="직전 동기간 대비　"+trend(cur.smart,prv.smart);
+    setComparison("trTotalQ","직전 동기간 대비",cur.totalQ,prv.totalQ);
+    setComparison("trTotalA","직전 동기간 대비",cur.totalA,prv.totalA);
+    setComparison("trPhoneIn","직전 동기간 대비",cur.phoneIn,prv.phoneIn);
+    setComparison("trPhoneAns","직전 동기간 대비",cur.phoneAns,prv.phoneAns);
+    setComparison("trPhoneRate","직전 동기간 대비",cur.phoneRate,prv.phoneRate,"pp");
+    setComparison("trAnswerPct","직전 동기간 대비",cur.answerPct,prv.answerPct,"pp");
+    setComparison("trChatUse","직전 동기간 대비",cur.chatUse,prv.chatUse);
+    setComparison("trCph","직전 동기간 대비",cur.cph,prv.cph,"num");
+    setComparison("trErms","직전 동기간 대비",cur.erms,prv.erms);
+    setComparison("trSmart","직전 동기간 대비",cur.smart,prv.smart);
   }else{
-    ["trTotalQ","trTotalA","trPhoneIn","trPhoneAns","trAnswerPct","trChatUse","trCph","trErms","trSmart"]
-      .forEach(id=>$(id).textContent="선택기간 기준");
+    ["trTotalQ","trTotalA","trPhoneIn","trPhoneAns","trPhoneRate","trAnswerPct","trChatUse","trCph","trErms","trSmart"]
+      .forEach(id=>$(id).textContent="직전 동기간 대비 - 데이터 없음");
   }
+
+  // 전년 동기간 대비
+  const yoyMap=[
+    ["yrTotalQ","totalQ","pct"],["yrTotalA","totalA","pct"],["yrAnswerPct","answerPct","pp"],
+    ["yrPhoneIn","phoneIn","pct"],["yrPhoneAns","phoneAns","pct"],["yrPhoneRate","phoneRate","pp"],
+    ["yrCph","cph","num"],["yrErms","erms","pct"],["yrChatUse","chatUse","pct"],["yrSmart","smart","pct"]
+  ];
+  yoyMap.forEach(([id,key,mode])=>{
+    if(yoy) setComparison(id,"전년 동기간 대비",cur[key],yoy[key],mode);
+    else $(id).textContent="전년 동기간 대비 - 데이터 없음";
+  });
 
   $("baseDateText").textContent=`조회기간: ${s} ~ ${e}`;
 
@@ -433,6 +786,14 @@ async function applyFilter(){
     {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3},
     {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3}
   ]);
+  if(charts["mainBar"]){
+    const mb=charts["mainBar"];
+    mb.options.plugins.legend.labels={boxWidth:18,boxHeight:8,font:{size:10}};
+    mb.options.scales.x.ticks={font:{size:9},maxRotation:0,minRotation:0};
+    mb.options.scales.y.ticks={font:{size:9}};
+    mb.options.scales.x.grid={display:false};
+    mb.update();
+  }
 
   // 우측 채널 = 선택기간 합계 / 선택기간 총문의량 대비 %
   $("channelTitle").textContent=`채널별 선택기간 현황 (${s} ~ ${e})`;
@@ -440,7 +801,7 @@ async function applyFilter(){
   const channelPhone=sum(rows,"phoneIn");
   const channelErms=sum(rows,"ermsCount");
   const channelSmart=sum(rows,"smart");
-  const channelChatAccess=sum(rows,"chatAccess");
+  const channelChatUse=sum(rows,"chatUse");
   const channelBook=sum(rows,"bookBuy");
   const channelCancel=sum(rows,"cancel");
   const tq=cur.totalQ;
@@ -448,14 +809,34 @@ async function applyFilter(){
   $("chPhone").textContent=fmt(channelPhone);
   $("chErms").textContent=fmt(channelErms);
   $("chSmart").textContent=fmt(channelSmart);
-  $("chChatAccess").textContent=fmt(channelChatAccess);
+  $("chChatAccess").textContent=fmt(channelChatUse);
   $("chBook").textContent=fmt(channelBook);
   $("chCancel").textContent=fmt(channelCancel);
 
   $("pctPhone").textContent=tq?pct(channelPhone,tq).toFixed(2)+"%":"";
   $("pctErms").textContent=tq?pct(channelErms,tq).toFixed(2)+"%":"";
   $("pctSmart").textContent=tq?pct(channelSmart,tq).toFixed(2)+"%":"";
-  $("pctChatAccess").textContent=tq?pct(channelChatAccess,tq).toFixed(2)+"%":"";
+  $("pctChatAccess").textContent=tq?pct(channelChatUse,tq).toFixed(2)+"%":"";
+
+  chart("channelCompareChart","bar",
+    ["전화인입","ERMS","스마트러닝앱","챗봇 이용"],
+    [{
+      label:"건수",
+      data:[channelPhone,channelErms,channelSmart,channelChatUse],
+      backgroundColor:["#173d73","#f4b400","#35a79c","#f28c28"],
+      borderRadius:6,
+      barThickness:30
+    }]
+  );
+  if(charts["channelCompareChart"]){
+    const cc=charts["channelCompareChart"];
+    cc.options.indexAxis="y";
+    cc.options.plugins.legend.display=false;
+    cc.options.layout={padding:{right:10,left:2}};
+    cc.options.scales.x={beginAtZero:true,grid:{color:"#edf1f6"},ticks:{font:{size:9},precision:0}};
+    cc.options.scales.y={grid:{display:false},ticks:{font:{size:10,weight:"700"}}};
+    cc.update();
+  }
 
   // 하단 = 선택기간 기준
   const rangeAnswerPct=cur.answerPct;
