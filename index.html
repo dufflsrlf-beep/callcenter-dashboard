@@ -3,6 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<script>
+(function () {
+  try {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has("v")) {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      const version =
+        now.getFullYear() +
+        pad(now.getMonth() + 1) +
+        pad(now.getDate()) + "-" +
+        pad(now.getHours()) +
+        pad(now.getMinutes()) +
+        pad(now.getSeconds());
+
+      url.searchParams.set("v", version);
+      window.location.replace(url.toString());
+    }
+  } catch (e) {
+    console.warn("자동 버전 파라미터 적용 실패", e);
+  }
+})();
+</script>
 <title>콜센터 통합 운영 대시보드</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -42,7 +68,7 @@
 
 <main class="main">
 <div class="top">
-  <div class="title">콜센터 통합 운영 대시보드</div>
+  <div class="title">콜센터 통합 운영 대시보드 <span id="pageVersion" style="font-size:10px;color:#8a96a8;font-weight:600;margin-left:6px"></span></div>
   <div class="filters">
     <div class="datebox">📅 <input id="startDate" type="date"> ~ <input id="endDate" type="date"></div>
     <button class="btn primary" id="searchBtn">조회</button>
@@ -178,6 +204,11 @@ const firestore = getFirestore(app);
 const auth = getAuth(app);
 
 const $ = id => document.getElementById(id);
+
+const pageVersionParam = new URL(window.location.href).searchParams.get("v") || "";
+if (document.getElementById("pageVersion") && pageVersionParam) {
+  document.getElementById("pageVersion").textContent = "v" + pageVersionParam;
+}
 const count = v => Math.round(Number(v) || 0);
 const fmt = v => count(v).toLocaleString("ko-KR");
 const money = v => "₩" + fmt(v);
