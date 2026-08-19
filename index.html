@@ -66,7 +66,7 @@
   <div class="mid">
     <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="sub">선택 기간 일일 운영실적</div><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
     <div class="card side-card">
-      <h3 id="channelTitle">채널별 기준일 현황</h3>
+      <h3 id="channelTitle">채널별 선택기간 현황</h3>
       <div class="channel"><div class="cicon">☎</div><div class="cname">전화인입</div><div class="cval" id="chPhone">-</div><div class="cpct" id="pctPhone"></div></div>
       <div class="channel"><div class="cicon">✉</div><div class="cname">ERMS 건수</div><div class="cval" id="chErms">-</div><div class="cpct" id="pctErms"></div></div>
       <div class="channel"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div><div class="cval" id="chSmart">-</div><div class="cpct" id="pctSmart"></div></div>
@@ -396,27 +396,35 @@ async function applyFilter(){
       .forEach(id=>$(id).textContent="선택기간 기준");
   }
 
-  $("baseDateText").textContent=`조회기간: ${s} ~ ${e} · 우측 기준일: ${latest.date}`;
+  $("baseDateText").textContent=`조회기간: ${s} ~ ${e}`;
 
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
     {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3},
     {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3}
   ]);
 
-  // 우측 채널 = 기준일 실제값 / 총문의량 대비 %
-  $("channelTitle").textContent=`채널별 기준일 현황 (${latest.date})`;
-  $("chPhone").textContent=fmt(latest.phoneIn);
-  $("chErms").textContent=fmt(latest.ermsCount);
-  $("chSmart").textContent=fmt(latest.smart);
-  $("chChatAccess").textContent=fmt(latest.chatAccess);
-  $("chBook").textContent=fmt(latest.bookBuy);
-  $("chCancel").textContent=fmt(latest.cancel);
+  // 우측 채널 = 선택기간 합계 / 선택기간 총문의량 대비 %
+  $("channelTitle").textContent=`채널별 선택기간 현황 (${s} ~ ${e})`;
 
-  const tq=Number(latest.totalQ)||0;
-  $("pctPhone").textContent=tq?pct(latest.phoneIn,tq).toFixed(2)+"%":"";
-  $("pctErms").textContent=tq?pct(latest.ermsCount,tq).toFixed(2)+"%":"";
-  $("pctSmart").textContent=tq?pct(latest.smart,tq).toFixed(2)+"%":"";
-  $("pctChatAccess").textContent=tq?pct(latest.chatAccess,tq).toFixed(2)+"%":"";
+  const channelPhone=sum(rows,"phoneIn");
+  const channelErms=sum(rows,"ermsCount");
+  const channelSmart=sum(rows,"smart");
+  const channelChatAccess=sum(rows,"chatAccess");
+  const channelBook=sum(rows,"bookBuy");
+  const channelCancel=sum(rows,"cancel");
+  const tq=cur.totalQ;
+
+  $("chPhone").textContent=fmt(channelPhone);
+  $("chErms").textContent=fmt(channelErms);
+  $("chSmart").textContent=fmt(channelSmart);
+  $("chChatAccess").textContent=fmt(channelChatAccess);
+  $("chBook").textContent=fmt(channelBook);
+  $("chCancel").textContent=fmt(channelCancel);
+
+  $("pctPhone").textContent=tq?pct(channelPhone,tq).toFixed(2)+"%":"";
+  $("pctErms").textContent=tq?pct(channelErms,tq).toFixed(2)+"%":"";
+  $("pctSmart").textContent=tq?pct(channelSmart,tq).toFixed(2)+"%":"";
+  $("pctChatAccess").textContent=tq?pct(channelChatAccess,tq).toFixed(2)+"%":"";
 
   // 하단 = 선택기간 기준
   const rangeAnswerPct=cur.answerPct;
