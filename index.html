@@ -94,58 +94,229 @@
 
 <section id="admin" class="section">
   <div id="adminLock" class="card adminbox">
-    <h3>🔒 관리자</h3><div class="notice">PIN은 이 브라우저의 관리자 화면 접근용입니다.</div>
-    <div class="actions"><input id="pinInput" type="password" placeholder="관리자 PIN"><button class="btn primary" id="unlockBtn">관리자 열기</button><button class="btn secondary" id="setPinBtn">PIN 설정/변경</button></div>
+    <h3>🔒 관리자 로그인</h3>
+    <div class="notice">Firebase Authentication에 등록한 관리자 이메일/비밀번호로 로그인합니다.</div>
+    <div class="actions">
+      <input id="adminEmail" type="email" placeholder="관리자 이메일" autocomplete="username">
+      <input id="adminPassword" type="password" placeholder="비밀번호" autocomplete="current-password">
+      <button class="btn primary" id="loginBtn">로그인</button>
+    </div>
+    <div id="loginStatus" class="status">로그인하지 않음</div>
   </div>
+
   <div id="adminPanel" class="hidden">
-    <div class="card adminbox"><div style="display:flex;justify-content:space-between;align-items:center"><div><h3 style="margin:0">관리자 데이터 관리</h3><div class="sub">업로드 시 기존 동일 종류 데이터는 교체됩니다.</div></div><button class="btn secondary" id="lockBtn">잠금</button></div>
-      <div class="uploadgrid">
-        <div class="card upload"><h3>① 일일 운영실적 Excel</h3><div class="drop"><input id="dailyFile" type="file" accept=".xlsx,.xls,.csv"><div style="margin-top:9px"><button class="btn secondary" id="dailySampleBtn">샘플 Excel</button></div></div><div id="dailyStatus" class="status">등록된 데이터 없음</div></div>
-        <div class="card upload"><h3>② 환불 상세 Excel</h3><div class="drop"><input id="refundFile" type="file" accept=".xlsx,.xls,.csv"><div style="margin-top:9px"><button class="btn secondary" id="refundSampleBtn">샘플 Excel</button></div></div><div id="refundStatus" class="status">등록된 데이터 없음</div></div>
+    <div class="card adminbox">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <h3 style="margin:0">관리자 데이터 관리</h3>
+          <div class="sub" id="adminUserText">Firebase 연결됨</div>
+        </div>
+        <button class="btn secondary" id="logoutBtn">로그아웃</button>
       </div>
-      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:13px"><div class="actions"><select id="rawType"><option value="daily">일일 운영실적</option><option value="refund">환불 상세</option></select><input id="rawSearch" placeholder="검색"></div><button class="btn danger" id="clearBtn">전체 데이터 초기화</button></div>
-      <div class="tableWrap"><table><thead id="rawHead"></thead><tbody id="rawBody"></tbody></table></div>
+
+      <div class="uploadgrid">
+        <div class="card upload">
+          <h3>① 일일 운영실적 Excel</h3>
+          <div class="drop">
+            <input id="dailyFile" type="file" accept=".xlsx,.xls,.csv">
+            <div style="margin-top:9px"><button class="btn secondary" id="dailySampleBtn">샘플 Excel</button></div>
+          </div>
+          <div id="dailyStatus" class="status">Firestore 확인 중...</div>
+        </div>
+
+        <div class="card upload">
+          <h3>② 환불 상세 Excel</h3>
+          <div class="drop">
+            <input id="refundFile" type="file" accept=".xlsx,.xls,.csv">
+            <div style="margin-top:9px"><button class="btn secondary" id="refundSampleBtn">샘플 Excel</button></div>
+          </div>
+          <div id="refundStatus" class="status">Firestore 확인 중...</div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:13px">
+        <div class="actions">
+          <select id="rawType">
+            <option value="daily">일일 운영실적</option>
+            <option value="refund">환불 상세</option>
+          </select>
+          <input id="rawSearch" placeholder="검색">
+        </div>
+        <button class="btn danger" id="clearBtn">전체 데이터 초기화</button>
+      </div>
+
+      <div class="tableWrap">
+        <table><thead id="rawHead"></thead><tbody id="rawBody"></tbody></table>
+      </div>
     </div>
   </div>
 </section>
 </main>
 </div>
 
-<script>
-const $=id=>document.getElementById(id);
-const count=v=>Math.round(Number(v)||0);
-const fmt=v=>count(v).toLocaleString("ko-KR");
-const money=v=>"₩"+fmt(v);
-const mean=(rows,key)=>rows.length?rows.reduce((s,r)=>s+(Number(r[key])||0),0)/rows.length:0;
-const sum=(rows,key)=>rows.reduce((s,r)=>s+(Number(r[key])||0),0);
-const pct=(a,b)=>b?(a/b*100):0;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs, doc, writeBatch, deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import {
+  getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
-let db=null,daily=[],refunds=[],charts={};
+const firebaseConfig = {
+  apiKey: "AIzaSyC1-3URDG8ZtvEGxnQAcY2ggNmKv1cXgIY",
+  authDomain: "callcenter-dashboard-16fd4.firebaseapp.com",
+  projectId: "callcenter-dashboard-16fd4",
+  storageBucket: "callcenter-dashboard-16fd4.firebasestorage.app",
+  messagingSenderId: "776597262719",
+  appId: "1:776597262719:web:1535528acc0e5fd4264a4a",
+  measurementId: "G-L7YR471BT6"
+};
 
-function openDB(){return new Promise((res,rej)=>{const q=indexedDB.open("cc_dashboard_admin_v1",1);q.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains("daily"))d.createObjectStore("daily",{keyPath:"date"});if(!d.objectStoreNames.contains("refunds"))d.createObjectStore("refunds",{keyPath:"rid"})};q.onsuccess=e=>{db=e.target.result;res()};q.onerror=e=>rej(e.target.error)})}
-function getAll(store){return new Promise((res,rej)=>{const q=db.transaction(store).objectStore(store).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>rej(q.error)})}
-function replaceStore(store,rows){return new Promise((res,rej)=>{const tx=db.transaction(store,"readwrite"),st=tx.objectStore(store);st.clear();rows.forEach(r=>st.put(r));tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
-async function reload(){daily=await getAll("daily");refunds=await getAll("refunds");daily.sort((a,b)=>a.date.localeCompare(b.date));refunds.sort((a,b)=>a.applyDate.localeCompare(b.applyDate));updateStatus()}
+const app = initializeApp(firebaseConfig);
+const firestore = getFirestore(app);
+const auth = getAuth(app);
 
-function norm(s){return String(s||"").replace(/<br\s*\/?>/gi,"").replace(/[\s\u00A0%％()（）\[\]{}:_\-\/]/g,"").toLowerCase()}
-function pick(o,names){const keys=Object.keys(o);for(const n of names){const k=keys.find(x=>norm(x)===norm(n));if(k!==undefined)return o[k]}return""}
-function num(v){if(v===null||v===undefined||v==="")return 0;const x=Number(String(v).replace(/[,%₩원]/g,""));return isNaN(x)?0:x}
-function asDate(v){if(!v)return"";if(v instanceof Date&&!isNaN(v))return v.toISOString().slice(0,10);if(typeof v==="number"&&window.XLSX){const d=XLSX.SSF.parse_date_code(v);if(d)return `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`}const m=String(v).trim().replace(/[.\/]/g,"-").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);return m?`${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}`:""}
+const $ = id => document.getElementById(id);
+const count = v => Math.round(Number(v) || 0);
+const fmt = v => count(v).toLocaleString("ko-KR");
+const money = v => "₩" + fmt(v);
+const mean = (rows,key) => rows.length ? rows.reduce((s,r)=>s+(Number(r[key])||0),0)/rows.length : 0;
+const sum = (rows,key) => rows.reduce((s,r)=>s+(Number(r[key])||0),0);
+const pct = (a,b) => b ? (a/b*100) : 0;
 
-function chart(id,type,labels,sets){if(charts[id])charts[id].destroy();charts[id]=new Chart($(id),{type,data:{labels,datasets:sets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}},scales:type==="bar"?{x:{grid:{display:false}},y:{beginAtZero:true}}:{x:{grid:{display:false}},y:{beginAtZero:true}}}})}
-function spark(id,labels,data,color){chart(id,"line",labels,[{data,borderColor:color,backgroundColor:color+"15",fill:true,tension:.3,pointRadius:2.5,borderWidth:2}])}
-function trend(cur,prev,suffix="%",dec=2){cur=Number(cur)||0;prev=Number(prev)||0;if(prev===0)return cur>0?'<span class="up">▲ 신규</span>':'-';const d=(cur-prev)/Math.abs(prev)*100;return d>=0?`<span class="up">▲ ${Math.abs(d).toFixed(dec)}${suffix}</span>`:`<span class="down">▼ ${Math.abs(d).toFixed(dec)}${suffix}</span>`}
-function previousPeriod(rows){if(!rows.length)return[];const firstIdx=daily.findIndex(r=>r.date===rows[0].date);const len=rows.length;return firstIdx<=0?[]:daily.slice(Math.max(0,firstIdx-len),firstIdx)}
+let daily = [];
+let refunds = [];          // 관리자 로그인 시에만 원본 로드
+let refundDaily = [];      // 일반 조회용 일자별 환불 집계
+let charts = {};
+let currentUser = null;
+
+function norm(s){
+  return String(s||"")
+    .replace(/<br\s*\/?>/gi,"")
+    .replace(/[\s\u00A0%％()（）\[\]{}:_\-\/]/g,"")
+    .toLowerCase();
+}
+function pick(o,names){
+  const keys=Object.keys(o);
+  for(const n of names){
+    const k=keys.find(x=>norm(x)===norm(n));
+    if(k!==undefined) return o[k];
+  }
+  return "";
+}
+function num(v){
+  if(v===null||v===undefined||v==="") return 0;
+  const x=Number(String(v).replace(/[,%₩원]/g,""));
+  return isNaN(x)?0:x;
+}
+function asDate(v){
+  if(!v) return "";
+  if(v instanceof Date && !isNaN(v)) return v.toISOString().slice(0,10);
+  if(typeof v==="number" && window.XLSX){
+    const d=XLSX.SSF.parse_date_code(v);
+    if(d) return `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
+  }
+  const m=String(v).trim().replace(/[.\/]/g,"-").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  return m ? `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}` : "";
+}
+
+function chart(id,type,labels,sets){
+  if(charts[id]) charts[id].destroy();
+  charts[id]=new Chart($(id),{
+    type,
+    data:{labels,datasets:sets},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{position:"bottom"}},
+      scales:{x:{grid:{display:false}},y:{beginAtZero:true}}
+    }
+  });
+}
+function spark(id,labels,data,color){
+  chart(id,"line",labels,[{
+    data,
+    borderColor:color,
+    backgroundColor:color+"15",
+    fill:true,
+    tension:.3,
+    pointRadius:2.5,
+    borderWidth:2
+  }]);
+}
+function trend(cur,prev,suffix="%",dec=2){
+  cur=Number(cur)||0; prev=Number(prev)||0;
+  if(prev===0) return cur>0?'<span class="up">▲ 신규</span>':'-';
+  const d=(cur-prev)/Math.abs(prev)*100;
+  return d>=0
+    ? `<span class="up">▲ ${Math.abs(d).toFixed(dec)}${suffix}</span>`
+    : `<span class="down">▼ ${Math.abs(d).toFixed(dec)}${suffix}</span>`;
+}
+
+async function fetchCollection(name){
+  const snap=await getDocs(collection(firestore,name));
+  return snap.docs.map(d=>({__id:d.id,...d.data()}));
+}
+
+async function reload(){
+  daily = await fetchCollection("daily");
+  daily.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+  refundDaily = await fetchCollection("refundDaily");
+  refundDaily.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+  if(currentUser){
+    refunds = await fetchCollection("refunds");
+    refunds.sort((a,b)=>(a.applyDate||"").localeCompare(b.applyDate||""));
+  }else{
+    refunds = [];
+  }
+  updateStatus();
+}
+
+async function deleteCollectionDocs(name){
+  const snap=await getDocs(collection(firestore,name));
+  const docs=snap.docs;
+  for(let i=0;i<docs.length;i+=400){
+    const batch=writeBatch(firestore);
+    docs.slice(i,i+400).forEach(x=>batch.delete(x.ref));
+    await batch.commit();
+  }
+}
+
+async function replaceCollection(name, rows, idFn){
+  await deleteCollectionDocs(name);
+  for(let i=0;i<rows.length;i+=400){
+    const batch=writeBatch(firestore);
+    rows.slice(i,i+400).forEach((r,j)=>{
+      const id=String(idFn(r,i+j));
+      batch.set(doc(firestore,name,id),r);
+    });
+    await batch.commit();
+  }
+}
+
+function previousDay(latest){
+  const idx=daily.findIndex(r=>r.date===latest.date);
+  return idx>0?daily[idx-1]:null;
+}
 
 async function applyFilter(){
   await reload();
-  const s=$("startDate").value,e=$("endDate").value;if(!s||!e)return alert("기간을 선택해 주세요.");if(s>e)return alert("시작일이 종료일보다 늦습니다.");
-  const rows=daily.filter(r=>r.date>=s&&r.date<=e);if(!rows.length)return alert("선택 기간에 데이터가 없습니다.");
-  const latest=rows.at(-1), prevRows=previousPeriod(rows);
 
-  // 상단 KPI = 선택 종료일(기준일)의 실제값
-  const latestIndex=daily.findIndex(r=>r.date===latest.date);
-  const prevDay=latestIndex>0?daily[latestIndex-1]:null;
+  const s=$("startDate").value;
+  const e=$("endDate").value;
+  if(!s||!e) return alert("기간을 선택해 주세요.");
+  if(s>e) return alert("시작일이 종료일보다 늦습니다.");
+
+  const rows=daily.filter(r=>r.date>=s&&r.date<=e);
+  if(!rows.length) return alert("선택 기간에 데이터가 없습니다.");
+
+  const latest=rows.at(-1);
+  const prev=previousDay(latest);
+
+  // 상단 KPI = 선택 종료일 실제값
   const cur={
     totalQ:Number(latest.totalQ)||0,
     totalA:Number(latest.totalA)||0,
@@ -157,16 +328,16 @@ async function applyFilter(){
     erms:Number(latest.ermsCount)||0,
     smart:Number(latest.smart)||0
   };
-  const prv=prevDay?{
-    totalQ:Number(prevDay.totalQ)||0,
-    totalA:Number(prevDay.totalA)||0,
-    phoneIn:Number(prevDay.phoneIn)||0,
-    phoneAns:Number(prevDay.phoneAns)||0,
-    answerPct:pct(Number(prevDay.totalA)||0,Number(prevDay.totalQ)||0),
-    chatUse:Number(prevDay.chatUse)||0,
-    cph:Number(prevDay.cphDay)||0,
-    erms:Number(prevDay.ermsCount)||0,
-    smart:Number(prevDay.smart)||0
+  const prv=prev?{
+    totalQ:Number(prev.totalQ)||0,
+    totalA:Number(prev.totalA)||0,
+    phoneIn:Number(prev.phoneIn)||0,
+    phoneAns:Number(prev.phoneAns)||0,
+    answerPct:pct(Number(prev.totalA)||0,Number(prev.totalQ)||0),
+    chatUse:Number(prev.chatUse)||0,
+    cph:Number(prev.cphDay)||0,
+    erms:Number(prev.ermsCount)||0,
+    smart:Number(prev.smart)||0
   }:null;
 
   $("kpiTotalQ").textContent=fmt(cur.totalQ);
@@ -185,35 +356,48 @@ async function applyFilter(){
     $("trPhoneIn").innerHTML="전일 대비　"+trend(cur.phoneIn,prv.phoneIn);
     $("trPhoneAns").innerHTML="전일 대비　"+trend(cur.phoneAns,prv.phoneAns);
     const pp=cur.answerPct-prv.answerPct;
-    $("trAnswerPct").innerHTML="전일 대비　"+(pp>=0?`<span class="up">▲ ${Math.abs(pp).toFixed(2)}%p</span>`:`<span class="down">▼ ${Math.abs(pp).toFixed(2)}%p</span>`);
+    $("trAnswerPct").innerHTML="전일 대비　"+(
+      pp>=0
+        ? `<span class="up">▲ ${Math.abs(pp).toFixed(2)}%p</span>`
+        : `<span class="down">▼ ${Math.abs(pp).toFixed(2)}%p</span>`
+    );
     $("trChatUse").innerHTML="전일 대비　"+trend(cur.chatUse,prv.chatUse);
     const cd=cur.cph-prv.cph;
-    $("trCph").innerHTML="전일 대비　"+(cd>=0?`<span class="up">▲ ${Math.abs(cd).toFixed(2)}</span>`:`<span class="down">▼ ${Math.abs(cd).toFixed(2)}</span>`);
+    $("trCph").innerHTML="전일 대비　"+(
+      cd>=0
+        ? `<span class="up">▲ ${Math.abs(cd).toFixed(2)}</span>`
+        : `<span class="down">▼ ${Math.abs(cd).toFixed(2)}</span>`
+    );
     $("trErms").innerHTML="전일 대비　"+trend(cur.erms,prv.erms);
     $("trSmart").innerHTML="전일 대비　"+trend(cur.smart,prv.smart);
-  }else {
+  }else{
     ["trTotalQ","trTotalA","trPhoneIn","trPhoneAns","trAnswerPct","trChatUse","trCph","trErms","trSmart"]
       .forEach(id=>$(id).textContent="기준일 실제값");
   }
 
   $("baseDateText").textContent=`조회기간: ${s} ~ ${e} · 기준일: ${latest.date}`;
 
-  // 메인
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
     {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3},
     {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3}
   ]);
 
-  // 기준일 채널 현황
+  // 우측 채널 = 기준일 실제값 / 총문의량 대비 %
   $("channelTitle").textContent=`채널별 기준일 현황 (${latest.date})`;
-  $("chPhone").textContent=fmt(latest.phoneIn);$("chErms").textContent=fmt(latest.ermsCount);$("chSmart").textContent=fmt(latest.smart);$("chChatAccess").textContent=fmt(latest.chatAccess);$("chBook").textContent=fmt(latest.bookBuy);$("chCancel").textContent=fmt(latest.cancel);
+  $("chPhone").textContent=fmt(latest.phoneIn);
+  $("chErms").textContent=fmt(latest.ermsCount);
+  $("chSmart").textContent=fmt(latest.smart);
+  $("chChatAccess").textContent=fmt(latest.chatAccess);
+  $("chBook").textContent=fmt(latest.bookBuy);
+  $("chCancel").textContent=fmt(latest.cancel);
+
   const tq=Number(latest.totalQ)||0;
   $("pctPhone").textContent=tq?pct(latest.phoneIn,tq).toFixed(2)+"%":"";
   $("pctErms").textContent=tq?pct(latest.ermsCount,tq).toFixed(2)+"%":"";
   $("pctSmart").textContent=tq?pct(latest.smart,tq).toFixed(2)+"%":"";
   $("pctChatAccess").textContent=tq?pct(latest.chatAccess,tq).toFixed(2)+"%":"";
 
-  // 하단 선택기간
+  // 하단 = 선택기간 기준
   const rangeAnswerPct=pct(sum(rows,"totalA"),sum(rows,"totalQ"));
   const rangeCph=mean(rows,"cphDay");
   $("miniAnswer").textContent=rangeAnswerPct.toFixed(2)+"%";
@@ -221,68 +405,288 @@ async function applyFilter(){
   $("miniErms").textContent=fmt(sum(rows,"ermsCount"));
   $("miniSmart").textContent=fmt(sum(rows,"smart"));
   $("miniChat").textContent=fmt(sum(rows,"chatUse"));
+
   spark("spAnswer",rows.map(r=>r.date.slice(5)),rows.map(r=>pct(r.totalA,r.totalQ)),"#f4b400");
   spark("spCph",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.cphDay)||0),"#0b2b59");
   spark("spErms",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.ermsCount)||0),"#0b2b59");
   spark("spSmart",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.smart)||0),"#f4b400");
   spark("spChat",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatUse)||0),"#f4b400");
 
-  // 메뉴
-  $("callInSum").textContent=fmt(sum(rows,"phoneIn"));$("callAnsSum").textContent=fmt(sum(rows,"phoneAns"));$("callRate").textContent=pct(sum(rows,"phoneAns"),sum(rows,"phoneIn")).toFixed(2)+"%";
-  chart("callChart","line",rows.map(r=>r.date.slice(5)),[{label:"전화인입",data:rows.map(r=>r.phoneIn),borderColor:"#0b2b59",tension:.3},{label:"총응답",data:rows.map(r=>r.phoneAns),borderColor:"#f4b400",tension:.3}]);
+  // 메뉴별 선택기간 집계
+  $("callInSum").textContent=fmt(sum(rows,"phoneIn"));
+  $("callAnsSum").textContent=fmt(sum(rows,"phoneAns"));
+  $("callRate").textContent=pct(sum(rows,"phoneAns"),sum(rows,"phoneIn")).toFixed(2)+"%";
+  chart("callChart","line",rows.map(r=>r.date.slice(5)),[
+    {label:"전화인입",data:rows.map(r=>r.phoneIn),borderColor:"#0b2b59",tension:.3},
+    {label:"총응답",data:rows.map(r=>r.phoneAns),borderColor:"#f4b400",tension:.3}
+  ]);
 
-  $("ermsSum").textContent=fmt(sum(rows,"ermsCount"));$("smartSum").textContent=fmt(sum(rows,"smart"));$("ermsAvg").textContent=fmt(mean(rows,"ermsCount"));
-  chart("ermsChart","line",rows.map(r=>r.date.slice(5)),[{label:"ERMS",data:rows.map(r=>r.ermsCount),borderColor:"#0b2b59",tension:.3},{label:"스마트러닝",data:rows.map(r=>r.smart),borderColor:"#f4b400",tension:.3}]);
+  $("ermsSum").textContent=fmt(sum(rows,"ermsCount"));
+  $("smartSum").textContent=fmt(sum(rows,"smart"));
+  $("ermsAvg").textContent=fmt(mean(rows,"ermsCount"));
+  chart("ermsChart","line",rows.map(r=>r.date.slice(5)),[
+    {label:"ERMS",data:rows.map(r=>r.ermsCount),borderColor:"#0b2b59",tension:.3},
+    {label:"스마트러닝",data:rows.map(r=>r.smart),borderColor:"#f4b400",tension:.3}
+  ]);
 
-  $("chatAccessSum").textContent=fmt(sum(rows,"chatAccess"));$("chatUseSum").textContent=fmt(sum(rows,"chatUse"));$("chatUseAvg").textContent=fmt(mean(rows,"chatUse"));
-  chart("chatChart","line",rows.map(r=>r.date.slice(5)),[{label:"챗봇접속",data:rows.map(r=>r.chatAccess),borderColor:"#0b2b59",tension:.3},{label:"챗봇이용",data:rows.map(r=>r.chatUse),borderColor:"#f4b400",tension:.3}]);
+  $("chatAccessSum").textContent=fmt(sum(rows,"chatAccess"));
+  $("chatUseSum").textContent=fmt(sum(rows,"chatUse"));
+  $("chatUseAvg").textContent=fmt(mean(rows,"chatUse"));
+  chart("chatChart","line",rows.map(r=>r.date.slice(5)),[
+    {label:"챗봇접속",data:rows.map(r=>r.chatAccess),borderColor:"#0b2b59",tension:.3},
+    {label:"챗봇이용",data:rows.map(r=>r.chatUse),borderColor:"#f4b400",tension:.3}
+  ]);
 
-  $("bookSum").textContent=fmt(sum(rows,"bookBuy"));$("returnSum").textContent=fmt(sum(rows,"bookReturn"));$("exchangeSum").textContent=fmt(sum(rows,"bookExchange"));
-  chart("bookChart","line",rows.map(r=>r.date.slice(5)),[{label:"교재구매",data:rows.map(r=>r.bookBuy),borderColor:"#0b2b59",tension:.3},{label:"반품",data:rows.map(r=>r.bookReturn),borderColor:"#f4b400",tension:.3}]);
+  $("bookSum").textContent=fmt(sum(rows,"bookBuy"));
+  $("returnSum").textContent=fmt(sum(rows,"bookReturn"));
+  $("exchangeSum").textContent=fmt(sum(rows,"bookExchange"));
+  chart("bookChart","line",rows.map(r=>r.date.slice(5)),[
+    {label:"교재구매",data:rows.map(r=>r.bookBuy),borderColor:"#0b2b59",tension:.3},
+    {label:"반품",data:rows.map(r=>r.bookReturn),borderColor:"#f4b400",tension:.3}
+  ]);
 
-  $("cphAvg").textContent=mean(rows,"cphDay").toFixed(2);$("cphMonth").textContent=Number(latest.cphMonth||0).toFixed(2);$("cphYear").textContent=Number(latest.cphYear||0).toFixed(2);
-  chart("cphChart","line",rows.map(r=>r.date.slice(5)),[{label:"CPH",data:rows.map(r=>r.cphDay),borderColor:"#0b2b59",tension:.3}]);
+  $("cphAvg").textContent=rangeCph.toFixed(2);
+  $("cphMonth").textContent=Number(latest.cphMonth||0).toFixed(2);
+  $("cphYear").textContent=Number(latest.cphYear||0).toFixed(2);
+  chart("cphChart","line",rows.map(r=>r.date.slice(5)),[
+    {label:"CPH",data:rows.map(r=>r.cphDay),borderColor:"#0b2b59",tension:.3}
+  ]);
 
-  const rr=refunds.filter(r=>r.applyDate>=s&&r.applyDate<=e),amt=sum(rr,"refundAmount");
-  $("refundCount").textContent=fmt(rr.length);$("refundAmount").textContent=money(amt);$("refundAvg").textContent=money(rr.length?amt/rr.length:0);
-  const rm={};rr.forEach(r=>rm[r.applyDate]=(rm[r.applyDate]||0)+1);const rd=Object.keys(rm).sort();chart("refundChart","bar",rd.map(d=>d.slice(5)),[{label:"환불 건수",data:rd.map(d=>rm[d]),backgroundColor:"#f4b400"}]);
+  // 환불은 공개용 일자별 집계 사용
+  const rr=refundDaily.filter(r=>r.date>=s&&r.date<=e);
+  const refundCount=rr.reduce((a,r)=>a+(Number(r.count)||0),0);
+  const refundAmount=rr.reduce((a,r)=>a+(Number(r.amount)||0),0);
+  $("refundCount").textContent=fmt(refundCount);
+  $("refundAmount").textContent=money(refundAmount);
+  $("refundAvg").textContent=money(refundCount?refundAmount/refundCount:0);
+  chart("refundChart","bar",rr.map(r=>r.date.slice(5)),[
+    {label:"환불 건수",data:rr.map(r=>Number(r.count)||0),backgroundColor:"#f4b400"}
+  ]);
 
   renderRaw();
 }
 
 function updateStatus(){
-  if(daily.length)$("dailyStatus").innerHTML=`등록 <b>${daily.length}일</b> · ${daily[0].date} ~ ${daily.at(-1).date}<br>최근일 총문의 ${fmt(daily.at(-1).totalQ)} / 총답변 ${fmt(daily.at(-1).totalA)}`;else $("dailyStatus").textContent="등록된 데이터 없음";
-  if(refunds.length)$("refundStatus").innerHTML=`등록 <b>${refunds.length}건</b> · ${refunds[0].applyDate} ~ ${refunds.at(-1).applyDate}`;else $("refundStatus").textContent="등록된 데이터 없음";
+  if(daily.length){
+    $("dailyStatus").innerHTML=`Firestore 등록 <b>${daily.length}일</b> · ${daily[0].date} ~ ${daily.at(-1).date}<br>최근일 총문의 ${fmt(daily.at(-1).totalQ)} / 총답변 ${fmt(daily.at(-1).totalA)}`;
+  }else{
+    $("dailyStatus").textContent="Firestore에 등록된 일일 운영실적 없음";
+  }
+
+  if(refundDaily.length){
+    const cnt=refundDaily.reduce((a,r)=>a+(Number(r.count)||0),0);
+    $("refundStatus").innerHTML=`Firestore 환불 집계 <b>${cnt}건</b> · ${refundDaily[0].date} ~ ${refundDaily.at(-1).date}`;
+  }else{
+    $("refundStatus").textContent="Firestore에 등록된 환불 데이터 없음";
+  }
 }
+
 async function upload(file,type){
-  if(!file)return;
+  if(!currentUser) return alert("관리자 로그인이 필요합니다.");
+  if(!file) return;
+
   try{
-    const wb=XLSX.read(await file.arrayBuffer(),{type:"array",cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],raw=XLSX.utils.sheet_to_json(ws,{defval:"",raw:true});if(!raw.length)throw new Error("첫 시트에 데이터가 없습니다.");
+    const wb=XLSX.read(await file.arrayBuffer(),{type:"array",cellDates:true});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const raw=XLSX.utils.sheet_to_json(ws,{defval:"",raw:true});
+    if(!raw.length) throw new Error("첫 시트에 데이터가 없습니다.");
+
     if(type==="daily"){
-      const rows=raw.map(o=>({date:asDate(pick(o,["일자"])),day:String(pick(o,["요일"])),totalQ:num(pick(o,["총문의량"])),totalA:num(pick(o,["총답변량"])),answerPct:num(pick(o,["총답변률"])),phoneIn:num(pick(o,["전화인입호"])),phoneAns:num(pick(o,["총응답호","총응답호 (a+b+c)"])),hq:num(pick(o,["응답호 (주간/본사)a"])),sourcing:num(pick(o,["응답호 (주간/소싱)b"])),night:num(pick(o,["응답호 (야간)c"])),ermsCount:num(pick(o,["ERMS 건수","ERMS건수","ERMS"])),smart:num(pick(o,["스마트러닝앱"])),chatAccess:num(pick(o,["챗봇접속"])),bookBuy:num(pick(o,["교재구매건수"])),bookReturn:num(pick(o,["반품(환불)","반품"])),bookExchange:num(pick(o,["교환"])),chatUse:num(pick(o,["챗봇이용건"])),cancel:num(pick(o,["바로취소"])),cphDay:num(pick(o,["CPH (일별)","CPH일별"])),cphWeek:num(pick(o,["CPH (주간누적)"])),cphMonth:num(pick(o,["CPH (월간누적)"])),cphYear:num(pick(o,["CPH (연간누적)"]))})).filter(r=>r.date);
-      await replaceStore("daily",rows);await reload();$("startDate").value=daily[0].date;$("endDate").value=daily.at(-1).date;await applyFilter();alert(`${rows.length}일 데이터를 교체 등록했습니다.`);
+      const rows=raw.map(o=>({
+        date:asDate(pick(o,["일자"])),
+        day:String(pick(o,["요일"])),
+        totalQ:num(pick(o,["총문의량"])),
+        totalA:num(pick(o,["총답변량"])),
+        answerPct:num(pick(o,["총답변률"])),
+        phoneIn:num(pick(o,["전화인입호"])),
+        phoneAns:num(pick(o,["총응답호","총응답호 (a+b+c)"])),
+        hq:num(pick(o,["응답호 (주간/본사)a"])),
+        sourcing:num(pick(o,["응답호 (주간/소싱)b"])),
+        night:num(pick(o,["응답호 (야간)c"])),
+        ermsCount:num(pick(o,["ERMS 건수","ERMS건수","ERMS"])),
+        smart:num(pick(o,["스마트러닝앱"])),
+        chatAccess:num(pick(o,["챗봇접속"])),
+        bookBuy:num(pick(o,["교재구매건수"])),
+        bookReturn:num(pick(o,["반품(환불)","반품"])),
+        bookExchange:num(pick(o,["교환"])),
+        chatUse:num(pick(o,["챗봇이용건"])),
+        cancel:num(pick(o,["바로취소"])),
+        cphDay:num(pick(o,["CPH (일별)","CPH일별"])),
+        cphWeek:num(pick(o,["CPH (주간누적)"])),
+        cphMonth:num(pick(o,["CPH (월간누적)"])),
+        cphYear:num(pick(o,["CPH (연간누적)"]))
+      })).filter(r=>r.date);
+
+      if(!rows.length) throw new Error("일자 컬럼을 인식하지 못했습니다.");
+
+      await replaceCollection("daily",rows,r=>r.date);
+      await reload();
+      $("startDate").value=daily[0].date;
+      $("endDate").value=daily.at(-1).date;
+      await applyFilter();
+      alert(`${rows.length}일 데이터를 Firestore에 교체 등록했습니다.`);
     }else{
-      const rows=raw.map((o,i)=>{const ad=asDate(pick(o,["환불신청일"]));return{rid:`${ad}|${pick(o,["아이디"])}|${i}`,uid:String(pick(o,["아이디"])),name:String(pick(o,["이름"])),applyDate:ad,pay:String(pick(o,["결제방법"])),type:String(pick(o,["종류"])),amount:num(pick(o,["금액"])),fee:num(pick(o,["수수료"])),refundAmount:num(pick(o,["환불금액"])),reason1:String(pick(o,["사유1"])),reason2:String(pick(o,["사유2"])),refundMethod:String(pick(o,["환불방법"]))}}).filter(r=>r.applyDate);
-      await replaceStore("refunds",rows);await reload();await applyFilter();alert(`${rows.length}건 환불 데이터를 교체 등록했습니다.`);
+      const rows=raw.map((o,i)=>{
+        const ad=asDate(pick(o,["환불신청일"]));
+        return{
+          rid:`${ad}|${String(pick(o,["아이디"]))}|${i}`,
+          uid:String(pick(o,["아이디"])),
+          name:String(pick(o,["이름"])),
+          phone:String(pick(o,["연락처"])),
+          applyDate:ad,
+          approveDate:asDate(pick(o,["환불승인일"])),
+          doneDate:asDate(pick(o,["환불완료일"])),
+          pay:String(pick(o,["결제방법"])),
+          type:String(pick(o,["종류"])),
+          amount:num(pick(o,["금액"])),
+          fee:num(pick(o,["수수료"])),
+          refundAmount:num(pick(o,["환불금액"])),
+          reason1:String(pick(o,["사유1"])),
+          reason2:String(pick(o,["사유2"])),
+          member:String(pick(o,["회원구분"])),
+          refundMethod:String(pick(o,["환불방법"]))
+        };
+      }).filter(r=>r.applyDate);
+
+      if(!rows.length) throw new Error("환불신청일 컬럼을 인식하지 못했습니다.");
+
+      // 원본 저장
+      await replaceCollection("refunds",rows,(r,i)=>`r_${String(i).padStart(7,"0")}`);
+
+      // 공개 대시보드용 일자별 집계 저장
+      const map={};
+      rows.forEach(r=>{
+        if(!map[r.applyDate]) map[r.applyDate]={date:r.applyDate,count:0,amount:0};
+        map[r.applyDate].count += 1;
+        map[r.applyDate].amount += Number(r.refundAmount)||0;
+      });
+      const summaries=Object.values(map).sort((a,b)=>a.date.localeCompare(b.date));
+      await replaceCollection("refundDaily",summaries,r=>r.date);
+
+      await reload();
+      await applyFilter();
+      alert(`${rows.length}건 환불 데이터를 Firestore에 교체 등록했습니다.`);
     }
-  }catch(e){console.error(e);alert("업로드 오류: "+e.message)}
+  }catch(e){
+    console.error(e);
+    alert("업로드 오류: "+(e?.message||e));
+  }
 }
 
-async function hash(t){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
-async function setPin(){const a=prompt("새 PIN(4자리 이상)");if(!a)return;if(a.length<4)return alert("4자리 이상 입력하세요.");const b=prompt("PIN 확인");if(a!==b)return alert("PIN이 다릅니다.");localStorage.setItem("cc_pin",await hash(a));alert("PIN 저장 완료")}
-async function unlock(){const saved=localStorage.getItem("cc_pin");if(!saved)return alert("먼저 PIN을 설정하세요.");if(await hash($("pinInput").value)!==saved)return alert("PIN이 맞지 않습니다.");sessionStorage.setItem("cc_open","1");syncLock()}
-function syncLock(){const open=sessionStorage.getItem("cc_open")==="1";$("adminLock").classList.toggle("hidden",open);$("adminPanel").classList.toggle("hidden",!open);if(open)renderRaw()}
-function renderRaw(){if(!$("rawType"))return;const type=$("rawType").value,q=$("rawSearch").value.toLowerCase(),rows=(type==="daily"?daily:refunds).filter(r=>JSON.stringify(r).toLowerCase().includes(q)).slice().reverse().slice(0,200);if(type==="daily"){$("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";$("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("")}else{$("rawHead").innerHTML="<tr><th>신청일</th><th>아이디</th><th>이름</th><th>종류</th><th>환불금액</th><th>사유1</th><th>사유2</th><th>환불방법</th></tr>";$("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.applyDate}</td><td>${r.uid}</td><td>${r.name}</td><td>${r.type}</td><td>${fmt(r.refundAmount)}</td><td>${r.reason1}</td><td>${r.reason2}</td><td>${r.refundMethod}</td></tr>`).join("")}}
-function dailySample(){const h=["일자","요일","총문의량","총답변량","총답변률","전화인입호","총응답호 (a+b+c)","응답호 (주간/본사)a","응답호 (주간/소싱)b","응답호 (야간)c","ERMS 건수","스마트러닝앱","챗봇접속","교재구매건수","반품(환불)","교환","챗봇이용건","바로취소","CPH (일별)","CPH (주간누적)","CPH (월간누적)","CPH (연간누적)"],r=["2026-08-17","월",1140,1121,0.9833,484,465,0,383,82,283,33,252,14345,238,42,1710,649,7.40,7.37,7.41,7.38],wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);XLSX.utils.book_append_sheet(wb,ws,"일일운영실적");XLSX.writeFile(wb,"콜센터_일일운영실적_샘플.xlsx")}
-function refundSample(){const h=["아이디","이름","환불신청일","결제방법","종류","금액","수수료","환불금액","사유1","사유2","환불방법"],r=["0227yw","조연*","2025-08-19 08:40","신용카드","교재",30800,0,30800,"기타","직접-상품 변경","카드취소"],wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);XLSX.utils.book_append_sheet(wb,ws,"환불상세");XLSX.writeFile(wb,"콜센터_환불상세_샘플.xlsx")}
+function renderRaw(){
+  if(!$("rawType")) return;
 
-$("searchBtn").addEventListener("click",()=>applyFilter().catch(e=>{console.error(e);alert("조회 오류: "+e.message)}));
-$("dailyFile").addEventListener("change",e=>upload(e.target.files[0],"daily"));$("refundFile").addEventListener("change",e=>upload(e.target.files[0],"refund"));
-$("setPinBtn").addEventListener("click",setPin);$("unlockBtn").addEventListener("click",unlock);$("lockBtn").addEventListener("click",()=>{sessionStorage.removeItem("cc_open");syncLock()});
-$("dailySampleBtn").addEventListener("click",dailySample);$("refundSampleBtn").addEventListener("click",refundSample);$("rawType").addEventListener("change",renderRaw);$("rawSearch").addEventListener("input",renderRaw);
-$("clearBtn").addEventListener("click",async()=>{if(!confirm("전체 데이터를 삭제할까요?"))return;await replaceStore("daily",[]);await replaceStore("refunds",[]);await reload();location.reload()});
-document.querySelectorAll(".menu button[data-target]").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".menu button[data-target]").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));$(b.dataset.target).classList.add("active");if(b.dataset.target==="admin")syncLock();setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),50)}));
+  const type=$("rawType").value;
+  const q=($("rawSearch").value||"").toLowerCase();
 
-(async()=>{await openDB();await reload();syncLock();if(daily.length){$("startDate").value=daily[0].date;$("endDate").value=daily.at(-1).date;await applyFilter()}})().catch(e=>{console.error(e);alert("초기화 오류: "+e.message)});
+  if(type==="refund" && !currentUser){
+    $("rawHead").innerHTML="";
+    $("rawBody").innerHTML="<tr><td>관리자 로그인 후 환불 원본을 확인할 수 있습니다.</td></tr>";
+    return;
+  }
+
+  const rows=(type==="daily"?daily:refunds)
+    .filter(r=>JSON.stringify(r).toLowerCase().includes(q))
+    .slice().reverse().slice(0,200);
+
+  if(type==="daily"){
+    $("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
+  }else{
+    $("rawHead").innerHTML="<tr><th>신청일</th><th>아이디</th><th>이름</th><th>종류</th><th>환불금액</th><th>사유1</th><th>사유2</th><th>환불방법</th></tr>";
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.applyDate}</td><td>${r.uid}</td><td>${r.name}</td><td>${r.type}</td><td>${fmt(r.refundAmount)}</td><td>${r.reason1}</td><td>${r.reason2}</td><td>${r.refundMethod}</td></tr>`).join("");
+  }
+}
+
+function dailySample(){
+  const h=["일자","요일","총문의량","총답변량","총답변률","전화인입호","총응답호 (a+b+c)","응답호 (주간/본사)a","응답호 (주간/소싱)b","응답호 (야간)c","ERMS 건수","스마트러닝앱","챗봇접속","교재구매건수","반품(환불)","교환","챗봇이용건","바로취소","CPH (일별)","CPH (주간누적)","CPH (월간누적)","CPH (연간누적)"];
+  const r=["2026-08-17","월",1140,1121,0.9833,484,465,0,383,82,283,33,252,14345,238,42,1710,649,7.40,7.37,7.41,7.38];
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);
+  XLSX.utils.book_append_sheet(wb,ws,"일일운영실적");
+  XLSX.writeFile(wb,"콜센터_일일운영실적_샘플.xlsx");
+}
+function refundSample(){
+  const h=["아이디","이름","연락처","환불신청일","환불승인일","환불완료일","결제방법","종류","금액","수수료","환불금액","사유1","사유2","회원구분","환불방법"];
+  const r=["0227yw","조연*","","2025-08-19 08:40","2025-08-19 08:40","2025-08-19 08:40","신용카드","교재",30800,0,30800,"기타","직접-상품 변경","기타","카드취소"];
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);
+  XLSX.utils.book_append_sheet(wb,ws,"환불상세");
+  XLSX.writeFile(wb,"콜센터_환불상세_샘플.xlsx");
+}
+
+async function login(){
+  try{
+    await signInWithEmailAndPassword(auth,$("adminEmail").value.trim(),$("adminPassword").value);
+  }catch(e){
+    console.error(e);
+    alert("로그인 실패: 이메일 또는 비밀번호를 확인해 주세요.");
+  }
+}
+async function logout(){
+  await signOut(auth);
+}
+
+function syncAuthUI(){
+  const logged=!!currentUser;
+  $("adminLock").classList.toggle("hidden",logged);
+  $("adminPanel").classList.toggle("hidden",!logged);
+  if(logged){
+    $("adminUserText").textContent=`로그인: ${currentUser.email}`;
+  }
+}
+
+onAuthStateChanged(auth, async user=>{
+  currentUser=user;
+  syncAuthUI();
+  await reload();
+  renderRaw();
+});
+
+$("searchBtn").addEventListener("click",()=>applyFilter().catch(e=>{
+  console.error(e);
+  alert("조회 오류: "+(e?.message||e));
+}));
+$("loginBtn").addEventListener("click",login);
+$("logoutBtn").addEventListener("click",logout);
+$("adminPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+$("dailyFile").addEventListener("change",e=>upload(e.target.files[0],"daily"));
+$("refundFile").addEventListener("change",e=>upload(e.target.files[0],"refund"));
+$("dailySampleBtn").addEventListener("click",dailySample);
+$("refundSampleBtn").addEventListener("click",refundSample);
+$("rawType").addEventListener("change",renderRaw);
+$("rawSearch").addEventListener("input",renderRaw);
+
+$("clearBtn").addEventListener("click",async()=>{
+  if(!currentUser) return alert("관리자 로그인이 필요합니다.");
+  if(!confirm("Firestore의 일일 운영실적과 환불 데이터를 모두 삭제할까요?")) return;
+  await deleteCollectionDocs("daily");
+  await deleteCollectionDocs("refunds");
+  await deleteCollectionDocs("refundDaily");
+  await reload();
+  location.reload();
+});
+
+document.querySelectorAll(".menu button[data-target]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".menu button[data-target]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+  $(b.dataset.target).classList.add("active");
+  setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),50);
+}));
+
+(async()=>{
+  try{
+    await reload();
+    if(daily.length){
+      $("startDate").value=daily[0].date;
+      $("endDate").value=daily.at(-1).date;
+      await applyFilter();
+    }else{
+      $("baseDateText").textContent="Firestore 데이터 없음";
+    }
+  }catch(e){
+    console.error(e);
+    alert("Firebase 초기화 오류: "+(e?.message||e));
+  }
+})();
 </script>
 </body></html>
