@@ -52,15 +52,15 @@
 
 <section id="overview" class="section active">
   <div class="kpis">
-    <div class="card kpi"><div class="kh"><div class="ico">☎</div>총 문의량</div><div class="kv" id="kpiTotalQ">-</div><div class="ks" id="trTotalQ">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">🎧</div>총 답변량</div><div class="kv" id="kpiTotalA">-</div><div class="ks" id="trTotalA">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks" id="trPhoneIn">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks" id="trPhoneAns">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">↗</div>답변률</div><div class="kv" id="kpiAnswerPct">-</div><div class="ks" id="trAnswerPct">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">💬</div>챗봇 이용</div><div class="kv" id="kpiChatUse">-</div><div class="ks" id="trChatUse">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks" id="trCph">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">✉</div>ERMS 건수</div><div class="kv" id="kpiErms">-</div><div class="ks" id="trErms">기준일 실제값</div></div>
-    <div class="card kpi"><div class="kh"><div class="ico">▣</div>스마트러닝앱</div><div class="kv" id="kpiSmart">-</div><div class="ks" id="trSmart">기준일 실제값</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">☎</div>총 문의량</div><div class="kv" id="kpiTotalQ">-</div><div class="ks" id="trTotalQ">선택기간 합계</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">🎧</div>총 답변량</div><div class="kv" id="kpiTotalA">-</div><div class="ks" id="trTotalA">선택기간 합계</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks" id="trPhoneIn">선택기간 합계</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks" id="trPhoneAns">선택기간 합계</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">↗</div>답변률</div><div class="kv" id="kpiAnswerPct">-</div><div class="ks" id="trAnswerPct">선택기간 전체</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">💬</div>챗봇 이용</div><div class="kv" id="kpiChatUse">-</div><div class="ks" id="trChatUse">선택기간 합계</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks" id="trCph">선택기간 평균</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">✉</div>ERMS 건수</div><div class="kv" id="kpiErms">-</div><div class="ks" id="trErms">선택기간 합계</div></div>
+    <div class="card kpi"><div class="kh"><div class="ico">▣</div>스마트러닝앱</div><div class="kv" id="kpiSmart">-</div><div class="ks" id="trSmart">선택기간 합계</div></div>
   </div>
 
   <div class="mid">
@@ -235,15 +235,32 @@ function chart(id,type,labels,sets){
   });
 }
 function spark(id,labels,data,color){
-  chart(id,"line",labels,[{
-    data,
-    borderColor:color,
-    backgroundColor:color+"15",
-    fill:true,
-    tension:.3,
-    pointRadius:2.5,
-    borderWidth:2
-  }]);
+  if(charts[id]) charts[id].destroy();
+  charts[id]=new Chart($(id),{
+    type:"line",
+    data:{
+      labels,
+      datasets:[{
+        label:"",
+        data,
+        borderColor:color,
+        backgroundColor:color+"15",
+        fill:true,
+        tension:.3,
+        pointRadius:2.5,
+        borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false}},
+        y:{display:false,beginAtZero:true}
+      }
+    }
+  });
 }
 function trend(cur,prev,suffix="%",dec=2){
   cur=Number(cur)||0; prev=Number(prev)||0;
@@ -316,28 +333,32 @@ async function applyFilter(){
   const latest=rows.at(-1);
   const prev=previousDay(latest);
 
-  // 상단 KPI = 선택 종료일 실제값
+  // 상단 KPI = 선택기간 기준
+  const firstIdx=daily.findIndex(r=>r.date===rows[0].date);
+  const prevRows=firstIdx>0 ? daily.slice(Math.max(0,firstIdx-rows.length), firstIdx) : [];
+
   const cur={
-    totalQ:Number(latest.totalQ)||0,
-    totalA:Number(latest.totalA)||0,
-    phoneIn:Number(latest.phoneIn)||0,
-    phoneAns:Number(latest.phoneAns)||0,
-    answerPct:pct(Number(latest.totalA)||0,Number(latest.totalQ)||0),
-    chatUse:Number(latest.chatUse)||0,
-    cph:Number(latest.cphDay)||0,
-    erms:Number(latest.ermsCount)||0,
-    smart:Number(latest.smart)||0
+    totalQ:sum(rows,"totalQ"),
+    totalA:sum(rows,"totalA"),
+    phoneIn:sum(rows,"phoneIn"),
+    phoneAns:sum(rows,"phoneAns"),
+    answerPct:pct(sum(rows,"totalA"),sum(rows,"totalQ")),
+    chatUse:sum(rows,"chatUse"),
+    cph:mean(rows,"cphDay"),
+    erms:sum(rows,"ermsCount"),
+    smart:sum(rows,"smart")
   };
-  const prv=prev?{
-    totalQ:Number(prev.totalQ)||0,
-    totalA:Number(prev.totalA)||0,
-    phoneIn:Number(prev.phoneIn)||0,
-    phoneAns:Number(prev.phoneAns)||0,
-    answerPct:pct(Number(prev.totalA)||0,Number(prev.totalQ)||0),
-    chatUse:Number(prev.chatUse)||0,
-    cph:Number(prev.cphDay)||0,
-    erms:Number(prev.ermsCount)||0,
-    smart:Number(prev.smart)||0
+
+  const prv=prevRows.length?{
+    totalQ:sum(prevRows,"totalQ"),
+    totalA:sum(prevRows,"totalA"),
+    phoneIn:sum(prevRows,"phoneIn"),
+    phoneAns:sum(prevRows,"phoneAns"),
+    answerPct:pct(sum(prevRows,"totalA"),sum(prevRows,"totalQ")),
+    chatUse:sum(prevRows,"chatUse"),
+    cph:mean(prevRows,"cphDay"),
+    erms:sum(prevRows,"ermsCount"),
+    smart:sum(prevRows,"smart")
   }:null;
 
   $("kpiTotalQ").textContent=fmt(cur.totalQ);
@@ -351,31 +372,31 @@ async function applyFilter(){
   $("kpiSmart").textContent=fmt(cur.smart);
 
   if(prv){
-    $("trTotalQ").innerHTML="전일 대비　"+trend(cur.totalQ,prv.totalQ);
-    $("trTotalA").innerHTML="전일 대비　"+trend(cur.totalA,prv.totalA);
-    $("trPhoneIn").innerHTML="전일 대비　"+trend(cur.phoneIn,prv.phoneIn);
-    $("trPhoneAns").innerHTML="전일 대비　"+trend(cur.phoneAns,prv.phoneAns);
+    $("trTotalQ").innerHTML="직전 동기간 대비　"+trend(cur.totalQ,prv.totalQ);
+    $("trTotalA").innerHTML="직전 동기간 대비　"+trend(cur.totalA,prv.totalA);
+    $("trPhoneIn").innerHTML="직전 동기간 대비　"+trend(cur.phoneIn,prv.phoneIn);
+    $("trPhoneAns").innerHTML="직전 동기간 대비　"+trend(cur.phoneAns,prv.phoneAns);
     const pp=cur.answerPct-prv.answerPct;
-    $("trAnswerPct").innerHTML="전일 대비　"+(
+    $("trAnswerPct").innerHTML="직전 동기간 대비　"+(
       pp>=0
         ? `<span class="up">▲ ${Math.abs(pp).toFixed(2)}%p</span>`
         : `<span class="down">▼ ${Math.abs(pp).toFixed(2)}%p</span>`
     );
-    $("trChatUse").innerHTML="전일 대비　"+trend(cur.chatUse,prv.chatUse);
+    $("trChatUse").innerHTML="직전 동기간 대비　"+trend(cur.chatUse,prv.chatUse);
     const cd=cur.cph-prv.cph;
-    $("trCph").innerHTML="전일 대비　"+(
+    $("trCph").innerHTML="직전 동기간 대비　"+(
       cd>=0
         ? `<span class="up">▲ ${Math.abs(cd).toFixed(2)}</span>`
         : `<span class="down">▼ ${Math.abs(cd).toFixed(2)}</span>`
     );
-    $("trErms").innerHTML="전일 대비　"+trend(cur.erms,prv.erms);
-    $("trSmart").innerHTML="전일 대비　"+trend(cur.smart,prv.smart);
+    $("trErms").innerHTML="직전 동기간 대비　"+trend(cur.erms,prv.erms);
+    $("trSmart").innerHTML="직전 동기간 대비　"+trend(cur.smart,prv.smart);
   }else{
     ["trTotalQ","trTotalA","trPhoneIn","trPhoneAns","trAnswerPct","trChatUse","trCph","trErms","trSmart"]
-      .forEach(id=>$(id).textContent="기준일 실제값");
+      .forEach(id=>$(id).textContent="선택기간 기준");
   }
 
-  $("baseDateText").textContent=`조회기간: ${s} ~ ${e} · 기준일: ${latest.date}`;
+  $("baseDateText").textContent=`조회기간: ${s} ~ ${e} · 우측 기준일: ${latest.date}`;
 
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
     {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3},
@@ -398,8 +419,8 @@ async function applyFilter(){
   $("pctChatAccess").textContent=tq?pct(latest.chatAccess,tq).toFixed(2)+"%":"";
 
   // 하단 = 선택기간 기준
-  const rangeAnswerPct=pct(sum(rows,"totalA"),sum(rows,"totalQ"));
-  const rangeCph=mean(rows,"cphDay");
+  const rangeAnswerPct=cur.answerPct;
+  const rangeCph=cur.cph;
   $("miniAnswer").textContent=rangeAnswerPct.toFixed(2)+"%";
   $("miniCph").textContent=rangeCph.toFixed(2);
   $("miniErms").textContent=fmt(sum(rows,"ermsCount"));
