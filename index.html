@@ -178,7 +178,7 @@ button,input,select{font:inherit}
   border:1px solid var(--line);
   border-radius:12px;
   box-shadow:var(--shadow);
-  padding:11px;
+  padding:10px;
 }
 .kpi-group-title{
   display:inline-block;
@@ -197,7 +197,7 @@ button,input,select{font:inherit}
 .kpi-group.call .kpi-group-grid{grid-template-columns:repeat(4,1fr)}
 .kpi-group.digital .kpi-group-grid{grid-template-columns:repeat(3,1fr)}
 .kpi{
-  min-height:188px;
+  min-height:174px;
   padding:13px 12px 10px;
   box-shadow:none;
   background:#fff;
@@ -226,26 +226,27 @@ button,input,select{font:inherit}
 .kv{
   margin-top:15px;
   text-align:center;
-  font-size:27px;
+  font-size:25px;
   line-height:1.1;
   font-weight:900;
   letter-spacing:-.8px;
 }
 .ks{
-  margin-top:17px;
+  margin-top:13px;
   font-size:9.6px;
   color:#6f7d92;
-  line-height:1.65;
+  line-height:1.55;
 }
 .up{color:var(--red);font-weight:900}
 .down{color:#1267de;font-weight:900}
 .mid{
   display:grid;
-  grid-template-columns:minmax(0,1.35fr) minmax(480px,.95fr);
+  align-items:stretch;
+  grid-template-columns:minmax(0,1.02fr) minmax(520px,.98fr);
   gap:12px;
   margin-bottom:12px;
 }
-.chart-card,.side-card{padding:16px}
+.chart-card,.side-card{padding:16px 16px 12px;height:100%}
 .chart-card h3,.side-card h3,.mini h3{
   margin:0;
   font-size:14.5px;
@@ -253,39 +254,107 @@ button,input,select{font:inherit}
   letter-spacing:-.35px;
 }
 .sub{font-size:10px;color:var(--muted);margin-top:4px}
-.chartbox{height:348px;margin-top:8px}
+.chartbox{height:455px;margin-top:8px}
 .side-card{min-width:0}
-.channel{
+.channel-group-label{
+  display:inline-block;
+  margin-top:12px;
+  padding:4px 8px;
+  border-radius:6px;
+  background:#eef4ff;
+  color:#1767d9;
+  font-size:10px;
+  font-weight:900;
+}
+.channel-group-label.secondary-group{
+  margin-top:16px;
+  background:#f3f5f8;
+  color:#536178;
+}
+.channel-simple-head{
   display:grid;
-  grid-template-columns:34px 1fr 85px 62px;
-  gap:9px;
+  grid-template-columns:1fr 100px;
+  gap:10px;
   align-items:center;
-  padding:10px 0;
+  padding:10px 4px 6px;
+  border-bottom:1px solid var(--line);
+  color:#54637a;
+  font-size:10px;
+  font-weight:900;
+}
+.channel-simple-row{
+  display:grid;
+  grid-template-columns:1fr 100px;
+  gap:10px;
+  align-items:center;
+  min-height:46px;
+  padding:8px 4px;
   border-bottom:1px solid var(--line);
 }
-.channel:last-of-type{border-bottom:0}
+.channel-simple-row:last-of-type{border-bottom:0}
+.channel-table-head{
+  display:grid;
+  grid-template-columns:minmax(120px,1.1fr) 92px 64px minmax(170px,1.7fr);
+  gap:10px;
+  align-items:center;
+  padding:12px 4px 7px;
+  border-bottom:1px solid var(--line);
+  color:#54637a;
+  font-size:10px;
+  font-weight:900;
+}
+.channel-row{
+  display:grid;
+  grid-template-columns:minmax(120px,1.1fr) 92px 64px minmax(170px,1.7fr);
+  gap:10px;
+  align-items:center;
+  min-height:48px;
+  padding:8px 4px;
+  border-bottom:1px solid var(--line);
+}
+.channel-row:last-of-type{border-bottom:0}
+.channel-name-wrap{display:flex;align-items:center;gap:9px;min-width:0}
 .cicon{
-  width:30px;height:30px;border-radius:50%;
+  flex:0 0 29px;
+  width:29px;height:29px;border-radius:50%;
   display:grid;place-items:center;
-  background:#f0f5ff;color:#1767d9;font-weight:900;
+  background:#eff4ff;color:#1767d9;font-weight:900;
 }
-.cname{font-size:11.5px;font-weight:800}
+.cname{font-size:11.5px;font-weight:800;white-space:nowrap}
 .cval{text-align:right;font-size:16px;font-weight:900}
-.cpct{text-align:right;font-size:10px;color:var(--muted)}
-.channel-chart-wrap{
-  height:235px;
-  margin-top:11px;
-  padding-top:10px;
-  border-top:1px solid var(--line);
+.cpct{text-align:right;font-size:10.5px;color:#64748b}
+.channel-bar-cell{display:flex;align-items:center;gap:8px;min-width:0}
+.channel-track{
+  position:relative;
+  flex:1;
+  height:10px;
+  border-radius:999px;
+  background:#eef2f7;
+  overflow:hidden;
 }
-.channel-chart-title{font-size:10.5px;font-weight:800;color:var(--muted);margin-bottom:5px}
+.channel-fill{height:100%;border-radius:999px}
+.channel-bar-value{width:58px;text-align:right;font-size:10px;color:#536178;white-space:nowrap}
+.ch-phone{background:#1673f8}
+.ch-erms{background:#7b42d3}
+.ch-smart{background:#8d4be0}
+.ch-chat{background:#7b42d3}
+.ch-book{background:#96a3b6}
+.ch-cancel{background:#96a3b6}
+.channel-note{
+  margin-top:8px;
+  padding-top:7px;
+  border-top:1px solid var(--line);
+  font-size:9.5px;
+  color:#7b8798;
+  line-height:1.45;
+}
 .bottom{
   display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:10px;
 }
 .mini{
-  min-height:180px;
+  min-height:165px;
   padding:14px;
 }
 .mv{
@@ -295,7 +364,7 @@ button,input,select{font:inherit}
   letter-spacing:-.6px;
 }
 .ms{font-size:10px;color:var(--muted);margin-top:6px}
-.spark{height:70px;margin-top:6px}
+.spark{height:62px;margin-top:6px}
 .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
 .stat{padding:16px}
 .stat .lab{font-size:11px;color:var(--muted);font-weight:800}
@@ -407,17 +476,69 @@ th{position:sticky;top:0;background:#f8fafc}
   <div class="mid">
     <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="sub">선택 기간 일일 운영실적</div><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
     <div class="card side-card">
-      <div style="display:flex;justify-content:space-between;align-items:center"><h3 id="channelTitle">채널별 선택기간 현황</h3><span style="font-size:9.5px;color:#8a96a8">(단위 : 건, %)</span></div>
-      <div class="channel"><div class="cicon">☎</div><div class="cname">전화인입</div><div class="cval" id="chPhone">-</div><div class="cpct" id="pctPhone"></div></div>
-      <div class="channel"><div class="cicon">✉</div><div class="cname">ERMS 건수</div><div class="cval" id="chErms">-</div><div class="cpct" id="pctErms"></div></div>
-      <div class="channel"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div><div class="cval" id="chSmart">-</div><div class="cpct" id="pctSmart"></div></div>
-      <div class="channel"><div class="cicon">💬</div><div class="cname">챗봇 이용</div><div class="cval" id="chChatAccess">-</div><div class="cpct" id="pctChatAccess"></div></div>
-      <div class="channel"><div class="cicon">▣</div><div class="cname">교재구매</div><div class="cval" id="chBook">-</div><div class="cpct"></div></div>
-      <div class="channel"><div class="cicon">×</div><div class="cname">바로취소</div><div class="cval" id="chCancel">-</div><div class="cpct"></div></div>
-      <div class="channel-chart-wrap">
-        <div class="channel-chart-title">주요 채널 비교</div>
-        <canvas id="channelCompareChart"></canvas>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <h3 id="channelTitle">채널별 현황</h3>
+        <span style="font-size:9.5px;color:#8a96a8">(단위 : 건, %)</span>
       </div>
+
+      <div class="channel-group-label">상담 채널</div>
+      <div class="channel-table-head">
+        <div>채널</div>
+        <div style="text-align:right">건수</div>
+        <div style="text-align:right">비율</div>
+        <div>채널별 건수 비교</div>
+      </div>
+
+      <div class="channel-row">
+        <div class="channel-name-wrap"><div class="cicon">☎</div><div class="cname">인입호</div></div>
+        <div class="cval" id="chPhone">-</div>
+        <div class="cpct" id="pctPhone"></div>
+        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-phone" id="barPhone"></div></div><div class="channel-bar-value" id="barPhoneVal">-</div></div>
+      </div>
+
+      <div class="channel-row">
+        <div class="channel-name-wrap"><div class="cicon">✉</div><div class="cname">ERMS</div></div>
+        <div class="cval" id="chErms">-</div>
+        <div class="cpct" id="pctErms"></div>
+        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-erms" id="barErms"></div></div><div class="channel-bar-value" id="barErmsVal">-</div></div>
+      </div>
+
+      <div class="channel-row">
+        <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div></div>
+        <div class="cval" id="chSmart">-</div>
+        <div class="cpct" id="pctSmart"></div>
+        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-smart" id="barSmart"></div></div><div class="channel-bar-value" id="barSmartVal">-</div></div>
+      </div>
+
+      <div class="channel-row">
+        <div class="channel-name-wrap"><div class="cicon">💬</div><div class="cname">챗봇상담</div></div>
+        <div class="cval" id="chChatConsult">-</div>
+        <div class="cpct" id="pctChatConsult"></div>
+        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-chat" id="barChatConsult"></div></div><div class="channel-bar-value" id="barChatConsultVal">-</div></div>
+      </div>
+
+      <div class="channel-group-label secondary-group">기타 이용 현황</div>
+      <div class="channel-simple-head">
+        <div>항목</div>
+        <div style="text-align:right">건수</div>
+      </div>
+
+      <div class="channel-simple-row">
+        <div class="channel-name-wrap"><div class="cicon">💭</div><div class="cname">챗봇 이용</div></div>
+        <div class="cval" id="chChatUse">-</div>
+      </div>
+
+      <div class="channel-simple-row">
+        <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">교재구매</div></div>
+        <div class="cval" id="chBook">-</div>
+      </div>
+
+      <div class="channel-simple-row">
+        <div class="channel-name-wrap"><div class="cicon">×</div><div class="cname">바로취소</div></div>
+        <div class="cval" id="chCancel">-</div>
+      </div>
+
+      <div class="channel-note">※ 상담 채널 비율은 총문의량 대비 기준입니다. 챗봇 이용·교재구매·바로취소는 건수만 표시합니다.</div>
     </div>
   </div>
 
@@ -428,6 +549,7 @@ th{position:sticky;top:0;background:#f8fafc}
     <div class="card mini"><h3>스마트러닝앱 추이</h3><div class="sub">선택기간 합계</div><div class="mv" id="miniSmart">-</div><div class="ms">일별 스마트러닝</div><div class="spark"><canvas id="spSmart"></canvas></div></div>
     <div class="card mini"><h3>챗봇 이용 추이</h3><div class="sub">선택기간 합계</div><div class="mv" id="miniChat">-</div><div class="ms">일별 챗봇 이용</div><div class="spark"><canvas id="spChat"></canvas></div></div>
   </div>
+  <div style="font-size:9.5px;color:#7d8798;margin:9px 4px 0">* 모든 수치는 선택기간 합계 기준이며, 비교값은 직전 동기간 및 전년 동기간과 비교한 값입니다.</div>
 </section>
 
 <section id="call" class="section"><div class="statgrid"><div class="card stat"><div class="lab">기간 전화인입 합계</div><div class="val" id="callInSum">-</div></div><div class="card stat"><div class="lab">기간 총응답 합계</div><div class="val" id="callAnsSum">-</div></div><div class="card stat"><div class="lab">기간 전화 응답률</div><div class="val" id="callRate">-</div></div></div><div class="card large"><canvas id="callChart"></canvas></div></section>
@@ -788,7 +910,9 @@ async function applyFilter(){
   ]);
   if(charts["mainBar"]){
     const mb=charts["mainBar"];
-    mb.options.plugins.legend.labels={boxWidth:18,boxHeight:8,font:{size:10}};
+    mb.options.layout={padding:{top:4,bottom:2,left:0,right:4}};
+    mb.options.plugins.legend.position="bottom";
+    mb.options.plugins.legend.labels={boxWidth:18,boxHeight:8,font:{size:10},padding:12};
     mb.options.scales.x.ticks={font:{size:9},maxRotation:0,minRotation:0};
     mb.options.scales.y.ticks={font:{size:9}};
     mb.options.scales.x.grid={display:false};
@@ -796,11 +920,12 @@ async function applyFilter(){
   }
 
   // 우측 채널 = 선택기간 합계 / 선택기간 총문의량 대비 %
-  $("channelTitle").textContent=`채널별 선택기간 현황 (${s} ~ ${e})`;
+  $("channelTitle").textContent=`채널별 현황 (${s} ~ ${e})`;
 
   const channelPhone=sum(rows,"phoneIn");
   const channelErms=sum(rows,"ermsCount");
   const channelSmart=sum(rows,"smart");
+  const channelChatConsult=sum(rows,"chatAccess");
   const channelChatUse=sum(rows,"chatUse");
   const channelBook=sum(rows,"bookBuy");
   const channelCancel=sum(rows,"cancel");
@@ -809,34 +934,28 @@ async function applyFilter(){
   $("chPhone").textContent=fmt(channelPhone);
   $("chErms").textContent=fmt(channelErms);
   $("chSmart").textContent=fmt(channelSmart);
-  $("chChatAccess").textContent=fmt(channelChatUse);
+  $("chChatConsult").textContent=fmt(channelChatConsult);
+  $("chChatUse").textContent=fmt(channelChatUse);
   $("chBook").textContent=fmt(channelBook);
   $("chCancel").textContent=fmt(channelCancel);
 
   $("pctPhone").textContent=tq?pct(channelPhone,tq).toFixed(2)+"%":"";
   $("pctErms").textContent=tq?pct(channelErms,tq).toFixed(2)+"%":"";
   $("pctSmart").textContent=tq?pct(channelSmart,tq).toFixed(2)+"%":"";
-  $("pctChatAccess").textContent=tq?pct(channelChatUse,tq).toFixed(2)+"%":"";
-
-  chart("channelCompareChart","bar",
-    ["전화인입","ERMS","스마트러닝앱","챗봇 이용"],
-    [{
-      label:"건수",
-      data:[channelPhone,channelErms,channelSmart,channelChatUse],
-      backgroundColor:["#173d73","#f4b400","#35a79c","#f28c28"],
-      borderRadius:6,
-      barThickness:30
-    }]
-  );
-  if(charts["channelCompareChart"]){
-    const cc=charts["channelCompareChart"];
-    cc.options.indexAxis="y";
-    cc.options.plugins.legend.display=false;
-    cc.options.layout={padding:{right:10,left:2}};
-    cc.options.scales.x={beginAtZero:true,grid:{color:"#edf1f6"},ticks:{font:{size:9},precision:0}};
-    cc.options.scales.y={grid:{display:false},ticks:{font:{size:10,weight:"700"}}};
-    cc.update();
-  }
+  $("pctChatConsult").textContent=tq?pct(channelChatConsult,tq).toFixed(2)+"%":"";
+  const channelValues=[channelPhone,channelErms,channelSmart,channelChatConsult];
+  const channelMax=Math.max(...channelValues,1);
+  const channelBarMap=[
+    ["barPhone","barPhoneVal",channelPhone],
+    ["barErms","barErmsVal",channelErms],
+    ["barSmart","barSmartVal",channelSmart],
+    ["barChatConsult","barChatConsultVal",channelChatConsult]
+  ];
+  channelBarMap.forEach(([barId,valId,value])=>{
+    const width=Math.max(0,(Number(value)||0)/channelMax*100);
+    $(barId).style.width=width.toFixed(2)+"%";
+    $(valId).textContent=fmt(value);
+  });
 
   // 하단 = 선택기간 기준
   const rangeAnswerPct=cur.answerPct;
