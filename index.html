@@ -588,7 +588,7 @@ th{position:sticky;top:0;background:#f8fafc}
             <input id="dailyFile" type="file" accept=".xlsx,.xls,.csv">
             <div style="margin-top:9px"><button class="btn secondary" id="dailySampleBtn">샘플 Excel</button></div>
           </div>
-          <div id="dailyStatus" class="status">Firestore 확인 중...</div>
+          <div id="dailyStatus" class="status">Firestore 확인 중...</div><div class="status" style="color:#c2410c">※ 날짜 보정 적용본: 기존 데이터가 있다면 Excel을 다시 업로드해 주세요.</div>
         </div>
 
         <div class="card upload">
@@ -690,11 +690,23 @@ function num(v){
 }
 function asDate(v){
   if(!v) return "";
-  if(v instanceof Date && !isNaN(v)) return v.toISOString().slice(0,10);
+
+  // Excel cellDates:true 로 읽힌 Date 객체는 UTC 변환(toISOString)을 사용하면
+  // 한국시간 기준 날짜가 하루 전으로 밀릴 수 있으므로 현지 날짜값을 그대로 사용한다.
+  if(v instanceof Date && !isNaN(v)){
+    const y=v.getFullYear();
+    const m=String(v.getMonth()+1).padStart(2,"0");
+    const d=String(v.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  // Excel serial date
   if(typeof v==="number" && window.XLSX){
     const d=XLSX.SSF.parse_date_code(v);
     if(d) return `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
   }
+
+  // 문자열 날짜
   const m=String(v).trim().replace(/[.\/]/g,"-").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   return m ? `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}` : "";
 }
