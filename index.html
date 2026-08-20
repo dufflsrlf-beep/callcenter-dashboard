@@ -231,6 +231,14 @@ button,input,select{font:inherit}
   font-weight:900;
   letter-spacing:-.8px;
 }
+.ks>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  white-space:nowrap;
+}
+.ks>div span{white-space:nowrap}
 .ks{
   margin-top:13px;
   font-size:9.6px;
@@ -761,12 +769,14 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="callInCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="callInYoy">-</span></div>
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="callInChg">-</span></div>
-    </div><div class="metric-card">
+    </div>
+    <div class="metric-card">
       <div class="metric-card-title">응답호</div>
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="callAnsCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="callAnsYoy">-</span></div>
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="callAnsChg">-</span></div>
-    </div><div class="metric-card">
+    </div>
+    <div class="metric-card">
       <div class="metric-card-title">응답률</div>
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="callRateCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="callRateYoy">-</span></div>
@@ -1230,19 +1240,25 @@ function detailPpChange(cur, prev){
     : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`;
 }
 function setDetail(curId,yoyId,chgId,curVal,yoyVal,{type="count",digits=2}={}){
-  const hasYoy=yoyVal!==null && yoyVal!==undefined;
+  const curEl=$(curId), yoyEl=$(yoyId), chgEl=$(chgId);
+  if(!curEl || !yoyEl || !chgEl) return;
+
+  const curNum=Number(curVal)||0;
+  const hasYoy=yoyVal!==null && yoyVal!==undefined && !Number.isNaN(Number(yoyVal));
+  const yoyNum=hasYoy ? Number(yoyVal) : null;
+
   if(type==="rate"){
-    $(curId).textContent=(Number(curVal)||0).toFixed(2)+"%";
-    $(yoyId).innerHTML=hasYoy ? (Number(yoyVal)||0).toFixed(2)+"%" : '<span class="compare-na">데이터 없음</span>';
-    $(chgId).innerHTML=hasYoy ? detailPpChange(curVal,yoyVal) : '<span class="compare-na">-</span>';
+    curEl.textContent=curNum.toFixed(2)+"%";
+    yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(2)+"%" : '<span class="compare-na">데이터 없음</span>';
+    chgEl.innerHTML=hasYoy ? detailPpChange(curNum,yoyNum) : '<span class="compare-na">-</span>';
   }else if(type==="decimal"){
-    $(curId).textContent=(Number(curVal)||0).toFixed(digits);
-    $(yoyId).innerHTML=hasYoy ? (Number(yoyVal)||0).toFixed(digits) : '<span class="compare-na">데이터 없음</span>';
-    $(chgId).innerHTML=hasYoy ? detailPctChange(curVal,yoyVal) : '<span class="compare-na">-</span>';
+    curEl.textContent=curNum.toFixed(digits);
+    yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(digits) : '<span class="compare-na">데이터 없음</span>';
+    chgEl.innerHTML=hasYoy ? detailPctChange(curNum,yoyNum) : '<span class="compare-na">-</span>';
   }else{
-    $(curId).textContent=fmt(curVal);
-    $(yoyId).innerHTML=hasYoy ? fmt(yoyVal) : '<span class="compare-na">데이터 없음</span>';
-    $(chgId).innerHTML=hasYoy ? detailPctChange(curVal,yoyVal) : '<span class="compare-na">-</span>';
+    curEl.textContent=fmt(curNum);
+    yoyEl.innerHTML=hasYoy ? fmt(yoyNum) : '<span class="compare-na">데이터 없음</span>';
+    chgEl.innerHTML=hasYoy ? detailPctChange(curNum,yoyNum) : '<span class="compare-na">-</span>';
   }
 }
 function setComparison(id, label, cur, prev, mode="pct"){
@@ -1413,6 +1429,23 @@ async function applyFilter(){
   ["callPeriod","ermsPeriod","chatPeriod","bookPeriod","cphPeriod"].forEach(id=>{
     if($(id)) $(id).textContent=detailPeriodText;
   });
+  // Call 상세 카드 - 선택기간 / 전년 동기간 / 전년대비
+  setDetail("callInCur","callInYoy","callInChg",
+    cur.phoneIn, yoy ? yoy.phoneIn : null);
+
+  setDetail("callAnsCur","callAnsYoy","callAnsChg",
+    cur.phoneAns, yoy ? yoy.phoneAns : null);
+
+  setDetail("callRateCur","callRateYoy","callRateChg",
+    cur.phoneRate, yoy ? yoy.phoneRate : null, {type:"rate"});
+
+  compareLineChart("callChart",rows.map(r=>r.date.slice(5)),[
+    {label:"인입호 올해",data:rows.map(r=>Number(r.phoneIn)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
+    {label:"인입호 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).phoneIn)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+    {label:"응답호 올해",data:rows.map(r=>Number(r.phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
+    {label:"응답호 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+  ]);
+
 
   // 비교 그래프: 올해 실선 / 전년 동기간 점선
   const currentLabels=rows.map(r=>r.date.slice(5));
