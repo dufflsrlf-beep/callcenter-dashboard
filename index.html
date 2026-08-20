@@ -892,6 +892,65 @@ th{position:sticky;top:0;background:#f8fafc}
   }
 }
 
+
+/* 메인 일자별 총 문의·답변 추이: 높이/막대 폭 축소 */
+.mid .chart-card .chartbox{
+  height:390px !important;
+}
+
+
+/* 메인 영역 좌우 카드 하단 정렬 */
+.mid{
+  align-items:stretch !important;
+}
+.mid > .chart-card,
+.mid > .side-card{
+  height:auto !important;
+  min-height:0 !important;
+  align-self:stretch !important;
+}
+.mid > .chart-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+.mid > .chart-card .chartbox{
+  flex:1 1 auto !important;
+  height:auto !important;
+  min-height:300px !important;
+}
+
+/* 일자별 총문의/총답변 막대: 한 날짜의 두 막대는 더 붙이고 전체 폭은 슬림하게 */
+#mainBar{
+  width:100% !important;
+}
+
+
+/* Call 상세 그래프: 인입호 + 응답률 2개만 표시 */
+#pageCall .detail-chart-grid,
+#callPage .detail-chart-grid,
+.call-detail .detail-chart-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+
+
+/* 좌측 메뉴 Call 현황: 인입호 / 응답률 그래프 2개 고정 */
+#call .call-two-charts{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  gap:12px !important;
+}
+#call .call-two-charts .detail-chart-card{
+  min-width:0 !important;
+}
+#call .call-two-charts .detail-chart-box{
+  height:300px !important;
+}
+@media(max-width:900px){
+  #call .call-two-charts{
+    grid-template-columns:1fr !important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1062,7 +1121,7 @@ th{position:sticky;top:0;background:#f8fafc}
         </div>
       </div>
 
-      <div class="channel-note">※ 전년대비는 동일 기간 기준 증감률이며, 막대는 올해와 전년 건수를 비교합니다.</div>
+      <div class="channel-note">※ 전년대비는 동일 요일 기준 증감률이며, 막대는 올해와 전년 건수를 비교합니다.</div>
     </div>
   </div>
 
@@ -1141,17 +1200,18 @@ th{position:sticky;top:0;background:#f8fafc}
     </div>
   </div>
   
-  <div class="compare-chart-note">※ 올해는 항목별 색상의 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
-  <div class="detail-chart-grid">
+  
+  <div class="compare-chart-note">※ 올해는 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
+  <div class="detail-chart-grid call-two-charts">
     <div class="detail-chart-card">
       <div class="detail-chart-title">인입호</div>
       <div class="detail-chart-sub">올해 vs 전년 동기간</div>
       <div class="detail-chart-box"><canvas id="callInChart"></canvas></div>
     </div>
     <div class="detail-chart-card">
-      <div class="detail-chart-title">응답호</div>
+      <div class="detail-chart-title">응답률</div>
       <div class="detail-chart-sub">올해 vs 전년 동기간</div>
-      <div class="detail-chart-box"><canvas id="callAnsChart"></canvas></div>
+      <div class="detail-chart-box"><canvas id="callRateChart"></canvas></div>
     </div>
   </div>
 </section>
@@ -1510,7 +1570,7 @@ function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,color
           callbacks:{
             label:(ctx)=>{
               const v=ctx.parsed.y;
-              return `${ctx.dataset.label}: ${opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")}`;
+              return `${ctx.dataset.label}: ${opts.percent?Number(v).toFixed(2)+"%":opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")}`;
             }
           }
         }
@@ -1519,10 +1579,11 @@ function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,color
         x:{grid:{display:false},ticks:{font:{size:10}}},
         y:{
           beginAtZero:true,
+          suggestedMax:opts.percent?100:undefined,
           grid:{color:"#e8edf4"},
           ticks:{
             font:{size:10},
-            callback:(v)=>opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")
+            callback:(v)=>opts.percent?Number(v).toFixed(0)+"%":opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")
           }
         }
       }
@@ -1819,6 +1880,33 @@ function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
                 <div class="cmp-bottom">${changeHtml}<span class="diff-val ${cur>=prev?'up-diff':'down-diff'}">${diffText(cur,prev,diffMode)}</span></div>`;
 }
 
+
+function weekdayAlignedLastYearRange(startStr,endStr){
+  const start=new Date(startStr+"T00:00:00");
+  const end=new Date(endStr+"T00:00:00");
+
+  const lyStart=new Date(start);
+  lyStart.setFullYear(start.getFullYear()-1);
+
+  const lyEnd=new Date(end);
+  lyEnd.setFullYear(end.getFullYear()-1);
+
+  // 전년의 동일 달력일 이후 가장 가까운 동일 요일로 이동
+  // 예: 2026-08-12(수) → 2025-08-13(수)
+  const shift=(start.getDay()-lyStart.getDay()+7)%7;
+
+  lyStart.setDate(lyStart.getDate()+shift);
+  lyEnd.setDate(lyEnd.getDate()+shift);
+
+  const fmt=d=>{
+    const y=d.getFullYear();
+    const m=String(d.getMonth()+1).padStart(2,"0");
+    const day=String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  };
+  return {start:fmt(lyStart),end:fmt(lyEnd)};
+}
+
 async function applyFilter(){
   await reload();
 
@@ -1839,8 +1927,7 @@ async function applyFilter(){
   const prevStart=dateShift(prevEnd,-(days-1));
   const prevRows=daily.filter(r=>r.date>=prevStart&&r.date<=prevEnd);
 
-  const yoyStart=yearShift(s,-1);
-  const yoyEnd=yearShift(e,-1);
+  const {start:yoyStart,end:yoyEnd}=weekdayAlignedLastYearRange(s,e);
   const yoyRows=daily.filter(r=>r.date>=yoyStart&&r.date<=yoyEnd);
 
   const cur=periodMetrics(rows);
@@ -1927,8 +2014,8 @@ async function applyFilter(){
 
 
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
-    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3},
-    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3}
+    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,maxBarThickness:14,barPercentage:0.99,categoryPercentage:0.64},
+    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3,maxBarThickness:14,barPercentage:0.99,categoryPercentage:0.64}
   ]);
   if(charts["mainBar"]){
     const mb=charts["mainBar"];
@@ -2103,27 +2190,40 @@ async function applyFilter(){
 
 
   const detailLabels=rows.map(r=>r.date.slice(5));
-  const yoyRowAt=i=>yoyRows[i]||{};
 
-  // Call: 지표별 분리
+  // Call 상세 그래프: 인입호 + 응답률
   barVsYoyChart(
     "callInChart",
     detailLabels,
-    rows.map(r=>r.phoneIn),
-    rows.map((r,i)=>yoyRowAt(i).phoneIn),
+    rows.map(r=>Number(r.phoneIn)||0),
+    rows.map((r,i)=>Number((yoyRows[i]||{}).phoneIn)||0),
     "인입호 올해","인입호 전년",
     "#0b2b59"
   );
+
   barVsYoyChart(
-    "callAnsChart",
+    "callRateChart",
     detailLabels,
-    rows.map(r=>r.phoneAns),
-    rows.map((r,i)=>yoyRowAt(i).phoneAns),
-    "응답호 올해","응답호 전년",
-    "#f4b400"
+    rows.map(r=>{
+      const pin=Number(r.phoneIn)||0;
+      const pans=Number(r.phoneAns)||0;
+      return pin ? pans/pin*100 : 0;
+    }),
+    rows.map((r,i)=>{
+      const y=yoyRows[i]||{};
+      const pin=Number(y.phoneIn)||0;
+      const pans=Number(y.phoneAns)||0;
+      return pin ? pans/pin*100 : 0;
+    }),
+    "응답률 올해","응답률 전년",
+    "#22a447",
+    {decimal:true,percent:true}
   );
 
-  // ERMS / 스마트러닝: 각각 분리
+  const yoyRowAt=i=>yoyRows[i]||{};
+
+  // Call: 지표별 분리
+// ERMS / 스마트러닝: 각각 분리
   barVsYoyChart(
     "ermsOnlyChart",
     detailLabels,
