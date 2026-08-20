@@ -56,6 +56,7 @@ html,body,button,input,select,table,canvas{
 }
 body{
   margin:0;
+  overflow-x:hidden;
   background:var(--bg);
   color:var(--ink);
   font-size:13px;
@@ -64,7 +65,7 @@ body{
 button,input,select{font:inherit}
 .app{
   display:grid;
-  grid-template-columns:192px minmax(0,1fr);
+  grid-template-columns:182px minmax(0,1fr);
   min-height:100vh;
 }
 .side{
@@ -169,10 +170,15 @@ button,input,select{font:inherit}
 }
 .kpi-groups{
   display:grid;
-  grid-template-columns:1.08fr 1.35fr 1.08fr;
-  gap:12px;
+  grid-template-columns:1.06fr 1.34fr 1.06fr;
+  gap:9px;
   margin-bottom:12px;
 }
+.kpi-groups>*,
+.kpi-group,
+.kpi-group-grid,
+.kpi-group-grid>*,
+.kpi{min-width:0}
 .kpi-group{
   background:#fff;
   border:1px solid var(--line);
@@ -192,13 +198,13 @@ button,input,select{font:inherit}
 .kpi-group.core .kpi-group-title{background:#1673f8}
 .kpi-group.call .kpi-group-title{background:#32a852}
 .kpi-group.digital .kpi-group-title{background:#7d3fc7}
-.kpi-group-grid{display:grid;gap:8px}
+.kpi-group-grid{display:grid;gap:7px}
 .kpi-group.core .kpi-group-grid{grid-template-columns:repeat(3,1fr)}
 .kpi-group.call .kpi-group-grid{grid-template-columns:repeat(4,1fr)}
 .kpi-group.digital .kpi-group-grid{grid-template-columns:repeat(3,1fr)}
 .kpi{
-  min-height:174px;
-  padding:13px 12px 10px;
+  min-height:205px;
+  padding:13px 10px 10px;
   box-shadow:none;
   background:#fff;
   border-radius:10px;
@@ -226,24 +232,51 @@ button,input,select{font:inherit}
 .kv{
   margin-top:15px;
   text-align:center;
-  font-size:25px;
+  font-size:26px;
   line-height:1.1;
   font-weight:900;
   letter-spacing:-.8px;
 }
-.ks>div{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:6px;
-  white-space:nowrap;
-}
-.ks>div span{white-space:nowrap}
 .ks{
-  margin-top:13px;
-  font-size:9.6px;
-  color:#6f7d92;
-  line-height:1.55;
+  margin-top:12px;
+  border-top:1px solid #edf1f6;
+  font-size:10.2px;
+  color:#3f4f66;
+}
+.ks>div{
+  display:grid;
+  grid-template-columns:minmax(54px,1fr) 72px 68px;
+  align-items:center;
+  gap:5px;
+  min-height:30px;
+  padding:5px 2px;
+  border-bottom:1px solid #f0f3f7;
+}
+.ks>div:last-child{border-bottom:0}
+.ks .ks-head{
+  min-height:24px;
+  padding:5px 2px 3px;
+  color:#7a8799;
+  font-size:9px;
+  font-weight:800;
+  background:#fafbfd;
+}
+.ks .ks-head span:nth-child(2),
+.ks .ks-head span:nth-child(3),
+.ks>div:not(.ks-head) span:nth-child(2),
+.ks>div:not(.ks-head) span:nth-child(3){
+  text-align:right;
+}
+.ks>div:not(.ks-head) span:first-child{
+  color:#54637a;
+  font-weight:700;
+  line-height:1.15;
+}
+.ks .up,.ks .down{white-space:nowrap}
+.ks .diff-val{
+  color:#26374f;
+  font-weight:800;
+  white-space:nowrap;
 }
 .up{color:var(--red);font-weight:900}
 .down{color:#1267de;font-weight:900}
@@ -281,7 +314,7 @@ button,input,select{font:inherit}
 }
 .channel-simple-head{
   display:grid;
-  grid-template-columns:1fr 100px;
+  grid-template-columns:minmax(120px,1fr) 92px 92px 92px minmax(150px,1.4fr);
   gap:10px;
   align-items:center;
   padding:10px 4px 6px;
@@ -292,7 +325,7 @@ button,input,select{font:inherit}
 }
 .channel-simple-row{
   display:grid;
-  grid-template-columns:1fr 100px;
+  grid-template-columns:minmax(120px,1fr) 92px 92px 92px minmax(150px,1.4fr);
   gap:10px;
   align-items:center;
   min-height:46px;
@@ -302,7 +335,7 @@ button,input,select{font:inherit}
 .channel-simple-row:last-of-type{border-bottom:0}
 .channel-table-head{
   display:grid;
-  grid-template-columns:minmax(120px,1.1fr) 92px 64px minmax(170px,1.7fr);
+  grid-template-columns:minmax(105px,1.05fr) 82px 82px 90px minmax(160px,1.55fr);
   gap:10px;
   align-items:center;
   padding:12px 4px 7px;
@@ -313,7 +346,7 @@ button,input,select{font:inherit}
 }
 .channel-row{
   display:grid;
-  grid-template-columns:minmax(120px,1.1fr) 92px 64px minmax(170px,1.7fr);
+  grid-template-columns:minmax(105px,1.05fr) 82px 82px 90px minmax(160px,1.55fr);
   gap:10px;
   align-items:center;
   min-height:48px;
@@ -348,6 +381,54 @@ button,input,select{font:inherit}
 .ch-chat{background:#7b42d3}
 .ch-book{background:#96a3b6}
 .ch-cancel{background:#96a3b6}
+.cyoy{
+  text-align:right;
+  font-size:11px;
+  color:#59677d;
+  font-weight:700;
+}
+.cchg{
+  text-align:right;
+  font-size:10.5px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.dual-bar-cell{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:0;
+}
+.dual-bar-line{
+  display:grid;
+  grid-template-columns:minmax(80px,1fr) 58px;
+  gap:7px;
+  align-items:center;
+}
+.dual-bar-line span{
+  text-align:right;
+  font-size:9.5px;
+  color:#5f6e82;
+  white-space:nowrap;
+}
+.bar-current{opacity:1}
+.bar-prev{opacity:.28}
+
+.bar-phone-cur{background:#16a34a!important}
+.bar-phone-prev{background:#86efac!important}
+.bar-erms-cur{background:#7c3aed!important}
+.bar-erms-prev{background:#c4b5fd!important}
+.bar-chat-cur{background:#f97316!important}
+.bar-chat-prev{background:#fed7aa!important}
+.bar-smart-cur{background:#06b6d4!important}
+.bar-smart-prev{background:#a5f3fc!important}
+.bar-chatuse-cur{background:#0b2b59!important}
+.bar-chatuse-prev{background:#93c5fd!important}
+.bar-book-cur{background:#22c55e!important}
+.bar-book-prev{background:#bbf7d0!important}
+.bar-cancel-cur{background:#ef4444!important}
+.bar-cancel-prev{background:#fecaca!important}
+
 .channel-note{
   margin-top:8px;
   padding-top:7px;
@@ -358,16 +439,13 @@ button,input,select{font:inherit}
 }
 .bottom{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
-  width:100%;
-  margin:0;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
 }
 .mini{
-  min-height:285px;
-  padding:17px 22px 13px;
+  min-height:300px;
+  padding:18px 18px 14px;
   overflow:hidden;
-  position:relative;
 }
 .mv{
   margin:0;
@@ -378,11 +456,7 @@ button,input,select{font:inherit}
   text-align:right;
 }
 .ms{font-size:11px;color:var(--muted);margin-top:7px;text-align:right}
-.spark{
-  height:190px;
-  margin:16px auto 0;
-  width:96%;
-}
+.spark{height:205px;margin-top:18px}
 .mini-head{
   display:flex;
   justify-content:space-between;
@@ -410,7 +484,7 @@ button,input,select{font:inherit}
   font-size:10px;
   color:#7a879a;
 }
-
+.mini{position:relative}
 
 
 .metric-cards{
@@ -566,7 +640,7 @@ th{position:sticky;top:0;background:#f8fafc}
 @media(max-width:1500px){
   .kpi-groups{grid-template-columns:1fr}
   .mid{grid-template-columns:1fr}
-  .bottom{grid-template-columns:repeat(3,minmax(0,460px));justify-content:center}
+  .bottom{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:1050px){
   .app{grid-template-columns:78px 1fr}
@@ -588,6 +662,114 @@ th{position:sticky;top:0;background:#f8fafc}
   .bottom,.statgrid,.uploadgrid{grid-template-columns:1fr}
   .chartbox{height:290px}
 }
+
+@media (min-width:1200px) and (max-width:1650px){
+  .kpi-group{padding:8px}
+  .kpi-group-grid{gap:5px}
+  .kpi{padding-left:8px;padding-right:8px}
+  .kh{font-size:10.8px;gap:5px}
+  .ico{width:28px;height:28px}
+  .kv{font-size:23px}
+  .ks{font-size:9.5px}
+  .ks>div{grid-template-columns:minmax(48px,1fr) 66px 62px;gap:3px}
+}
+
+
+/* 채널별 현황: 막대그래프 우측 중복 건수 숨김 */
+.channel-bar-values,
+.bar-values,
+.channel-bar-value,
+.bar-value,
+.dualbar-value,
+.dual-bar-value{
+  display:none !important;
+}
+
+
+.channel-bars > :last-child:not(:first-child),
+.dualbar > :last-child:not(:first-child),
+.dual-bar > :last-child:not(:first-child),
+.bar-compare > :last-child:not(:first-child){
+  /* right-side value column is redundant because 올해/전년 values are already shown */
+}
+
+
+/* 채널별 현황 막대 우측 건수 제거 + 막대 영역 확장 */
+.dual-bar-line{
+  grid-template-columns:minmax(80px,1fr) !important;
+  gap:0 !important;
+}
+.dual-bar-line > span{
+  display:none !important;
+}
+
+
+/* KPI 비교영역: 동기간 실제값 + 증감률/차이를 세로 2단으로 표시 */
+.ks{
+  margin-top:10px;
+  border-top:1px solid #edf1f6;
+  font-size:10px;
+  color:#3f4f66;
+}
+.ks .ks-head{display:none !important}
+.ks>div:not(.ks-head){
+  display:block !important;
+  min-height:48px;
+  padding:6px 2px 5px;
+  border-bottom:1px solid #eef2f6;
+}
+.ks>div:not(.ks-head):last-child{border-bottom:0}
+.cmp-top,.cmp-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  white-space:nowrap;
+}
+.cmp-top{
+  color:#53637a;
+  font-weight:700;
+  margin-bottom:4px;
+}
+.cmp-top strong{
+  color:#12233f;
+  font-size:10.5px;
+  font-weight:900;
+}
+.cmp-bottom{
+  padding-left:2px;
+  font-weight:800;
+}
+.cmp-bottom .diff-val{
+  color:#26374f;
+  font-weight:900;
+}
+.kpi{
+  min-height:224px;
+}
+@media (min-width:1200px) and (max-width:1650px){
+  .ks{font-size:9.3px}
+  .cmp-top strong{font-size:9.8px}
+  .ks>div:not(.ks-head){min-height:45px;padding:5px 1px}
+  .kpi{min-height:218px}
+}
+
+
+/* KPI 증감 색상 강화: 증가=빨강, 감소=파랑 */
+.cmp-bottom .up,
+.cmp-bottom .up + .diff-val{
+  color:#ff3b4d !important;
+  font-weight:900 !important;
+}
+.cmp-bottom .down,
+.cmp-bottom .down + .diff-val{
+  color:#0868df !important;
+  font-weight:900 !important;
+}
+
+.cmp-bottom .diff-val.up-diff{color:#ff3b4d !important}
+.cmp-bottom .diff-val.down-diff{color:#0868df !important}
+
 </style>
 </head>
 <body>
@@ -619,30 +801,30 @@ th{position:sticky;top:0;background:#f8fafc}
 <section id="overview" class="section active">
   <div class="kpi-groups">
     <div class="kpi-group core">
-      <div class="kpi-group-title">전체현황</div>
+      <div class="kpi-group-title">전체현황 <span style="font-size:9.5px;font-weight:800;opacity:.95">(CALL+ERMS+채팅상담+스마트러닝)</span></div>
       <div class="kpi-group-grid">
-        <div class="card kpi"><div class="kh"><div class="ico">☎</div>총 문의량</div><div class="kv" id="kpiTotalQ">-</div><div class="ks"><div id="trTotalQ">직전 동기간 대비 -</div><div id="yrTotalQ" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">🎧</div>총 답변량</div><div class="kv" id="kpiTotalA">-</div><div class="ks"><div id="trTotalA">직전 동기간 대비 -</div><div id="yrTotalA" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">↗</div>답변률</div><div class="kv" id="kpiAnswerPct">-</div><div class="ks"><div id="trAnswerPct">직전 동기간 대비 -</div><div id="yrAnswerPct" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">☎</div>총 문의량</div><div class="kv" id="kpiTotalQ">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trTotalQ">직전 동기간 대비 -</div><div id="yrTotalQ" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">🎧</div>총 답변량</div><div class="kv" id="kpiTotalA">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trTotalA">직전 동기간 대비 -</div><div id="yrTotalA" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">↗</div>답변률</div><div class="kv" id="kpiAnswerPct">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trAnswerPct">직전 동기간 대비 -</div><div id="yrAnswerPct" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
       </div>
     </div>
 
     <div class="kpi-group call">
       <div class="kpi-group-title">Call 현황</div>
       <div class="kpi-group-grid">
-        <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks"><div id="trPhoneIn">직전 동기간 대비 -</div><div id="yrPhoneIn" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks"><div id="trPhoneAns">직전 동기간 대비 -</div><div id="yrPhoneAns" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">％</div>응답률</div><div class="kv" id="kpiPhoneRate">-</div><div class="ks"><div id="trPhoneRate">직전 동기간 대비 -</div><div id="yrPhoneRate" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks"><div id="trCph">직전 동기간 대비 -</div><div id="yrCph" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trPhoneIn">직전 동기간 대비 -</div><div id="yrPhoneIn" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trPhoneAns">직전 동기간 대비 -</div><div id="yrPhoneAns" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">％</div>응답률</div><div class="kv" id="kpiPhoneRate">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trPhoneRate">직전 동기간 대비 -</div><div id="yrPhoneRate" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trCph">직전 동기간 대비 -</div><div id="yrCph" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
       </div>
     </div>
 
     <div class="kpi-group digital">
       <div class="kpi-group-title">채널 현황</div>
       <div class="kpi-group-grid">
-        <div class="card kpi"><div class="kh"><div class="ico">✉</div>ERMS</div><div class="kv" id="kpiErms">-</div><div class="ks"><div id="trErms">직전 동기간 대비 -</div><div id="yrErms" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">💬</div>챗봇 이용</div><div class="kv" id="kpiChatUse">-</div><div class="ks"><div id="trChatUse">직전 동기간 대비 -</div><div id="yrChatUse" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">▣</div>스마트러닝</div><div class="kv" id="kpiSmart">-</div><div class="ks"><div id="trSmart">직전 동기간 대비 -</div><div id="yrSmart" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">✉</div>ERMS</div><div class="kv" id="kpiErms">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trErms">직전 동기간 대비 -</div><div id="yrErms" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">💬</div>챗봇 이용</div><div class="kv" id="kpiChatUse">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trChatUse">직전 동기간 대비 -</div><div id="yrChatUse" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
+        <div class="card kpi"><div class="kh"><div class="ico">▣</div>스마트러닝</div><div class="kv" id="kpiSmart">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trSmart">직전 동기간 대비 -</div><div id="yrSmart" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
       </div>
     </div>
   </div>
@@ -652,67 +834,101 @@ th{position:sticky;top:0;background:#f8fafc}
     <div class="card side-card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <h3 id="channelTitle">채널별 현황</h3>
-        <span style="font-size:9.5px;color:#8a96a8">(단위 : 건, %)</span>
+        <span style="font-size:9.5px;color:#8a96a8">(단위 : 건)</span>
       </div>
 
       <div class="channel-group-label">상담 채널</div>
       <div class="channel-table-head">
         <div>채널</div>
-        <div style="text-align:right">건수</div>
-        <div style="text-align:right">비율</div>
-        <div>채널별 건수 비교</div>
+        <div style="text-align:right">올해</div>
+        <div style="text-align:right">전년</div>
+        <div style="text-align:right">전년대비</div>
+        <div>건수 비교 (올해 vs 전년)</div>
       </div>
-
-      <div class="channel-row">
+<div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">☎</div><div class="cname">인입호</div></div>
         <div class="cval" id="chPhone">-</div>
-        <div class="cpct" id="pctPhone"></div>
-        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-phone" id="barPhone"></div></div><div class="channel-bar-value" id="barPhoneVal">-</div></div>
+        <div class="cyoy" id="yoyPhone">-</div>
+        <div class="cchg" id="chgPhone">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-phone-cur" id="barPhoneCur"></div></div><span id="barPhoneValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-phone-prev" id="barPhonePrev"></div></div><span id="barPhoneValPrev">-</span></div>
+        </div>
       </div>
-
-      <div class="channel-row">
+<div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">✉</div><div class="cname">ERMS</div></div>
         <div class="cval" id="chErms">-</div>
-        <div class="cpct" id="pctErms"></div>
-        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-erms" id="barErms"></div></div><div class="channel-bar-value" id="barErmsVal">-</div></div>
+        <div class="cyoy" id="yoyErms">-</div>
+        <div class="cchg" id="chgErms">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-erms-cur" id="barErmsCur"></div></div><span id="barErmsValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-erms-prev" id="barErmsPrev"></div></div><span id="barErmsValPrev">-</span></div>
+        </div>
       </div>
-
-      <div class="channel-row">
+<div class="channel-row">
+        <div class="channel-name-wrap"><div class="cicon">💬</div><div class="cname">채팅상담</div></div>
+        <div class="cval" id="chChatConsult">-</div>
+        <div class="cyoy" id="yoyChatConsult">-</div>
+        <div class="cchg" id="chgChatConsult">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-chat-cur" id="barChatConsultCur"></div></div><span id="barChatConsultValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-chat-prev" id="barChatConsultPrev"></div></div><span id="barChatConsultValPrev">-</span></div>
+        </div>
+      </div>
+<div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div></div>
         <div class="cval" id="chSmart">-</div>
-        <div class="cpct" id="pctSmart"></div>
-        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-smart" id="barSmart"></div></div><div class="channel-bar-value" id="barSmartVal">-</div></div>
-      </div>
-
-      <div class="channel-row">
-        <div class="channel-name-wrap"><div class="cicon">💬</div><div class="cname">챗봇상담</div></div>
-        <div class="cval" id="chChatConsult">-</div>
-        <div class="cpct" id="pctChatConsult"></div>
-        <div class="channel-bar-cell"><div class="channel-track"><div class="channel-fill ch-chat" id="barChatConsult"></div></div><div class="channel-bar-value" id="barChatConsultVal">-</div></div>
+        <div class="cyoy" id="yoySmart">-</div>
+        <div class="cchg" id="chgSmart">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-smart-cur" id="barSmartCur"></div></div><span id="barSmartValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-smart-prev" id="barSmartPrev"></div></div><span id="barSmartValPrev">-</span></div>
+        </div>
       </div>
 
       <div class="channel-group-label secondary-group">기타 이용 현황</div>
       <div class="channel-simple-head">
         <div>항목</div>
-        <div style="text-align:right">건수</div>
+        <div style="text-align:right">올해</div>
+        <div style="text-align:right">전년</div>
+        <div style="text-align:right">전년대비</div>
+        <div>건수 비교 (올해 vs 전년)</div>
       </div>
 
       <div class="channel-simple-row">
         <div class="channel-name-wrap"><div class="cicon">💭</div><div class="cname">챗봇 이용</div></div>
         <div class="cval" id="chChatUse">-</div>
+        <div class="cyoy" id="yoyChatUse">-</div>
+        <div class="cchg" id="chgChatUse">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-chatuse-cur" id="barChatUseCur"></div></div><span id="barChatUseCurVal">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-chatuse-prev" id="barChatUsePrev"></div></div><span id="barChatUsePrevVal">-</span></div>
+        </div>
       </div>
 
       <div class="channel-simple-row">
         <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">교재구매</div></div>
         <div class="cval" id="chBook">-</div>
+        <div class="cyoy" id="yoyBook">-</div>
+        <div class="cchg" id="chgBook">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-book-cur" id="barBookCur"></div></div><span id="barBookCurVal">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-book-prev" id="barBookPrev"></div></div><span id="barBookPrevVal">-</span></div>
+        </div>
       </div>
 
       <div class="channel-simple-row">
         <div class="channel-name-wrap"><div class="cicon">×</div><div class="cname">바로취소</div></div>
         <div class="cval" id="chCancel">-</div>
+        <div class="cyoy" id="yoyCancel">-</div>
+        <div class="cchg" id="chgCancel">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-cancel-cur" id="barCancelCur"></div></div><span id="barCancelCurVal">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-cancel-prev" id="barCancelPrev"></div></div><span id="barCancelPrevVal">-</span></div>
+        </div>
       </div>
 
-      <div class="channel-note">※ 상담 채널 비율은 총문의량 대비 기준입니다. 챗봇 이용·교재구매·바로취소는 건수만 표시합니다.</div>
+      <div class="channel-note">※ 전년대비는 동일 기간 기준 증감률이며, 막대는 올해와 전년 건수를 비교합니다.</div>
     </div>
   </div>
 
@@ -820,7 +1036,7 @@ th{position:sticky;top:0;background:#f8fafc}
   <div class="detail-head"><div class="detail-title">챗봇 이용</div><div class="detail-period" id="chatPeriod"></div></div>
   <div class="metric-cards">
     <div class="metric-card">
-      <div class="metric-card-title">챗봇상담</div>
+      <div class="metric-card-title">채팅상담</div>
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="chatConsultCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="chatConsultYoy">-</span></div>
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="chatConsultChg">-</span></div>
@@ -1268,21 +1484,59 @@ function setDetail(curId,yoyId,chgId,curVal,yoyVal,{type="count",digits=2}={}){
     chgEl.innerHTML=hasYoy ? detailPctChange(curNum,yoyNum) : '<span class="compare-na">-</span>';
   }
 }
-function setComparison(id, label, cur, prev, mode="pct"){
-  const el=$(id); if(!el) return;
+
+function diffText(cur, prev, mode="count"){
+  cur=Number(cur)||0;
+  prev=Number(prev)||0;
+  const d=cur-prev;
+  const sign=d>0?"+":d<0?"-":"";
+  const abs=Math.abs(d);
+
+  if(mode==="rate"){
+    return `(${sign}${abs.toFixed(2)}%p)`;
+  }
+  if(mode==="decimal"){
+    return `(${sign}${abs.toFixed(2)})`;
+  }
+  return `(${sign}${Math.round(abs).toLocaleString("ko-KR")}건)`;
+}
+function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
+  const el=$(id);
+  if(!el) return;
+
+  const shortLabel = label.startsWith("직전") ? "직전 동기간" : "전년 동기간";
+
   if(prev===null || prev===undefined){
-    el.textContent=label+" - 데이터 없음";
+    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>데이터 없음</strong></div>
+                  <div class="cmp-bottom"><span>-</span><span class="diff-val">-</span></div>`;
     return;
   }
+
+  cur=Number(cur)||0;
+  prev=Number(prev)||0;
+
+  let changeHtml="";
+  let prevText="";
   if(mode==="pp"){
-    const d=(Number(cur)||0)-(Number(prev)||0);
-    el.innerHTML=label+"　"+(d>=0?`<span class="up">▲ ${Math.abs(d).toFixed(2)}%p</span>`:`<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`);
-  }else if(mode==="num"){
-    const d=(Number(cur)||0)-(Number(prev)||0);
-    el.innerHTML=label+"　"+(d>=0?`<span class="up">▲ ${Math.abs(d).toFixed(2)}</span>`:`<span class="down">▼ ${Math.abs(d).toFixed(2)}</span>`);
+    const d=cur-prev;
+    prevText=`${prev.toFixed(2)}%`;
+    changeHtml=d>=0
+      ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%p</span>`
+      : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`;
   }else{
-    el.innerHTML=label+"　"+trend(cur,prev);
+    prevText=`${Math.round(prev).toLocaleString()}건`;
+    if(prev===0){
+      changeHtml=cur>0?'<span class="up">▲ 신규</span>':'<span>-</span>';
+    }else{
+      const d=(cur-prev)/Math.abs(prev)*100;
+      changeHtml=d>=0
+        ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%</span>`
+        : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%</span>`;
+    }
   }
+
+  el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prevText}</strong></div>
+                <div class="cmp-bottom">${changeHtml}<span class="diff-val ${cur>=prev?'up-diff':'down-diff'}">${diffText(cur,prev,diffMode)}</span></div>`;
 }
 
 async function applyFilter(){
@@ -1387,24 +1641,54 @@ async function applyFilter(){
   $("chChatUse").textContent=fmt(channelChatUse);
   $("chBook").textContent=fmt(channelBook);
   $("chCancel").textContent=fmt(channelCancel);
+  const yoyChannelPhone = yoy ? yoy.phoneIn : null;
+  const yoyChannelErms = yoy ? yoy.erms : null;
+  const yoyChannelSmart = yoy ? yoy.smart : null;
+  const yoyChannelChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
+  const yoyChannelChatUse = yoy ? yoy.chatUse : null;
+  const yoyChannelBook = yoyRows.length ? sum(yoyRows,"bookBuy") : null;
+  const yoyChannelCancel = yoyRows.length ? sum(yoyRows,"cancel") : null;
 
-  $("pctPhone").textContent=tq?pct(channelPhone,tq).toFixed(2)+"%":"";
-  $("pctErms").textContent=tq?pct(channelErms,tq).toFixed(2)+"%":"";
-  $("pctSmart").textContent=tq?pct(channelSmart,tq).toFixed(2)+"%":"";
-  $("pctChatConsult").textContent=tq?pct(channelChatConsult,tq).toFixed(2)+"%":"";
-  const channelValues=[channelPhone,channelErms,channelSmart,channelChatConsult];
-  const channelMax=Math.max(...channelValues,1);
-  const channelBarMap=[
-    ["barPhone","barPhoneVal",channelPhone],
-    ["barErms","barErmsVal",channelErms],
-    ["barSmart","barSmartVal",channelSmart],
-    ["barChatConsult","barChatConsultVal",channelChatConsult]
-  ];
-  channelBarMap.forEach(([barId,valId,value])=>{
-    const width=Math.max(0,(Number(value)||0)/channelMax*100);
-    $(barId).style.width=width.toFixed(2)+"%";
-    $(valId).textContent=fmt(value);
-  });
+  const setChannelYoy=(yoyId,chgId,curVal,yoyVal)=>{
+    if(yoyVal===null || yoyVal===undefined){
+      $(yoyId).textContent="데이터 없음";
+      $(chgId).textContent="-";
+      return;
+    }
+    $(yoyId).textContent=fmt(yoyVal);
+    $(chgId).innerHTML=detailPctChange(curVal,yoyVal);
+  };
+
+  setChannelYoy("yoyPhone","chgPhone",channelPhone,yoyChannelPhone);
+  setChannelYoy("yoyErms","chgErms",channelErms,yoyChannelErms);
+  setChannelYoy("yoySmart","chgSmart",channelSmart,yoyChannelSmart);
+  setChannelYoy("yoyChatConsult","chgChatConsult",channelChatConsult,yoyChannelChatConsult);
+  setChannelYoy("yoyChatUse","chgChatUse",channelChatUse,yoyChannelChatUse);
+  setChannelYoy("yoyBook","chgBook",channelBook,yoyChannelBook);
+  setChannelYoy("yoyCancel","chgCancel",channelCancel,yoyChannelCancel);
+
+  const setDualBars=(curBarId,prevBarId,curValId,prevValId,curVal,prevVal)=>{
+    const c=Number(curVal)||0;
+    const p=Number(prevVal)||0;
+    const max=Math.max(c,p,1);
+    const curEl=$(curBarId), prevEl=$(prevBarId);
+    if(curEl) curEl.style.width=(c/max*100).toFixed(2)+"%";
+    if(prevEl) prevEl.style.width=(p/max*100).toFixed(2)+"%";
+    if($(curValId)) $(curValId).textContent=fmt(c);
+    if($(prevValId)) $(prevValId).textContent=(prevVal===null||prevVal===undefined)?"-":fmt(p);
+  };
+
+  setDualBars("barPhoneCur","barPhonePrev","barPhoneValCur","barPhoneValPrev",channelPhone,yoyChannelPhone);
+  setDualBars("barErmsCur","barErmsPrev","barErmsValCur","barErmsValPrev",channelErms,yoyChannelErms);
+  setDualBars("barChatConsultCur","barChatConsultPrev","barChatConsultValCur","barChatConsultValPrev",channelChatConsult,yoyChannelChatConsult);
+  setDualBars("barSmartCur","barSmartPrev","barSmartValCur","barSmartValPrev",channelSmart,yoyChannelSmart);
+
+  setDualBars("barChatUseCur","barChatUsePrev","barChatUseCurVal","barChatUsePrevVal",channelChatUse,yoyChannelChatUse);
+  setDualBars("barBookCur","barBookPrev","barBookCurVal","barBookPrevVal",channelBook,yoyChannelBook);
+  setDualBars("barCancelCur","barCancelPrev","barCancelCurVal","barCancelPrevVal",channelCancel,yoyChannelCancel);
+
+
+
 
   // 하단 = 선택기간 기준
   const rangeAnswerPct=cur.answerPct;
@@ -1466,75 +1750,36 @@ async function applyFilter(){
     {label:"응답호 전년",data:rows.map((r,i)=>Number(yoyAt(i).phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-
-
-  
-  // ===== 상세 메뉴 공통 데이터 반영 =====
-
-  // ERMS · 스마트러닝
-  const detailCurErmsAvg = rows.length ? cur.erms / rows.length : 0;
-  const detailYoyErmsAvg = yoyRows.length && yoy ? yoy.erms / yoyRows.length : null;
-  setDetail("ermsCur","ermsYoy","ermsChg",cur.erms,yoy ? yoy.erms : null);
-  setDetail("smartCur","smartYoy","smartChg",cur.smart,yoy ? yoy.smart : null);
-  setDetail("ermsAvgCur","ermsAvgYoy","ermsAvgChg",detailCurErmsAvg,detailYoyErmsAvg,{type:"decimal",digits:1});
-
-  compareLineChart("ermsChart",rows.map(r=>r.date.slice(5)),[
+  // ERMS / 스마트러닝
+  compareLineChart("ermsChart",currentLabels,[
     {label:"ERMS 올해",data:rows.map(r=>Number(r.ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"ERMS 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+    {label:"ERMS 전년",data:rows.map((r,i)=>Number(yoyAt(i).ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
     {label:"스마트러닝 올해",data:rows.map(r=>Number(r.smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"스마트러닝 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+    {label:"스마트러닝 전년",data:rows.map((r,i)=>Number(yoyAt(i).smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // 챗봇 이용
-  const detailCurChatConsult = sum(rows,"chatAccess");
-  const detailYoyChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
-  const detailCurChatAvg = rows.length ? cur.chatUse / rows.length : 0;
-  const detailYoyChatAvg = yoyRows.length && yoy ? yoy.chatUse / yoyRows.length : null;
-  setDetail("chatConsultCur","chatConsultYoy","chatConsultChg",detailCurChatConsult,detailYoyChatConsult);
-  setDetail("chatUseCur","chatUseYoy","chatUseChg",cur.chatUse,yoy ? yoy.chatUse : null);
-  setDetail("chatAvgCur","chatAvgYoy","chatAvgChg",detailCurChatAvg,detailYoyChatAvg,{type:"decimal",digits:1});
-
-  compareLineChart("chatChart",rows.map(r=>r.date.slice(5)),[
-    {label:"챗봇상담 올해",data:rows.map(r=>Number(r.chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"챗봇상담 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+  // 챗봇
+  compareLineChart("chatChart",currentLabels,[
+    {label:"채팅상담 올해",data:rows.map(r=>Number(r.chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
+    {label:"채팅상담 전년",data:rows.map((r,i)=>Number(yoyAt(i).chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
     {label:"챗봇이용 올해",data:rows.map(r=>Number(r.chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"챗봇이용 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+    {label:"챗봇이용 전년",data:rows.map((r,i)=>Number(yoyAt(i).chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // 교재 구매
-  const detailCurBook = sum(rows,"bookBuy");
-  const detailCurReturn = sum(rows,"bookReturn");
-  const detailCurExchange = sum(rows,"bookExchange");
-  const detailYoyBook = yoyRows.length ? sum(yoyRows,"bookBuy") : null;
-  const detailYoyReturn = yoyRows.length ? sum(yoyRows,"bookReturn") : null;
-  const detailYoyExchange = yoyRows.length ? sum(yoyRows,"bookExchange") : null;
-  setDetail("bookCur","bookYoy","bookChg",detailCurBook,detailYoyBook);
-  setDetail("returnCur","returnYoy","returnChg",detailCurReturn,detailYoyReturn);
-  setDetail("exchangeCur","exchangeYoy","exchangeChg",detailCurExchange,detailYoyExchange);
-
-  compareLineChart("bookChart",rows.map(r=>r.date.slice(5)),[
+  // 교재
+  compareLineChart("bookChart",currentLabels,[
     {label:"교재구매 올해",data:rows.map(r=>Number(r.bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"교재구매 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+    {label:"교재구매 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
     {label:"반품 올해",data:rows.map(r=>Number(r.bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.2,pointRadius:2.2},
-    {label:"반품 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6},
+    {label:"반품 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6},
     {label:"교환 올해",data:rows.map(r=>Number(r.bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:2.2,pointRadius:2.2},
-    {label:"교환 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6}
+    {label:"교환 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6}
   ]);
 
   // CPH
-  const detailYoyCphLatest = yoyRows.length ? yoyRows.at(-1) : null;
-  const detailCurCphMonth = Number(latest.cphMonth)||0;
-  const detailCurCphYear = Number(latest.cphYear)||0;
-  const detailYoyCphMonth = detailYoyCphLatest ? (Number(detailYoyCphLatest.cphMonth)||0) : null;
-  const detailYoyCphYear = detailYoyCphLatest ? (Number(detailYoyCphLatest.cphYear)||0) : null;
-
-  setDetail("cphAvgCur","cphAvgYoy","cphAvgChg",cur.cph,yoy ? yoy.cph : null,{type:"decimal",digits:2});
-  setDetail("cphMonthCur","cphMonthYoy","cphMonthChg",detailCurCphMonth,detailYoyCphMonth,{type:"decimal",digits:2});
-  setDetail("cphYearCur","cphYearYoy","cphYearChg",detailCurCphYear,detailYoyCphYear,{type:"decimal",digits:2});
-
-  compareLineChart("cphChart",rows.map(r=>r.date.slice(5)),[
+  compareLineChart("cphChart",currentLabels,[
     {label:"CPH 올해",data:rows.map(r=>Number(r.cphDay)||0),borderColor:"#0b2b59",backgroundColor:"#0b2b5910",fill:true,tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"CPH 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).cphDay)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+    {label:"CPH 전년",data:rows.map((r,i)=>Number(yoyAt(i).cphDay)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
   // 환불은 공개용 일자별 집계 사용
@@ -1774,16 +2019,11 @@ $("clearBtn").addEventListener("click",async()=>{
 });
 
 document.querySelectorAll(".menu button[data-target]").forEach(b=>b.addEventListener("click",()=>{
-  const target=$(b.dataset.target);
-  if(!target){
-    console.warn("메뉴 대상 섹션을 찾지 못했습니다:",b.dataset.target);
-    return;
-  }
   document.querySelectorAll(".menu button[data-target]").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
-  target.classList.add("active");
-  setTimeout(()=>Object.values(charts).forEach(c=>{try{c.resize();}catch(e){}}),50);
+  $(b.dataset.target).classList.add("active");
+  setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),50);
 }));
 
 (async()=>{
