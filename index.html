@@ -350,21 +350,52 @@ button,input,select{font:inherit}
 }
 .bottom{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
 .mini{
-  min-height:165px;
-  padding:14px;
+  min-height:300px;
+  padding:18px 18px 14px;
+  overflow:hidden;
 }
 .mv{
-  margin-top:11px;
-  font-size:24px;
+  margin:0;
+  font-size:34px;
+  line-height:1;
   font-weight:900;
-  letter-spacing:-.6px;
+  letter-spacing:-1px;
+  text-align:right;
 }
-.ms{font-size:10px;color:var(--muted);margin-top:6px}
-.spark{height:62px;margin-top:6px}
+.ms{font-size:11px;color:var(--muted);margin-top:7px;text-align:right}
+.spark{height:205px;margin-top:18px}
+.mini-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+}
+.mini-titlebox{min-width:0}
+.mini-valuebox{
+  margin-left:auto;
+  min-width:125px;
+  text-align:right;
+}
+.mini h3{
+  font-size:18px;
+  line-height:1.15;
+}
+.mini .sub{
+  font-size:11px;
+  margin-top:7px;
+}
+.mini-unit{
+  position:absolute;
+  left:16px;
+  top:108px;
+  font-size:10px;
+  color:#7a879a;
+}
+.mini{position:relative}
 .statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
 .stat{padding:16px}
 .stat .lab{font-size:11px;color:var(--muted);font-weight:800}
@@ -543,18 +574,60 @@ th{position:sticky;top:0;background:#f8fafc}
   </div>
 
   <div class="bottom">
-    <div class="card mini"><h3>답변률 추이</h3><div class="sub">선택기간 전체</div><div class="mv" id="miniAnswer">-</div><div class="ms">일별 답변률</div><div class="spark"><canvas id="spAnswer"></canvas></div></div>
-    <div class="card mini"><h3>CPH 추이</h3><div class="sub">선택기간 평균</div><div class="mv" id="miniCph">-</div><div class="ms">일별 CPH</div><div class="spark"><canvas id="spCph"></canvas></div></div>
-    <div class="card mini"><h3>ERMS 건수 추이</h3><div class="sub">선택기간 합계</div><div class="mv" id="miniErms">-</div><div class="ms">일별 ERMS</div><div class="spark"><canvas id="spErms"></canvas></div></div>
-    <div class="card mini"><h3>스마트러닝앱 추이</h3><div class="sub">선택기간 합계</div><div class="mv" id="miniSmart">-</div><div class="ms">일별 스마트러닝</div><div class="spark"><canvas id="spSmart"></canvas></div></div>
-    <div class="card mini"><h3>챗봇 이용 추이</h3><div class="sub">선택기간 합계</div><div class="mv" id="miniChat">-</div><div class="ms">일별 챗봇 이용</div><div class="spark"><canvas id="spChat"></canvas></div></div>
+    <div class="card mini">
+      <div class="mini-head">
+        <div class="mini-titlebox"><h3>답변률</h3><div class="sub">선택기간 전체</div></div>
+        <div class="mini-valuebox"><div class="mv" id="miniAnswer">-</div><div class="ms">일별 답변률</div></div>
+      </div>
+      <div class="spark"><canvas id="spAnswer"></canvas></div>
+    </div>
+
+    <div class="card mini">
+      <div class="mini-head">
+        <div class="mini-titlebox"><h3>응답률</h3><div class="sub">선택기간 전체</div></div>
+        <div class="mini-valuebox"><div class="mv" id="miniPhoneRate">-</div><div class="ms">일별 응답률</div></div>
+      </div>
+      <div class="spark"><canvas id="spPhoneRate"></canvas></div>
+    </div>
+
+    <div class="card mini">
+      <div class="mini-head">
+        <div class="mini-titlebox"><h3>CPH</h3><div class="sub">선택기간 평균</div></div>
+        <div class="mini-valuebox"><div class="mv" id="miniCph">-</div><div class="ms">일별 CPH</div></div>
+      </div>
+      <div class="spark"><canvas id="spCph"></canvas></div>
+    </div>
+
+    <div class="card mini">
+      <div class="mini-head">
+        <div class="mini-titlebox"><h3>ERMS</h3><div class="sub">선택기간 합계</div></div>
+        <div class="mini-valuebox"><div class="mv" id="miniErms">-</div><div class="ms">일별 ERMS</div></div>
+      </div>
+      <div class="spark"><canvas id="spErms"></canvas></div>
+    </div>
+
+    <div class="card mini">
+      <div class="mini-head">
+        <div class="mini-titlebox"><h3>스마트러닝앱</h3><div class="sub">선택기간 합계</div></div>
+        <div class="mini-valuebox"><div class="mv" id="miniSmart">-</div><div class="ms">일별 스마트러닝</div></div>
+      </div>
+      <div class="spark"><canvas id="spSmart"></canvas></div>
+    </div>
+
+    <div class="card mini">
+      <div class="mini-head">
+        <div class="mini-titlebox"><h3>챗봇 이용</h3><div class="sub">선택기간 합계</div></div>
+        <div class="mini-valuebox"><div class="mv" id="miniChat">-</div><div class="ms">일별 챗봇 이용</div></div>
+      </div>
+      <div class="spark"><canvas id="spChat"></canvas></div>
+    </div>
   </div>
   <div style="font-size:9.5px;color:#7d8798;margin:9px 4px 0">* 모든 수치는 선택기간 합계 기준이며, 비교값은 직전 동기간 및 전년 동기간과 비교한 값입니다.</div>
 </section>
 
-<section id="call" class="section"><div class="statgrid"><div class="card stat"><div class="lab">기간 전화인입 합계</div><div class="val" id="callInSum">-</div></div><div class="card stat"><div class="lab">기간 총응답 합계</div><div class="val" id="callAnsSum">-</div></div><div class="card stat"><div class="lab">기간 전화 응답률</div><div class="val" id="callRate">-</div></div></div><div class="card large"><canvas id="callChart"></canvas></div></section>
-<section id="erms" class="section"><div class="statgrid"><div class="card stat"><div class="lab">기간 ERMS 합계</div><div class="val" id="ermsSum">-</div></div><div class="card stat"><div class="lab">기간 스마트러닝 합계</div><div class="val" id="smartSum">-</div></div><div class="card stat"><div class="lab">ERMS 일평균</div><div class="val" id="ermsAvg">-</div></div></div><div class="card large"><canvas id="ermsChart"></canvas></div></section>
-<section id="chat" class="section"><div class="statgrid"><div class="card stat"><div class="lab">챗봇 접속 합계</div><div class="val" id="chatAccessSum">-</div></div><div class="card stat"><div class="lab">챗봇 이용 합계</div><div class="val" id="chatUseSum">-</div></div><div class="card stat"><div class="lab">챗봇 이용 일평균</div><div class="val" id="chatUseAvg">-</div></div></div><div class="card large"><canvas id="chatChart"></canvas></div></section>
+<section id="call" class="section"><div class="sub" style="margin:0 0 10px">통합현황과 동일한 선택기간 기준</div><div class="statgrid"><div class="card stat"><div class="lab">기간 전화인입 합계</div><div class="val" id="callInSum">-</div></div><div class="card stat"><div class="lab">기간 총응답 합계</div><div class="val" id="callAnsSum">-</div></div><div class="card stat"><div class="lab">기간 전화 응답률</div><div class="val" id="callRate">-</div></div></div><div class="card large"><canvas id="callChart"></canvas></div></section>
+<section id="erms" class="section"><div class="sub" style="margin:0 0 10px">통합현황과 동일한 선택기간 기준</div><div class="statgrid"><div class="card stat"><div class="lab">기간 ERMS 합계</div><div class="val" id="ermsSum">-</div></div><div class="card stat"><div class="lab">기간 스마트러닝 합계</div><div class="val" id="smartSum">-</div></div><div class="card stat"><div class="lab">ERMS 일평균</div><div class="val" id="ermsAvg">-</div></div></div><div class="card large"><canvas id="ermsChart"></canvas></div></section>
+<section id="chat" class="section"><div class="sub" style="margin:0 0 10px">통합현황과 동일한 선택기간 기준</div><div class="statgrid"><div class="card stat"><div class="lab">챗봇 접속 합계</div><div class="val" id="chatAccessSum">-</div></div><div class="card stat"><div class="lab">챗봇 이용 합계</div><div class="val" id="chatUseSum">-</div></div><div class="card stat"><div class="lab">챗봇 이용 일평균</div><div class="val" id="chatUseAvg">-</div></div></div><div class="card large"><canvas id="chatChart"></canvas></div></section>
 <section id="book" class="section"><div class="statgrid"><div class="card stat"><div class="lab">교재구매 합계</div><div class="val" id="bookSum">-</div></div><div class="card stat"><div class="lab">반품 합계</div><div class="val" id="returnSum">-</div></div><div class="card stat"><div class="lab">교환 합계</div><div class="val" id="exchangeSum">-</div></div></div><div class="card large"><canvas id="bookChart"></canvas></div></section>
 <section id="cph" class="section"><div class="statgrid"><div class="card stat"><div class="lab">선택기간 CPH 평균</div><div class="val" id="cphAvg">-</div></div><div class="card stat"><div class="lab">기준일 월간누적</div><div class="val" id="cphMonth">-</div></div><div class="card stat"><div class="lab">기준일 연간누적</div><div class="val" id="cphYear">-</div></div></div><div class="card large"><canvas id="cphChart"></canvas></div></section>
 <section id="refund" class="section"><div class="statgrid"><div class="card stat"><div class="lab">환불 신청</div><div class="val" id="refundCount">-</div></div><div class="card stat"><div class="lab">환불금액</div><div class="val" id="refundAmount">-</div></div><div class="card stat"><div class="lab">평균 환불금액</div><div class="val" id="refundAvg">-</div></div></div><div class="card large"><canvas id="refundChart"></canvas></div></section>
@@ -588,7 +661,7 @@ th{position:sticky;top:0;background:#f8fafc}
             <input id="dailyFile" type="file" accept=".xlsx,.xls,.csv">
             <div style="margin-top:9px"><button class="btn secondary" id="dailySampleBtn">샘플 Excel</button></div>
           </div>
-          <div id="dailyStatus" class="status">Firestore 확인 중...</div><div class="status" style="color:#c2410c">※ 날짜 보정 적용본: 기존 데이터가 있다면 Excel을 다시 업로드해 주세요.</div>
+          <div id="dailyStatus" class="status">Firestore 확인 중...</div><div class="status" style="color:#c2410c">※ 날짜 완전보정 적용본: Excel 날짜를 일련번호 기준으로 저장합니다. 기존 데이터는 반드시 다시 업로드해 주세요.</div>
         </div>
 
         <div class="card upload">
@@ -689,10 +762,18 @@ function num(v){
   return isNaN(x)?0:x;
 }
 function asDate(v){
-  if(!v) return "";
+  if(v===null||v===undefined||v==="") return "";
 
-  // Excel cellDates:true 로 읽힌 Date 객체는 UTC 변환(toISOString)을 사용하면
-  // 한국시간 기준 날짜가 하루 전으로 밀릴 수 있으므로 현지 날짜값을 그대로 사용한다.
+  // 가장 안전한 방식: Excel 날짜 일련번호를 직접 YYYY-MM-DD로 변환
+  // 시간대(Date/UTC)를 전혀 거치지 않는다.
+  if(typeof v==="number" && window.XLSX){
+    const d=XLSX.SSF.parse_date_code(v);
+    if(d){
+      return `${String(d.y).padStart(4,"0")}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
+    }
+  }
+
+  // 혹시 Date 객체가 들어오는 경우에도 UTC 변환 금지
   if(v instanceof Date && !isNaN(v)){
     const y=v.getFullYear();
     const m=String(v.getMonth()+1).padStart(2,"0");
@@ -700,14 +781,9 @@ function asDate(v){
     return `${y}-${m}-${d}`;
   }
 
-  // Excel serial date
-  if(typeof v==="number" && window.XLSX){
-    const d=XLSX.SSF.parse_date_code(v);
-    if(d) return `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
-  }
-
   // 문자열 날짜
-  const m=String(v).trim().replace(/[.\/]/g,"-").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  const str=String(v).trim().replace(/[.\/]/g,"-");
+  const m=str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   return m ? `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}` : "";
 }
 
@@ -724,30 +800,76 @@ function chart(id,type,labels,sets){
     }
   });
 }
-function spark(id,labels,data,color){
+function spark(id,labels,data,color,opts={}){
   if(charts[id]) charts[id].destroy();
+
+  const values=data.map(v=>Number(v)||0);
+  const minVal=Math.min(...values);
+  const maxVal=Math.max(...values);
+  const isPercent=opts.percent===true;
+
+  let yMin=0;
+  let yMax=undefined;
+
+  if(isPercent){
+    yMin=Math.max(0,Math.floor((minVal-3)/5)*5);
+    yMax=Math.min(100,Math.ceil((maxVal+2)/5)*5);
+    if(yMax<=yMin) yMax=Math.min(100,yMin+10);
+  }else if(opts.zeroBased===false){
+    const gap=Math.max(1,maxVal-minVal);
+    yMin=Math.max(0,minVal-gap*.25);
+    yMax=maxVal+gap*.25;
+  }
+
   charts[id]=new Chart($(id),{
     type:"line",
     data:{
       labels,
       datasets:[{
         label:"",
-        data,
+        data:values,
         borderColor:color,
-        backgroundColor:color+"15",
+        backgroundColor:color+"12",
         fill:true,
-        tension:.3,
-        pointRadius:2.5,
-        borderWidth:2
+        tension:.28,
+        pointRadius:3.2,
+        pointHoverRadius:4,
+        borderWidth:2.2,
+        pointBackgroundColor:"#fff",
+        pointBorderColor:color,
+        pointBorderWidth:2
       }]
     },
     options:{
       responsive:true,
       maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
+      layout:{padding:{top:8,right:5,left:0,bottom:0}},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            label:(ctx)=> isPercent ? ctx.parsed.y.toFixed(2)+"%" : ctx.parsed.y.toLocaleString("ko-KR")
+          }
+        }
+      },
       scales:{
-        x:{grid:{display:false}},
-        y:{display:false,beginAtZero:true}
+        x:{
+          grid:{display:false},
+          ticks:{font:{size:10},maxRotation:0,minRotation:0,autoSkip:true,maxTicksLimit:9}
+        },
+        y:{
+          display:true,
+          beginAtZero:!isPercent && opts.zeroBased!==false,
+          min:yMin,
+          max:yMax,
+          grid:{color:"#e8edf4"},
+          border:{display:false},
+          ticks:{
+            font:{size:9},
+            maxTicksLimit:5,
+            callback:(v)=>isPercent ? v+"%" : Number(v).toLocaleString("ko-KR")
+          }
+        }
       }
     }
   });
@@ -810,9 +932,10 @@ function previousDay(latest){
 }
 
 function dateShift(dateStr, days){
-  const d=new Date(dateStr+"T00:00:00");
-  d.setDate(d.getDate()+days);
-  return d.toISOString().slice(0,10);
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const dt=new Date(y,m-1,d);
+  dt.setDate(dt.getDate()+days);
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
 }
 function yearShift(dateStr, years){
   const [y,m,d]=dateStr.split("-").map(Number);
@@ -934,11 +1057,11 @@ async function applyFilter(){
   // 우측 채널 = 선택기간 합계 / 선택기간 총문의량 대비 %
   $("channelTitle").textContent=`채널별 현황 (${s} ~ ${e})`;
 
-  const channelPhone=sum(rows,"phoneIn");
-  const channelErms=sum(rows,"ermsCount");
-  const channelSmart=sum(rows,"smart");
+  const channelPhone=cur.phoneIn;
+  const channelErms=cur.erms;
+  const channelSmart=cur.smart;
   const channelChatConsult=sum(rows,"chatAccess");
-  const channelChatUse=sum(rows,"chatUse");
+  const channelChatUse=cur.chatUse;
   const channelBook=sum(rows,"bookBuy");
   const channelCancel=sum(rows,"cancel");
   const tq=cur.totalQ;
@@ -973,37 +1096,49 @@ async function applyFilter(){
   const rangeAnswerPct=cur.answerPct;
   const rangeCph=cur.cph;
   $("miniAnswer").textContent=rangeAnswerPct.toFixed(2)+"%";
+  $("miniPhoneRate").textContent=cur.phoneRate.toFixed(2)+"%";
   $("miniCph").textContent=rangeCph.toFixed(2);
-  $("miniErms").textContent=fmt(sum(rows,"ermsCount"));
-  $("miniSmart").textContent=fmt(sum(rows,"smart"));
-  $("miniChat").textContent=fmt(sum(rows,"chatUse"));
+  $("miniErms").textContent=fmt(cur.erms);
+  $("miniSmart").textContent=fmt(cur.smart);
+  $("miniChat").textContent=fmt(cur.chatUse);
+  $("miniAnswer").style.color="#f4a900";
+  $("miniPhoneRate").style.color="#2fa64a";
+  $("miniCph").style.color="#0b2b59";
+  $("miniErms").style.color="#7d3fc7";
+  $("miniSmart").style.color="#1767d9";
+  $("miniChat").style.color="#f4a900";
 
-  spark("spAnswer",rows.map(r=>r.date.slice(5)),rows.map(r=>pct(r.totalA,r.totalQ)),"#f4b400");
-  spark("spCph",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.cphDay)||0),"#0b2b59");
-  spark("spErms",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.ermsCount)||0),"#0b2b59");
-  spark("spSmart",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.smart)||0),"#f4b400");
-  spark("spChat",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatUse)||0),"#f4b400");
+
+  spark("spAnswer",rows.map(r=>r.date.slice(5)),rows.map(r=>pct(r.totalA,r.totalQ)),"#f4a900",{percent:true});
+  spark("spPhoneRate",rows.map(r=>r.date.slice(5)),rows.map(r=>pct(r.phoneAns,r.phoneIn)),"#2fa64a",{percent:true});
+  spark("spCph",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.cphDay)||0),"#0b2b59",{zeroBased:true});
+  spark("spErms",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.ermsCount)||0),"#7d3fc7",{zeroBased:true});
+  spark("spSmart",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.smart)||0),"#1767d9",{zeroBased:true});
+  spark("spChat",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatUse)||0),"#f4a900",{zeroBased:true});
 
   // 메뉴별 선택기간 집계
-  $("callInSum").textContent=fmt(sum(rows,"phoneIn"));
-  $("callAnsSum").textContent=fmt(sum(rows,"phoneAns"));
-  $("callRate").textContent=pct(sum(rows,"phoneAns"),sum(rows,"phoneIn")).toFixed(2)+"%";
+  // Call 현황 = 전체현황 Call KPI와 동일한 선택기간 기준값 사용
+  $("callInSum").textContent=fmt(cur.phoneIn);
+  $("callAnsSum").textContent=fmt(cur.phoneAns);
+  $("callRate").textContent=cur.phoneRate.toFixed(2)+"%";
   chart("callChart","line",rows.map(r=>r.date.slice(5)),[
     {label:"전화인입",data:rows.map(r=>r.phoneIn),borderColor:"#0b2b59",tension:.3},
     {label:"총응답",data:rows.map(r=>r.phoneAns),borderColor:"#f4b400",tension:.3}
   ]);
 
-  $("ermsSum").textContent=fmt(sum(rows,"ermsCount"));
-  $("smartSum").textContent=fmt(sum(rows,"smart"));
-  $("ermsAvg").textContent=fmt(mean(rows,"ermsCount"));
+  // 채널 현황 = 전체현황 채널 KPI와 동일한 선택기간 기준값 사용
+  $("ermsSum").textContent=fmt(cur.erms);
+  $("smartSum").textContent=fmt(cur.smart);
+  $("ermsAvg").textContent=fmt(rows.length ? cur.erms / rows.length : 0);
   chart("ermsChart","line",rows.map(r=>r.date.slice(5)),[
     {label:"ERMS",data:rows.map(r=>r.ermsCount),borderColor:"#0b2b59",tension:.3},
     {label:"스마트러닝",data:rows.map(r=>r.smart),borderColor:"#f4b400",tension:.3}
   ]);
 
-  $("chatAccessSum").textContent=fmt(sum(rows,"chatAccess"));
-  $("chatUseSum").textContent=fmt(sum(rows,"chatUse"));
-  $("chatUseAvg").textContent=fmt(mean(rows,"chatUse"));
+  // 챗봇 현황도 채널별 현황과 동일한 선택기간 기준값 사용
+  $("chatAccessSum").textContent=fmt(channelChatConsult);
+  $("chatUseSum").textContent=fmt(cur.chatUse);
+  $("chatUseAvg").textContent=fmt(rows.length ? cur.chatUse / rows.length : 0);
   chart("chatChart","line",rows.map(r=>r.date.slice(5)),[
     {label:"챗봇접속",data:rows.map(r=>r.chatAccess),borderColor:"#0b2b59",tension:.3},
     {label:"챗봇이용",data:rows.map(r=>r.chatUse),borderColor:"#f4b400",tension:.3}
@@ -1058,7 +1193,7 @@ async function upload(file,type){
   if(!file) return;
 
   try{
-    const wb=XLSX.read(await file.arrayBuffer(),{type:"array",cellDates:true});
+    const wb=XLSX.read(await file.arrayBuffer(),{type:"array",cellDates:false});
     const ws=wb.Sheets[wb.SheetNames[0]];
     const raw=XLSX.utils.sheet_to_json(ws,{defval:"",raw:true});
     if(!raw.length) throw new Error("첫 시트에 데이터가 없습니다.");
@@ -1091,12 +1226,18 @@ async function upload(file,type){
 
       if(!rows.length) throw new Error("일자 컬럼을 인식하지 못했습니다.");
 
+      rows.sort((a,b)=>a.date.localeCompare(b.date));
+
+      // 업로드 직전 날짜 검증
+      const firstDate=rows[0].date;
+      const lastDate=rows.at(-1).date;
+
       await replaceCollection("daily",rows,r=>r.date);
       await reload();
       $("startDate").value=daily[0].date;
       $("endDate").value=daily.at(-1).date;
       await applyFilter();
-      alert(`${rows.length}일 데이터를 Firestore에 교체 등록했습니다.`);
+      alert(`${rows.length}일 데이터를 Firestore에 교체 등록했습니다.\n날짜 확인: ${firstDate} ~ ${lastDate}\n※ Excel 원본의 첫/마지막 날짜와 반드시 동일한지 확인해 주세요.`);
     }else{
       const rows=raw.map((o,i)=>{
         const ad=asDate(pick(o,["환불신청일"]));
