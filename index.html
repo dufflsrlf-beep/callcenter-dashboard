@@ -951,6 +951,39 @@ th{position:sticky;top:0;background:#f8fafc}
   }
 }
 
+
+/* 채널별 현황: 숫자 영역과 건수 비교 막대 영역 사이 구분선 */
+.channel-table-head > div:nth-child(5),
+.channel-row > .dual-bar-cell,
+.channel-simple-head > div:nth-child(5),
+.channel-simple-row > .dual-bar-cell{
+  border-left:1px solid #d7e0eb !important;
+  padding-left:14px !important;
+}
+.channel-table-head > div:nth-child(4),
+.channel-row > .cchg,
+.channel-simple-head > div:nth-child(4),
+.channel-simple-row > .cchg{
+  padding-right:12px !important;
+}
+
+
+/* 채널별 현황: 채널 ↔ 올해 간격 축소, 확보 폭은 건수 비교 영역에 배분 */
+.channel-table-head,
+.channel-row{
+  grid-template-columns:minmax(88px,.88fr) 74px 72px 78px minmax(155px,1.62fr) !important;
+}
+.channel-simple-head,
+.channel-simple-row{
+  grid-template-columns:minmax(95px,.92fr) 82px 82px 82px minmax(155px,1.52fr) !important;
+}
+.channel-table-head > div:first-child,
+.channel-row > .channel-name-wrap,
+.channel-simple-head > div:first-child,
+.channel-simple-row > .channel-name-wrap{
+  padding-right:4px !important;
+}
+
 </style>
 </head>
 <body>
