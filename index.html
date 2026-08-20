@@ -358,14 +358,16 @@ button,input,select{font:inherit}
 }
 .bottom{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,460px));
-  justify-content:center;
-  gap:10px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  width:100%;
+  margin:0;
 }
 .mini{
-  min-height:300px;
-  padding:18px 18px 14px;
+  min-height:285px;
+  padding:17px 22px 13px;
   overflow:hidden;
+  position:relative;
 }
 .mv{
   margin:0;
@@ -376,7 +378,11 @@ button,input,select{font:inherit}
   text-align:right;
 }
 .ms{font-size:11px;color:var(--muted);margin-top:7px;text-align:right}
-.spark{height:205px;margin-top:18px}
+.spark{
+  height:190px;
+  margin:16px auto 0;
+  width:96%;
+}
 .mini-head{
   display:flex;
   justify-content:space-between;
@@ -404,7 +410,7 @@ button,input,select{font:inherit}
   font-size:10px;
   color:#7a879a;
 }
-.mini{position:relative}
+
 
 
 .metric-cards{
@@ -1462,16 +1468,15 @@ async function applyFilter(){
 
 
 
-  // ERMS · 스마트러닝 상세 카드
-  const curErmsAvg = rows.length ? cur.erms / rows.length : 0;
-  const yoyErmsAvg = yoyRows.length ? yoy.erms / yoyRows.length : null;
+  
+  // ===== 상세 메뉴 공통 데이터 반영 =====
 
-  setDetail("ermsCur","ermsYoy","ermsChg",
-    cur.erms, yoy ? yoy.erms : null);
-  setDetail("smartCur","smartYoy","smartChg",
-    cur.smart, yoy ? yoy.smart : null);
-  setDetail("ermsAvgCur","ermsAvgYoy","ermsAvgChg",
-    curErmsAvg, yoyErmsAvg, {type:"decimal",digits:1});
+  // ERMS · 스마트러닝
+  const detailCurErmsAvg = rows.length ? cur.erms / rows.length : 0;
+  const detailYoyErmsAvg = yoyRows.length && yoy ? yoy.erms / yoyRows.length : null;
+  setDetail("ermsCur","ermsYoy","ermsChg",cur.erms,yoy ? yoy.erms : null);
+  setDetail("smartCur","smartYoy","smartChg",cur.smart,yoy ? yoy.smart : null);
+  setDetail("ermsAvgCur","ermsAvgYoy","ermsAvgChg",detailCurErmsAvg,detailYoyErmsAvg,{type:"decimal",digits:1});
 
   compareLineChart("ermsChart",rows.map(r=>r.date.slice(5)),[
     {label:"ERMS 올해",data:rows.map(r=>Number(r.ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
@@ -1480,18 +1485,14 @@ async function applyFilter(){
     {label:"스마트러닝 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // 챗봇 상세 카드
-  const curChatConsult = sum(rows,"chatAccess");
-  const yoyChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
-  const curChatAvg = rows.length ? cur.chatUse / rows.length : 0;
-  const yoyChatAvg = yoyRows.length ? yoy.chatUse / yoyRows.length : null;
-
-  setDetail("chatConsultCur","chatConsultYoy","chatConsultChg",
-    curChatConsult, yoyChatConsult);
-  setDetail("chatUseCur","chatUseYoy","chatUseChg",
-    cur.chatUse, yoy ? yoy.chatUse : null);
-  setDetail("chatAvgCur","chatAvgYoy","chatAvgChg",
-    curChatAvg, yoyChatAvg, {type:"decimal",digits:1});
+  // 챗봇 이용
+  const detailCurChatConsult = sum(rows,"chatAccess");
+  const detailYoyChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
+  const detailCurChatAvg = rows.length ? cur.chatUse / rows.length : 0;
+  const detailYoyChatAvg = yoyRows.length && yoy ? yoy.chatUse / yoyRows.length : null;
+  setDetail("chatConsultCur","chatConsultYoy","chatConsultChg",detailCurChatConsult,detailYoyChatConsult);
+  setDetail("chatUseCur","chatUseYoy","chatUseChg",cur.chatUse,yoy ? yoy.chatUse : null);
+  setDetail("chatAvgCur","chatAvgYoy","chatAvgChg",detailCurChatAvg,detailYoyChatAvg,{type:"decimal",digits:1});
 
   compareLineChart("chatChart",rows.map(r=>r.date.slice(5)),[
     {label:"챗봇상담 올해",data:rows.map(r=>Number(r.chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
@@ -1500,17 +1501,16 @@ async function applyFilter(){
     {label:"챗봇이용 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // 교재 구매 상세 카드
-  const curBook = sum(rows,"bookBuy");
-  const curReturn = sum(rows,"bookReturn");
-  const curExchange = sum(rows,"bookExchange");
-  const yoyBook = yoyRows.length ? sum(yoyRows,"bookBuy") : null;
-  const yoyReturn = yoyRows.length ? sum(yoyRows,"bookReturn") : null;
-  const yoyExchange = yoyRows.length ? sum(yoyRows,"bookExchange") : null;
-
-  setDetail("bookCur","bookYoy","bookChg",curBook,yoyBook);
-  setDetail("returnCur","returnYoy","returnChg",curReturn,yoyReturn);
-  setDetail("exchangeCur","exchangeYoy","exchangeChg",curExchange,yoyExchange);
+  // 교재 구매
+  const detailCurBook = sum(rows,"bookBuy");
+  const detailCurReturn = sum(rows,"bookReturn");
+  const detailCurExchange = sum(rows,"bookExchange");
+  const detailYoyBook = yoyRows.length ? sum(yoyRows,"bookBuy") : null;
+  const detailYoyReturn = yoyRows.length ? sum(yoyRows,"bookReturn") : null;
+  const detailYoyExchange = yoyRows.length ? sum(yoyRows,"bookExchange") : null;
+  setDetail("bookCur","bookYoy","bookChg",detailCurBook,detailYoyBook);
+  setDetail("returnCur","returnYoy","returnChg",detailCurReturn,detailYoyReturn);
+  setDetail("exchangeCur","exchangeYoy","exchangeChg",detailCurExchange,detailYoyExchange);
 
   compareLineChart("bookChart",rows.map(r=>r.date.slice(5)),[
     {label:"교재구매 올해",data:rows.map(r=>Number(r.bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
@@ -1521,19 +1521,16 @@ async function applyFilter(){
     {label:"교환 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6}
   ]);
 
-  // CPH 상세 카드
-  const yoyCphLatest = yoyRows.length ? yoyRows.at(-1) : null;
-  const curCphMonth = Number(latest.cphMonth)||0;
-  const curCphYear = Number(latest.cphYear)||0;
-  const yoyCphMonth = yoyCphLatest ? (Number(yoyCphLatest.cphMonth)||0) : null;
-  const yoyCphYear = yoyCphLatest ? (Number(yoyCphLatest.cphYear)||0) : null;
+  // CPH
+  const detailYoyCphLatest = yoyRows.length ? yoyRows.at(-1) : null;
+  const detailCurCphMonth = Number(latest.cphMonth)||0;
+  const detailCurCphYear = Number(latest.cphYear)||0;
+  const detailYoyCphMonth = detailYoyCphLatest ? (Number(detailYoyCphLatest.cphMonth)||0) : null;
+  const detailYoyCphYear = detailYoyCphLatest ? (Number(detailYoyCphLatest.cphYear)||0) : null;
 
-  setDetail("cphAvgCur","cphAvgYoy","cphAvgChg",
-    cur.cph, yoy ? yoy.cph : null, {type:"decimal",digits:2});
-  setDetail("cphMonthCur","cphMonthYoy","cphMonthChg",
-    curCphMonth, yoyCphMonth, {type:"decimal",digits:2});
-  setDetail("cphYearCur","cphYearYoy","cphYearChg",
-    curCphYear, yoyCphYear, {type:"decimal",digits:2});
+  setDetail("cphAvgCur","cphAvgYoy","cphAvgChg",cur.cph,yoy ? yoy.cph : null,{type:"decimal",digits:2});
+  setDetail("cphMonthCur","cphMonthYoy","cphMonthChg",detailCurCphMonth,detailYoyCphMonth,{type:"decimal",digits:2});
+  setDetail("cphYearCur","cphYearYoy","cphYearChg",detailCurCphYear,detailYoyCphYear,{type:"decimal",digits:2});
 
   compareLineChart("cphChart",rows.map(r=>r.date.slice(5)),[
     {label:"CPH 올해",data:rows.map(r=>Number(r.cphDay)||0),borderColor:"#0b2b59",backgroundColor:"#0b2b5910",fill:true,tension:.25,borderWidth:2.4,pointRadius:2.4},
