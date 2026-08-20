@@ -770,6 +770,9 @@ th{position:sticky;top:0;background:#f8fafc}
 .cmp-bottom .diff-val.up-diff{color:#ff3b4d !important}
 .cmp-bottom .diff-val.down-diff{color:#0868df !important}
 
+
+/* 비율 KPI와 CPH는 증감값 1개만 우측 정렬 */
+.cmp-bottom.single{justify-content:flex-end}
 </style>
 </head>
 <body>
@@ -1503,39 +1506,48 @@ function diffText(cur, prev, mode="count"){
 function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
   const el=$(id);
   if(!el) return;
-
   const shortLabel = label.startsWith("직전") ? "직전 동기간" : "전년 동기간";
 
   if(prev===null || prev===undefined){
     el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>데이터 없음</strong></div>
-                  <div class="cmp-bottom"><span>-</span><span class="diff-val">-</span></div>`;
+                  <div class="cmp-bottom"><span>-</span></div>`;
     return;
   }
 
-  cur=Number(cur)||0;
-  prev=Number(prev)||0;
+  cur=Number(cur)||0; prev=Number(prev)||0;
 
-  let changeHtml="";
-  let prevText="";
+  // 답변률/응답률: 비교기간 비율과 %p 증감만 표시
   if(mode==="pp"){
     const d=cur-prev;
-    prevText=`${prev.toFixed(2)}%`;
-    changeHtml=d>=0
+    const changeHtml=d>=0
       ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%p</span>`
       : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`;
-  }else{
-    prevText=`${Math.round(prev).toLocaleString()}건`;
-    if(prev===0){
-      changeHtml=cur>0?'<span class="up">▲ 신규</span>':'<span>-</span>';
-    }else{
-      const d=(cur-prev)/Math.abs(prev)*100;
-      changeHtml=d>=0
-        ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%</span>`
-        : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%</span>`;
-    }
+    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prev.toFixed(2)}%</strong></div>
+                  <div class="cmp-bottom single">${changeHtml}</div>`;
+    return;
   }
 
-  el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prevText}</strong></div>
+  // CPH: 비교기간 값과 +/- 숫자만 표시 (증감률 삭제)
+  if(diffMode==="cph" || diffMode==="decimal"){
+    const d=cur-prev;
+    const cls=d>0?"up":d<0?"down":"";
+    const sign=d>0?"+":"";
+    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prev.toFixed(2)}</strong></div>
+                  <div class="cmp-bottom single"><span class="${cls}">${sign}${d.toFixed(2)}</span></div>`;
+    return;
+  }
+
+  // 건수 KPI: 비교기간 건수 + 증감률 + 증감건수
+  let changeHtml="";
+  if(prev===0){
+    changeHtml=cur>0?'<span class="up">▲ 신규</span>':'<span>-</span>';
+  }else{
+    const d=(cur-prev)/Math.abs(prev)*100;
+    changeHtml=d>=0
+      ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%</span>`
+      : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%</span>`;
+  }
+  el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${Math.round(prev).toLocaleString()}건</strong></div>
                 <div class="cmp-bottom">${changeHtml}<span class="diff-val ${cur>=prev?'up-diff':'down-diff'}">${diffText(cur,prev,diffMode)}</span></div>`;
 }
 
@@ -1587,7 +1599,7 @@ async function applyFilter(){
     setComparison("trPhoneRate","직전 동기간 대비",cur.phoneRate,prv.phoneRate,"pp");
     setComparison("trAnswerPct","직전 동기간 대비",cur.answerPct,prv.answerPct,"pp");
     setComparison("trChatUse","직전 동기간 대비",cur.chatUse,prv.chatUse);
-    setComparison("trCph","직전 동기간 대비",cur.cph,prv.cph,"num");
+    setComparison("trCph", "직전 동기간 대비", cur.cph, prv.cph, "pct", "cph");
     setComparison("trErms","직전 동기간 대비",cur.erms,prv.erms);
     setComparison("trSmart","직전 동기간 대비",cur.smart,prv.smart);
   }else{
