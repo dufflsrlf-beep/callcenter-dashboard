@@ -170,7 +170,7 @@ button,input,select{font:inherit}
 }
 .kpi-groups{
   display:grid;
-  grid-template-columns:1.06fr 1.34fr 1.06fr;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,1.32fr) minmax(0,1.08fr);
   gap:9px;
   margin-bottom:12px;
 }
@@ -638,7 +638,6 @@ table{width:100%;border-collapse:collapse;min-width:1100px}
 th,td{padding:8px 10px;border-bottom:1px solid #edf1f6;font-size:10.5px;white-space:nowrap;text-align:left}
 th{position:sticky;top:0;background:#f8fafc}
 @media(max-width:1500px){
-  .kpi-groups{grid-template-columns:1fr}
   .mid{grid-template-columns:1fr}
   .bottom{grid-template-columns:repeat(3,1fr)}
 }
@@ -773,6 +772,126 @@ th{position:sticky;top:0;background:#f8fafc}
 
 /* 비율 KPI와 CPH는 증감값 1개만 우측 정렬 */
 .cmp-bottom.single{justify-content:flex-end}
+
+/* CPH 전용 비교 카드 */
+.cph-ks{margin-top:10px;border-top:1px solid #edf1f6}
+.cph-row{
+  padding:8px 2px 7px;
+  border-bottom:1px solid #eef2f6;
+}
+.cph-row:last-child{border-bottom:0}
+.cph-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  color:#53637a;
+  font-size:10px;
+  font-weight:700;
+}
+.cph-top strong{
+  color:#12233f;
+  font-size:10.5px;
+  font-weight:900;
+}
+.cph-diff{
+  margin-top:4px;
+  text-align:right;
+  font-size:10.5px;
+  font-weight:900;
+}
+.cph-diff.up{color:#ff3b4d}
+.cph-diff.down{color:#0868df}
+
+
+/* 상단 3개 그룹을 데스크톱에서 항상 한 줄로 유지 */
+.kpi-groups{
+  display:grid !important;
+  grid-template-columns:minmax(0,1.02fr) minmax(0,1.32fr) minmax(0,1.08fr) !important;
+  gap:10px !important;
+  align-items:stretch;
+}
+.kpi-groups > *,
+.kpi-group,
+.kpi-group-grid,
+.kpi-group-grid > *,
+.kpi{
+  min-width:0 !important;
+}
+.kpi-group{
+  width:auto !important;
+}
+.kpi-group-grid{
+  width:100%;
+}
+@media (max-width:900px){
+  .kpi-groups{
+    grid-template-columns:1fr !important;
+  }
+}
+
+
+.kpi-groups > .kpi-group:nth-child(1) .kpi-group-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+.kpi-groups > .kpi-group:nth-child(2) .kpi-group-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+}
+.kpi-groups > .kpi-group:nth-child(3) .kpi-group-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+}
+
+
+/* 하단 6개 추이 그래프: 가로 폭은 유지하고 세로 높이만 축소 */
+.bottom .mini{
+  min-height:0 !important;
+  padding-bottom:10px !important;
+}
+.bottom .spark{
+  height:145px !important;
+  margin-top:10px !important;
+}
+
+
+/* 좌측 상세 메뉴 그래프: 지표별 분리 카드 */
+.detail-chart-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:12px;
+}
+.detail-chart-grid.cols-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.detail-chart-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  padding:14px 14px 10px;
+  min-width:0;
+}
+.detail-chart-title{
+  font-size:13px;
+  font-weight:900;
+  color:#14243f;
+  margin-bottom:4px;
+}
+.detail-chart-sub{
+  font-size:10px;
+  color:#7a8798;
+  margin-bottom:8px;
+}
+.detail-chart-box{
+  height:260px;
+}
+@media(max-width:1100px){
+  .detail-chart-grid,
+  .detail-chart-grid.cols-3{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -818,8 +937,20 @@ th{position:sticky;top:0;background:#f8fafc}
         <div class="card kpi"><div class="kh"><div class="ico">☎</div>인입호</div><div class="kv" id="kpiPhoneIn">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trPhoneIn">직전 동기간 대비 -</div><div id="yrPhoneIn" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
         <div class="card kpi"><div class="kh"><div class="ico">☑</div>응답호</div><div class="kv" id="kpiPhoneAns">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trPhoneAns">직전 동기간 대비 -</div><div id="yrPhoneAns" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
         <div class="card kpi"><div class="kh"><div class="ico">％</div>응답률</div><div class="kv" id="kpiPhoneRate">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trPhoneRate">직전 동기간 대비 -</div><div id="yrPhoneRate" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-        <div class="card kpi"><div class="kh"><div class="ico">♟</div>CPH</div><div class="kv" id="kpiCph">-</div><div class="ks"><div class="ks-head"><span>비교</span><span>증감</span><span>차이</span></div><div id="trCph">직전 동기간 대비 -</div><div id="yrCph" style="margin-top:3px">전년 동기간 대비 -</div></div></div>
-      </div>
+        <div class="card kpi">
+  <div class="kh"><div class="ico">♟</div>CPH</div>
+  <div class="kv" id="kpiCph">-</div>
+  <div class="ks cph-ks">
+    <div class="cph-row">
+      <div class="cph-top"><span>직전 동기간</span><strong id="cphPrevVal">-</strong></div>
+      <div class="cph-diff" id="cphPrevDiff">-</div>
+    </div>
+    <div class="cph-row">
+      <div class="cph-top"><span>전년 동기간</span><strong id="cphYoyVal">-</strong></div>
+      <div class="cph-diff" id="cphYoyDiff">-</div>
+    </div>
+  </div>
+</div></div>
     </div>
 
     <div class="kpi-group digital">
@@ -1009,8 +1140,20 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="callRateChg">-</span></div>
     </div>
   </div>
-  <div class="compare-chart-note">※ 실선은 올해, 점선은 전년 동기간입니다.</div>
-  <div class="card large"><canvas id="callChart"></canvas></div>
+  
+  <div class="compare-chart-note">※ 올해는 항목별 색상의 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
+  <div class="detail-chart-grid">
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">인입호</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="callInChart"></canvas></div>
+    </div>
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">응답호</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="callAnsChart"></canvas></div>
+    </div>
+  </div>
 </section>
 <section id="erms" class="section">
   <div class="detail-head"><div class="detail-title">ERMS · 스마트러닝</div><div class="detail-period" id="ermsPeriod"></div></div>
@@ -1032,8 +1175,20 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="ermsAvgChg">-</span></div>
     </div>
   </div>
-  <div class="compare-chart-note">※ 실선은 올해, 점선은 전년 동기간입니다.</div>
-  <div class="card large"><canvas id="ermsChart"></canvas></div>
+  
+  <div class="compare-chart-note">※ 올해는 항목별 색상의 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
+  <div class="detail-chart-grid">
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">ERMS</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="ermsOnlyChart"></canvas></div>
+    </div>
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">스마트러닝앱</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="smartOnlyChart"></canvas></div>
+    </div>
+  </div>
 </section>
 <section id="chat" class="section">
   <div class="detail-head"><div class="detail-title">챗봇 이용</div><div class="detail-period" id="chatPeriod"></div></div>
@@ -1055,8 +1210,20 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="chatAvgChg">-</span></div>
     </div>
   </div>
-  <div class="compare-chart-note">※ 실선은 올해, 점선은 전년 동기간입니다.</div>
-  <div class="card large"><canvas id="chatChart"></canvas></div>
+  
+  <div class="compare-chart-note">※ 올해는 항목별 색상의 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
+  <div class="detail-chart-grid">
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">채팅상담</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="chatConsultOnlyChart"></canvas></div>
+    </div>
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">챗봇 이용</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="chatUseOnlyChart"></canvas></div>
+    </div>
+  </div>
 </section>
 <section id="book" class="section">
   <div class="detail-head"><div class="detail-title">교재 구매</div><div class="detail-period" id="bookPeriod"></div></div>
@@ -1078,8 +1245,25 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="exchangeChg">-</span></div>
     </div>
   </div>
-  <div class="compare-chart-note">※ 실선은 올해, 점선은 전년 동기간입니다.</div>
-  <div class="card large"><canvas id="bookChart"></canvas></div>
+  
+  <div class="compare-chart-note">※ 올해는 항목별 색상의 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
+  <div class="detail-chart-grid cols-3">
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">교재구매</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="bookBuyOnlyChart"></canvas></div>
+    </div>
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">반품</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="bookReturnOnlyChart"></canvas></div>
+    </div>
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">교환</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="bookExchangeOnlyChart"></canvas></div>
+    </div>
+  </div>
 </section>
 <section id="cph" class="section">
   <div class="detail-head"><div class="detail-title">CPH 현황</div><div class="detail-period" id="cphPeriod"></div></div>
@@ -1101,8 +1285,15 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="cphYearChg">-</span></div>
     </div>
   </div>
-  <div class="compare-chart-note">※ 실선은 올해, 점선은 전년 동기간입니다.</div>
-  <div class="card large"><canvas id="cphChart"></canvas></div>
+  
+  <div class="compare-chart-note">※ 올해는 항목별 색상의 막대그래프, 전년 동기간은 회색 점선으로 표시됩니다.</div>
+  <div class="detail-chart-grid" style="grid-template-columns:1fr">
+    <div class="detail-chart-card">
+      <div class="detail-chart-title">CPH</div>
+      <div class="detail-chart-sub">올해 vs 전년 동기간</div>
+      <div class="detail-chart-box"><canvas id="cphOnlyChart"></canvas></div>
+    </div>
+  </div>
 </section>
 <section id="refund" class="section"><div class="statgrid"><div class="card stat"><div class="lab">환불 신청</div><div class="val" id="refundCount">-</div></div><div class="card stat"><div class="lab">환불금액</div><div class="val" id="refundAmount">-</div></div><div class="card stat"><div class="lab">평균 환불금액</div><div class="val" id="refundAvg">-</div></div></div><div class="card large"><canvas id="refundChart"></canvas></div></section>
 
@@ -1261,6 +1452,83 @@ function asDate(v){
   return m ? `${m[1]}-${m[2].padStart(2,"0")}-${m[3].padStart(2,"0")}` : "";
 }
 
+
+
+function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,colorCur,opts={}){
+  if(charts[id]) charts[id].destroy();
+  const yoyColor="#6f7d92";
+  charts[id]=new Chart($(id),{
+    data:{
+      labels,
+      datasets:[
+        {
+          type:"bar",
+          label:currentLabel,
+          data:currentData.map(v=>Number(v)||0),
+          backgroundColor:colorCur,
+          borderColor:colorCur,
+          borderWidth:0,
+          borderRadius:4,
+          maxBarThickness:34,
+          order:2
+        },
+        {
+          type:"line",
+          label:yoyLabel,
+          data:yoyData.map(v=>Number(v)||0),
+          borderColor:yoyColor,
+          backgroundColor:"transparent",
+          borderWidth:2.2,
+          borderDash:[7,5],
+          pointRadius:2.6,
+          pointHoverRadius:4,
+          pointBackgroundColor:"#fff",
+          pointBorderColor:yoyColor,
+          pointBorderWidth:2,
+          tension:.22,
+          fill:false,
+          order:1
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:"index",intersect:false},
+      plugins:{
+        legend:{
+          position:"bottom",
+          labels:{
+            boxWidth:18,
+            boxHeight:8,
+            font:{size:10},
+            padding:12,
+            usePointStyle:false
+          }
+        },
+        tooltip:{
+          callbacks:{
+            label:(ctx)=>{
+              const v=ctx.parsed.y;
+              return `${ctx.dataset.label}: ${opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")}`;
+            }
+          }
+        }
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{size:10}}},
+        y:{
+          beginAtZero:true,
+          grid:{color:"#e8edf4"},
+          ticks:{
+            font:{size:10},
+            callback:(v)=>opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")
+          }
+        }
+      }
+    }
+  });
+}
 
 function compareLineChart(id, labels, datasets){
   if(charts[id]) charts[id].destroy();
@@ -1587,6 +1855,30 @@ async function applyFilter(){
   $("kpiAnswerPct").textContent=cur.answerPct.toFixed(2)+"%";
   $("kpiChatUse").textContent=fmt(cur.chatUse);
   $("kpiCph").textContent=cur.cph.toFixed(2);
+
+  // CPH 전용 비교표시: 공통 건수/증감률 로직과 분리
+  const curCphVal = Number(cur.cph)||0;
+  const prevCphVal = prv ? Number(prv.cph)||0 : null;
+  const yoyCphVal = yoy ? Number(yoy.cph)||0 : null;
+
+  const renderCphCompare=(valueId,diffId,baseVal)=>{
+    const vEl=$(valueId), dEl=$(diffId);
+    if(!vEl || !dEl) return;
+    if(baseVal===null){
+      vEl.textContent="데이터 없음";
+      dEl.textContent="-";
+      dEl.className="cph-diff";
+      return;
+    }
+    const diff=curCphVal-baseVal;
+    vEl.textContent=baseVal.toFixed(2);
+    dEl.textContent=(diff>0?"+":"")+diff.toFixed(2);
+    dEl.className="cph-diff "+(diff>0?"up":diff<0?"down":"");
+  };
+
+  renderCphCompare("cphPrevVal","cphPrevDiff",prevCphVal);
+  renderCphCompare("cphYoyVal","cphYoyDiff",yoyCphVal);
+
   $("kpiErms").textContent=fmt(cur.erms);
   $("kpiSmart").textContent=fmt(cur.smart);
 
@@ -1599,11 +1891,26 @@ async function applyFilter(){
     setComparison("trPhoneRate","직전 동기간 대비",cur.phoneRate,prv.phoneRate,"pp");
     setComparison("trAnswerPct","직전 동기간 대비",cur.answerPct,prv.answerPct,"pp");
     setComparison("trChatUse","직전 동기간 대비",cur.chatUse,prv.chatUse);
-    setComparison("trCph", "직전 동기간 대비", cur.cph, prv.cph, "pct", "cph");
+
+  // CPH 전년 동기간: 전년도 동일기간 평균 CPH를 소수점 2자리로 표시하고 차이만 표시
+  if($("yrCph")){
+    const yoyCph = yoy ? Number(yoy.cph)||0 : null;
+    if(yoyCph===null){
+      $("yrCph").innerHTML=`<div class="cmp-top"><span>전년 동기간</span><strong>데이터 없음</strong></div>
+                            <div class="cmp-bottom single"><span>-</span></div>`;
+    }else{
+      const d=(Number(cur.cph)||0)-yoyCph;
+      const cls=d>0?"up":d<0?"down":"";
+      const sign=d>0?"+":"";
+      $("yrCph").innerHTML=`<div class="cmp-top"><span>전년 동기간</span><strong>${yoyCph.toFixed(2)}</strong></div>
+                            <div class="cmp-bottom single"><span class="${cls}">${sign}${d.toFixed(2)}</span></div>`;
+    }
+  }
+
     setComparison("trErms","직전 동기간 대비",cur.erms,prv.erms);
     setComparison("trSmart","직전 동기간 대비",cur.smart,prv.smart);
   }else{
-    ["trTotalQ","trTotalA","trPhoneIn","trPhoneAns","trPhoneRate","trAnswerPct","trChatUse","trCph","trErms","trSmart"]
+    ["trTotalQ","trTotalA","trPhoneIn","trPhoneAns","trPhoneRate","trAnswerPct","trChatUse","trErms","trSmart"]
       .forEach(id=>$(id).textContent="직전 동기간 대비 - 데이터 없음");
   }
 
@@ -1611,7 +1918,7 @@ async function applyFilter(){
   const yoyMap=[
     ["yrTotalQ","totalQ","pct"],["yrTotalA","totalA","pct"],["yrAnswerPct","answerPct","pp"],
     ["yrPhoneIn","phoneIn","pct"],["yrPhoneAns","phoneAns","pct"],["yrPhoneRate","phoneRate","pp"],
-    ["yrCph","cph","num"],["yrErms","erms","pct"],["yrChatUse","chatUse","pct"],["yrSmart","smart","pct"]
+    ["yrErms","erms","pct"],["yrChatUse","chatUse","pct"],["yrSmart","smart","pct"]
   ];
   yoyMap.forEach(([id,key,mode])=>{
     if(yoy) setComparison(id,"전년 동기간 대비",cur[key],yoy[key],mode);
@@ -1732,6 +2039,163 @@ async function applyFilter(){
   ["callPeriod","ermsPeriod","chatPeriod","bookPeriod","cphPeriod"].forEach(id=>{
     if($(id)) $(id).textContent=detailPeriodText;
   });
+
+  // 좌측 상세 메뉴 데이터 카드 렌더링
+  const yoyAvailable = yoyRows.length > 0;
+
+  // Call 현황
+  setDetail("callInCur","callInYoy","callInChg",
+    cur.phoneIn, yoyAvailable ? yoy.phoneIn : null);
+  setDetail("callAnsCur","callAnsYoy","callAnsChg",
+    cur.phoneAns, yoyAvailable ? yoy.phoneAns : null);
+  setDetail("callRateCur","callRateYoy","callRateChg",
+    cur.phoneRate, yoyAvailable ? yoy.phoneRate : null, {type:"rate"});
+
+  // ERMS · 스마트러닝
+  const curErmsAvg = rows.length ? cur.erms / rows.length : 0;
+  const yoyErmsAvg = yoyAvailable ? yoy.erms / yoyRows.length : null;
+  setDetail("ermsCur","ermsYoy","ermsChg",
+    cur.erms, yoyAvailable ? yoy.erms : null);
+  setDetail("smartCur","smartYoy","smartChg",
+    cur.smart, yoyAvailable ? yoy.smart : null);
+  setDetail("ermsAvgCur","ermsAvgYoy","ermsAvgChg",
+    curErmsAvg, yoyErmsAvg, {type:"decimal",digits:1});
+
+  // 챗봇 이용
+  const curChatConsultDetail = sum(rows,"chatAccess");
+  const yoyChatConsultDetail = yoyAvailable ? sum(yoyRows,"chatAccess") : null;
+  const curChatAvg = rows.length ? cur.chatUse / rows.length : 0;
+  const yoyChatAvg = yoyAvailable ? yoy.chatUse / yoyRows.length : null;
+  setDetail("chatConsultCur","chatConsultYoy","chatConsultChg",
+    curChatConsultDetail, yoyChatConsultDetail);
+  setDetail("chatUseCur","chatUseYoy","chatUseChg",
+    cur.chatUse, yoyAvailable ? yoy.chatUse : null);
+  setDetail("chatAvgCur","chatAvgYoy","chatAvgChg",
+    curChatAvg, yoyChatAvg, {type:"decimal",digits:1});
+
+  // 교재 구매
+  const curBookDetail = sum(rows,"bookBuy");
+  const yoyBookDetail = yoyAvailable ? sum(yoyRows,"bookBuy") : null;
+  const curReturnDetail = sum(rows,"bookReturn");
+  const yoyReturnDetail = yoyAvailable ? sum(yoyRows,"bookReturn") : null;
+  const curExchangeDetail = sum(rows,"bookExchange");
+  const yoyExchangeDetail = yoyAvailable ? sum(yoyRows,"bookExchange") : null;
+
+  setDetail("bookCur","bookYoy","bookChg",
+    curBookDetail, yoyBookDetail);
+  setDetail("returnCur","returnYoy","returnChg",
+    curReturnDetail, yoyReturnDetail);
+  setDetail("exchangeCur","exchangeYoy","exchangeChg",
+    curExchangeDetail, yoyExchangeDetail);
+
+  // CPH 현황
+  const yoyLatestDetail = yoyAvailable ? yoyRows.at(-1) : null;
+  setDetail("cphAvgCur","cphAvgYoy","cphAvgChg",
+    cur.cph, yoyAvailable ? yoy.cph : null, {type:"decimal",digits:2});
+  setDetail("cphMonthCur","cphMonthYoy","cphMonthChg",
+    Number(latest.cphMonth)||0,
+    yoyLatestDetail ? Number(yoyLatestDetail.cphMonth)||0 : null,
+    {type:"decimal",digits:2});
+  setDetail("cphYearCur","cphYearYoy","cphYearChg",
+    Number(latest.cphYear)||0,
+    yoyLatestDetail ? Number(yoyLatestDetail.cphYear)||0 : null,
+    {type:"decimal",digits:2});
+
+
+  const detailLabels=rows.map(r=>r.date.slice(5));
+  const yoyRowAt=i=>yoyRows[i]||{};
+
+  // Call: 지표별 분리
+  barVsYoyChart(
+    "callInChart",
+    detailLabels,
+    rows.map(r=>r.phoneIn),
+    rows.map((r,i)=>yoyRowAt(i).phoneIn),
+    "인입호 올해","인입호 전년",
+    "#0b2b59"
+  );
+  barVsYoyChart(
+    "callAnsChart",
+    detailLabels,
+    rows.map(r=>r.phoneAns),
+    rows.map((r,i)=>yoyRowAt(i).phoneAns),
+    "응답호 올해","응답호 전년",
+    "#f4b400"
+  );
+
+  // ERMS / 스마트러닝: 각각 분리
+  barVsYoyChart(
+    "ermsOnlyChart",
+    detailLabels,
+    rows.map(r=>r.ermsCount),
+    rows.map((r,i)=>yoyRowAt(i).ermsCount),
+    "ERMS 올해","ERMS 전년",
+    "#7d3fc7"
+  );
+  barVsYoyChart(
+    "smartOnlyChart",
+    detailLabels,
+    rows.map(r=>r.smart),
+    rows.map((r,i)=>yoyRowAt(i).smart),
+    "스마트러닝 올해","스마트러닝 전년",
+    "#1767d9"
+  );
+
+  // 챗봇 이용: 채팅상담 / 챗봇 이용 각각 분리
+  barVsYoyChart(
+    "chatConsultOnlyChart",
+    detailLabels,
+    rows.map(r=>r.chatAccess),
+    rows.map((r,i)=>yoyRowAt(i).chatAccess),
+    "채팅상담 올해","채팅상담 전년",
+    "#f97316"
+  );
+  barVsYoyChart(
+    "chatUseOnlyChart",
+    detailLabels,
+    rows.map(r=>r.chatUse),
+    rows.map((r,i)=>yoyRowAt(i).chatUse),
+    "챗봇 이용 올해","챗봇 이용 전년",
+    "#0b2b59"
+  );
+
+  // 교재 구매: 교재구매 / 반품 / 교환 각각 분리
+  barVsYoyChart(
+    "bookBuyOnlyChart",
+    detailLabels,
+    rows.map(r=>r.bookBuy),
+    rows.map((r,i)=>yoyRowAt(i).bookBuy),
+    "교재구매 올해","교재구매 전년",
+    "#1767d9"
+  );
+  barVsYoyChart(
+    "bookReturnOnlyChart",
+    detailLabels,
+    rows.map(r=>r.bookReturn),
+    rows.map((r,i)=>yoyRowAt(i).bookReturn),
+    "반품 올해","반품 전년",
+    "#22c55e"
+  );
+  barVsYoyChart(
+    "bookExchangeOnlyChart",
+    detailLabels,
+    rows.map(r=>r.bookExchange),
+    rows.map((r,i)=>yoyRowAt(i).bookExchange),
+    "교환 올해","교환 전년",
+    "#ef4444"
+  );
+
+  // CPH
+  barVsYoyChart(
+    "cphOnlyChart",
+    detailLabels,
+    rows.map(r=>r.cphDay),
+    rows.map((r,i)=>yoyRowAt(i).cphDay),
+    "CPH 올해","CPH 전년",
+    "#0b2b59",
+    {decimal:true}
+  );
+
   // Call 상세 카드 - 선택기간 / 전년 동기간 / 전년대비
   setDetail("callInCur","callInYoy","callInChg",
     cur.phoneIn, yoy ? yoy.phoneIn : null);
@@ -1742,57 +2206,20 @@ async function applyFilter(){
   setDetail("callRateCur","callRateYoy","callRateChg",
     cur.phoneRate, yoy ? yoy.phoneRate : null, {type:"rate"});
 
-  compareLineChart("callChart",rows.map(r=>r.date.slice(5)),[
-    {label:"인입호 올해",data:rows.map(r=>Number(r.phoneIn)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"인입호 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).phoneIn)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
-    {label:"응답호 올해",data:rows.map(r=>Number(r.phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"응답호 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
-  ]);
-
 
   // 비교 그래프: 올해 실선 / 전년 동기간 점선
   const currentLabels=rows.map(r=>r.date.slice(5));
   const yoyAt=i=>yoyRows[i]||{};
 
   // Call
-  compareLineChart("callChart",currentLabels,[
-    {label:"인입호 올해",data:rows.map(r=>Number(r.phoneIn)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"인입호 전년",data:rows.map((r,i)=>Number(yoyAt(i).phoneIn)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
-    {label:"응답호 올해",data:rows.map(r=>Number(r.phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"응답호 전년",data:rows.map((r,i)=>Number(yoyAt(i).phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
-  ]);
 
   // ERMS / 스마트러닝
-  compareLineChart("ermsChart",currentLabels,[
-    {label:"ERMS 올해",data:rows.map(r=>Number(r.ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"ERMS 전년",data:rows.map((r,i)=>Number(yoyAt(i).ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
-    {label:"스마트러닝 올해",data:rows.map(r=>Number(r.smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"스마트러닝 전년",data:rows.map((r,i)=>Number(yoyAt(i).smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
-  ]);
 
   // 챗봇
-  compareLineChart("chatChart",currentLabels,[
-    {label:"채팅상담 올해",data:rows.map(r=>Number(r.chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"채팅상담 전년",data:rows.map((r,i)=>Number(yoyAt(i).chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
-    {label:"챗봇이용 올해",data:rows.map(r=>Number(r.chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"챗봇이용 전년",data:rows.map((r,i)=>Number(yoyAt(i).chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
-  ]);
 
   // 교재
-  compareLineChart("bookChart",currentLabels,[
-    {label:"교재구매 올해",data:rows.map(r=>Number(r.bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"교재구매 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
-    {label:"반품 올해",data:rows.map(r=>Number(r.bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.2,pointRadius:2.2},
-    {label:"반품 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6},
-    {label:"교환 올해",data:rows.map(r=>Number(r.bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:2.2,pointRadius:2.2},
-    {label:"교환 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6}
-  ]);
 
   // CPH
-  compareLineChart("cphChart",currentLabels,[
-    {label:"CPH 올해",data:rows.map(r=>Number(r.cphDay)||0),borderColor:"#0b2b59",backgroundColor:"#0b2b5910",fill:true,tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"CPH 전년",data:rows.map((r,i)=>Number(yoyAt(i).cphDay)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
-  ]);
 
   // 환불은 공개용 일자별 집계 사용
   const rr=refundDaily.filter(r=>r.date>=s&&r.date<=e);
