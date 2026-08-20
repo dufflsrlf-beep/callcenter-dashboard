@@ -358,7 +358,8 @@ button,input,select{font:inherit}
 }
 .bottom{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(3,minmax(0,460px));
+  justify-content:center;
   gap:10px;
 }
 .mini{
@@ -559,7 +560,7 @@ th{position:sticky;top:0;background:#f8fafc}
 @media(max-width:1500px){
   .kpi-groups{grid-template-columns:1fr}
   .mid{grid-template-columns:1fr}
-  .bottom{grid-template-columns:repeat(3,1fr)}
+  .bottom{grid-template-columns:repeat(3,minmax(0,460px));justify-content:center}
 }
 @media(max-width:1050px){
   .app{grid-template-columns:78px 1fr}
@@ -1459,36 +1460,84 @@ async function applyFilter(){
     {label:"응답호 전년",data:rows.map((r,i)=>Number(yoyAt(i).phoneAns)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // ERMS / 스마트러닝
-  compareLineChart("ermsChart",currentLabels,[
+
+
+  // ERMS · 스마트러닝 상세 카드
+  const curErmsAvg = rows.length ? cur.erms / rows.length : 0;
+  const yoyErmsAvg = yoyRows.length ? yoy.erms / yoyRows.length : null;
+
+  setDetail("ermsCur","ermsYoy","ermsChg",
+    cur.erms, yoy ? yoy.erms : null);
+  setDetail("smartCur","smartYoy","smartChg",
+    cur.smart, yoy ? yoy.smart : null);
+  setDetail("ermsAvgCur","ermsAvgYoy","ermsAvgChg",
+    curErmsAvg, yoyErmsAvg, {type:"decimal",digits:1});
+
+  compareLineChart("ermsChart",rows.map(r=>r.date.slice(5)),[
     {label:"ERMS 올해",data:rows.map(r=>Number(r.ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"ERMS 전년",data:rows.map((r,i)=>Number(yoyAt(i).ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+    {label:"ERMS 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).ermsCount)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
     {label:"스마트러닝 올해",data:rows.map(r=>Number(r.smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"스마트러닝 전년",data:rows.map((r,i)=>Number(yoyAt(i).smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+    {label:"스마트러닝 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).smart)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // 챗봇
-  compareLineChart("chatChart",currentLabels,[
+  // 챗봇 상세 카드
+  const curChatConsult = sum(rows,"chatAccess");
+  const yoyChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
+  const curChatAvg = rows.length ? cur.chatUse / rows.length : 0;
+  const yoyChatAvg = yoyRows.length ? yoy.chatUse / yoyRows.length : null;
+
+  setDetail("chatConsultCur","chatConsultYoy","chatConsultChg",
+    curChatConsult, yoyChatConsult);
+  setDetail("chatUseCur","chatUseYoy","chatUseChg",
+    cur.chatUse, yoy ? yoy.chatUse : null);
+  setDetail("chatAvgCur","chatAvgYoy","chatAvgChg",
+    curChatAvg, yoyChatAvg, {type:"decimal",digits:1});
+
+  compareLineChart("chatChart",rows.map(r=>r.date.slice(5)),[
     {label:"챗봇상담 올해",data:rows.map(r=>Number(r.chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"챗봇상담 전년",data:rows.map((r,i)=>Number(yoyAt(i).chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+    {label:"챗봇상담 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).chatAccess)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
     {label:"챗봇이용 올해",data:rows.map(r=>Number(r.chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"챗봇이용 전년",data:rows.map((r,i)=>Number(yoyAt(i).chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+    {label:"챗봇이용 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).chatUse)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
-  // 교재
-  compareLineChart("bookChart",currentLabels,[
+  // 교재 구매 상세 카드
+  const curBook = sum(rows,"bookBuy");
+  const curReturn = sum(rows,"bookReturn");
+  const curExchange = sum(rows,"bookExchange");
+  const yoyBook = yoyRows.length ? sum(yoyRows,"bookBuy") : null;
+  const yoyReturn = yoyRows.length ? sum(yoyRows,"bookReturn") : null;
+  const yoyExchange = yoyRows.length ? sum(yoyRows,"bookExchange") : null;
+
+  setDetail("bookCur","bookYoy","bookChg",curBook,yoyBook);
+  setDetail("returnCur","returnYoy","returnChg",curReturn,yoyReturn);
+  setDetail("exchangeCur","exchangeYoy","exchangeChg",curExchange,yoyExchange);
+
+  compareLineChart("bookChart",rows.map(r=>r.date.slice(5)),[
     {label:"교재구매 올해",data:rows.map(r=>Number(r.bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"교재구매 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
+    {label:"교재구매 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookBuy)||0),borderColor:"#0b2b59",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8},
     {label:"반품 올해",data:rows.map(r=>Number(r.bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:2.2,pointRadius:2.2},
-    {label:"반품 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6},
+    {label:"반품 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookReturn)||0),borderColor:"#f4b400",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6},
     {label:"교환 올해",data:rows.map(r=>Number(r.bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:2.2,pointRadius:2.2},
-    {label:"교환 전년",data:rows.map((r,i)=>Number(yoyAt(i).bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6}
+    {label:"교환 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).bookExchange)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.6,borderDash:[6,5],pointRadius:1.6}
   ]);
 
-  // CPH
-  compareLineChart("cphChart",currentLabels,[
+  // CPH 상세 카드
+  const yoyCphLatest = yoyRows.length ? yoyRows.at(-1) : null;
+  const curCphMonth = Number(latest.cphMonth)||0;
+  const curCphYear = Number(latest.cphYear)||0;
+  const yoyCphMonth = yoyCphLatest ? (Number(yoyCphLatest.cphMonth)||0) : null;
+  const yoyCphYear = yoyCphLatest ? (Number(yoyCphLatest.cphYear)||0) : null;
+
+  setDetail("cphAvgCur","cphAvgYoy","cphAvgChg",
+    cur.cph, yoy ? yoy.cph : null, {type:"decimal",digits:2});
+  setDetail("cphMonthCur","cphMonthYoy","cphMonthChg",
+    curCphMonth, yoyCphMonth, {type:"decimal",digits:2});
+  setDetail("cphYearCur","cphYearYoy","cphYearChg",
+    curCphYear, yoyCphYear, {type:"decimal",digits:2});
+
+  compareLineChart("cphChart",rows.map(r=>r.date.slice(5)),[
     {label:"CPH 올해",data:rows.map(r=>Number(r.cphDay)||0),borderColor:"#0b2b59",backgroundColor:"#0b2b5910",fill:true,tension:.25,borderWidth:2.4,pointRadius:2.4},
-    {label:"CPH 전년",data:rows.map((r,i)=>Number(yoyAt(i).cphDay)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
+    {label:"CPH 전년",data:rows.map((r,i)=>Number((yoyRows[i]||{}).cphDay)||0),borderColor:"#7d3fc7",backgroundColor:"transparent",tension:.25,borderWidth:1.8,borderDash:[6,5],pointRadius:1.8}
   ]);
 
   // 환불은 공개용 일자별 집계 사용
@@ -1728,11 +1777,16 @@ $("clearBtn").addEventListener("click",async()=>{
 });
 
 document.querySelectorAll(".menu button[data-target]").forEach(b=>b.addEventListener("click",()=>{
+  const target=$(b.dataset.target);
+  if(!target){
+    console.warn("메뉴 대상 섹션을 찾지 못했습니다:",b.dataset.target);
+    return;
+  }
   document.querySelectorAll(".menu button[data-target]").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
   document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
-  $(b.dataset.target).classList.add("active");
-  setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),50);
+  target.classList.add("active");
+  setTimeout(()=>Object.values(charts).forEach(c=>{try{c.resize();}catch(e){}}),50);
 }));
 
 (async()=>{
