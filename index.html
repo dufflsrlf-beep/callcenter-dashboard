@@ -899,7 +899,7 @@ th{position:sticky;top:0;background:#f8fafc}
             <input id="dailyFile" type="file" accept=".xlsx,.xls,.csv">
             <div style="margin-top:9px"><button class="btn secondary" id="dailySampleBtn">샘플 Excel</button></div>
           </div>
-          <div id="dailyStatus" class="status">Firestore 확인 중...</div><div class="status" style="color:#c2410c">※ 날짜 완전보정 적용본: Excel 날짜를 일련번호 기준으로 저장합니다. 기존 데이터는 반드시 다시 업로드해 주세요.</div>
+          <div id="dailyStatus" class="status">Firestore 확인 중...</div><div class="status" style="color:#c2410c">※ 날짜 완전보정 적용본: Excel 날짜를 일련번호 기준으로 저장합니다. 기존 데이터는 반드시 다시 업로드해 주세요.<br>※ 전화 응답률 열은 샘플/업로드용으로 추가되며, 대시보드 응답률은 총응답호 ÷ 전화인입호로 계산합니다.</div>
         </div>
 
         <div class="card upload">
@@ -1505,6 +1505,7 @@ async function upload(file,type){
         totalA:num(pick(o,["총답변량"])),
         answerPct:num(pick(o,["총답변률"])),
         phoneIn:num(pick(o,["전화인입호"])),
+        phoneRateExcel:num(pick(o,["전화 응답률","전화응답률"])),
         phoneAns:num(pick(o,["총응답호","총응답호 (a+b+c)"])),
         hq:num(pick(o,["응답호 (주간/본사)a"])),
         sourcing:num(pick(o,["응답호 (주간/소싱)b"])),
@@ -1601,8 +1602,8 @@ function renderRaw(){
     .slice().reverse().slice(0,200);
 
   if(type==="daily"){
-    $("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";
-    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
+    $("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>전화 응답률</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${r.phoneRateExcel?((Number(r.phoneRateExcel)<=1?Number(r.phoneRateExcel)*100:Number(r.phoneRateExcel)).toFixed(1)+"%"):"-"}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
   }else{
     $("rawHead").innerHTML="<tr><th>신청일</th><th>아이디</th><th>이름</th><th>종류</th><th>환불금액</th><th>사유1</th><th>사유2</th><th>환불방법</th></tr>";
     $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.applyDate}</td><td>${r.uid}</td><td>${r.name}</td><td>${r.type}</td><td>${fmt(r.refundAmount)}</td><td>${r.reason1}</td><td>${r.reason2}</td><td>${r.refundMethod}</td></tr>`).join("");
@@ -1610,9 +1611,11 @@ function renderRaw(){
 }
 
 function dailySample(){
-  const h=["일자","요일","총문의량","총답변량","총답변률","전화인입호","총응답호 (a+b+c)","응답호 (주간/본사)a","응답호 (주간/소싱)b","응답호 (야간)c","ERMS 건수","스마트러닝앱","챗봇접속","교재구매건수","반품(환불)","교환","챗봇이용건","바로취소","CPH (일별)","CPH (주간누적)","CPH (월간누적)","CPH (연간누적)"];
-  const r=["2026-08-17","월",1140,1121,0.9833,484,465,0,383,82,283,33,252,14345,238,42,1710,649,7.40,7.37,7.41,7.38];
+  const h=["일자","요일","총문의량","총답변량","총답변률","전화인입호","전화 응답률","총응답호 (a+b+c)","응답호 (주간/본사)a","응답호 (주간/소싱)b","응답호 (야간)c","ERMS 건수","스마트러닝앱","챗봇접속","교재구매건수","반품(환불)","교환","챗봇이용건","바로취소","CPH (일별)","CPH (주간누적)","CPH (월간누적)","CPH (연간누적)"];
+  const r=["2026-08-17","월",1140,1121,0.9833,484,0.9607,465,0,383,82,283,33,252,14345,238,42,1710,649,7.40,7.37,7.41,7.38];
   const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);
+  if(ws["E2"]) ws["E2"].z="0.0%";
+  if(ws["G2"]) ws["G2"].z="0.0%";
   XLSX.utils.book_append_sheet(wb,ws,"일일운영실적");
   XLSX.writeFile(wb,"콜센터_일일운영실적_샘플.xlsx");
 }
