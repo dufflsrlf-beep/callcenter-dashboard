@@ -1383,632 +1383,6 @@ th{position:sticky;top:0;background:#f8fafc}
 }
 
 
-
-/* 환불 현황 */
-.refund-head{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:12px}
-.refund-head h2{margin:0;font-size:20px;color:#10213d}
-.refund-desc{margin-top:4px;font-size:11px;color:#7b8799}
-.refund-filterbar{display:flex;gap:10px;flex-wrap:wrap}
-.refund-filterbar label{font-size:10px;font-weight:800;color:#526176;display:flex;align-items:center;gap:6px}
-.refund-filterbar select{height:34px;border:1px solid #d8e1ec;border-radius:8px;background:#fff;padding:0 26px 0 10px;font-size:11px;color:#13233f}
-.refund-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
-.refund-kpi{padding:15px 16px}
-.rk-label{font-size:11px;font-weight:900;color:#4f5f75}
-.rk-value{font-size:25px;font-weight:900;color:#10213d;margin:10px 0}
-.rk-compare{font-size:10px;color:#718096}
-.rk-compare b{color:#384861;margin-left:5px}
-.refund-main-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:12px;margin-bottom:12px}
-.refund-sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.refund-chart-card,.refund-card{padding:14px}
-.refund-card-title{font-size:14px;font-weight:900;color:#12223c}
-.refund-card-sub{font-size:10px;color:#7d899b;margin-top:3px}
-.refund-chart-box{height:300px;margin-top:10px}
-.refund-table-head,.refund-data-row{display:grid;grid-template-columns:1.15fr .65fr 1fr .72fr;align-items:center;gap:8px}
-.refund-table-head.reason,.refund-data-row.reason{grid-template-columns:1.7fr .7fr .7fr}
-.refund-table-head{font-size:10px;font-weight:800;color:#778397;padding:10px 2px 8px;border-bottom:1px solid #dfe6ef}
-.refund-table-head span:not(:first-child),.refund-data-row span:not(:first-child){text-align:right}
-.refund-data-row{font-size:11px;padding:11px 2px;border-bottom:1px solid #edf1f5}
-.refund-data-row:last-child{border-bottom:0}
-.refund-data-row .name{font-weight:800;color:#1a2a44}
-.refund-data-row .num{font-weight:900;color:#11213b}
-.refund-note{font-size:10px;color:#7c899b;margin-top:9px}
-@media(max-width:1200px){
-  .refund-kpis{grid-template-columns:repeat(2,1fr)}
-  .refund-main-grid,.refund-sub-grid{grid-template-columns:1fr}
-}
-
-
-/* 상담 채널: 채널 | 올해 | 비중 | 전년 | 전년대비 | 건수 비교 */
-.channel-table-head,
-.channel-row{
-  grid-template-columns:minmax(95px,.88fr) 74px 64px 74px 78px minmax(155px,1.55fr) !important;
-  column-gap:0 !important;
-}
-.channel-row .cshare{
-  text-align:right;
-  font-size:11px !important;
-  font-weight:800;
-  color:#58677d;
-  white-space:nowrap;
-}
-.channel-table-head > div:nth-child(6),
-.channel-row > .dual-bar-cell{
-  border-left:1px solid #d7e0eb !important;
-  padding-left:14px !important;
-}
-.channel-table-head > div:nth-child(5),
-.channel-row > .cchg{
-  padding-right:12px !important;
-}
-.channel-table-head > div:nth-child(5){
-  border-left:0 !important;
-  padding-left:0 !important;
-}
-.channel-simple-head,
-.channel-simple-row{
-  grid-template-columns:minmax(95px,.90fr) 82px 82px 82px minmax(155px,1.55fr) !important;
-}
-
-
-/* 채널별 현황 정렬 최종
-   상담 채널: 채널 | 올해 | 비중 | 전년 | 전년대비 | 건수 비교
-   기타 이용 현황: 항목 | 올해 | 전년 | 전년대비 | 건수 비교 */
-
-/* 상담 채널 6열 */
-.channel-table-head,
-.channel-row{
-  grid-template-columns:minmax(105px,1.05fr) 72px 62px 72px 78px minmax(170px,1.6fr) !important;
-  column-gap:0 !important;
-}
-
-/* 기타 이용 현황 5열 — 비중 열 없음 */
-.channel-simple-head,
-.channel-simple-row{
-  grid-template-columns:minmax(105px,1.05fr) 92px 92px 82px minmax(170px,1.6fr) !important;
-  column-gap:0 !important;
-}
-
-/* 숫자열 정렬 */
-.channel-table-head > div:nth-child(2),
-.channel-table-head > div:nth-child(3),
-.channel-table-head > div:nth-child(4),
-.channel-table-head > div:nth-child(5),
-.channel-simple-head > div:nth-child(2),
-.channel-simple-head > div:nth-child(3),
-.channel-simple-head > div:nth-child(4){
-  text-align:right !important;
-}
-
-/* 건수 비교 앞 세로 구분선 */
-.channel-table-head > div:nth-child(6),
-.channel-row > .dual-bar-cell{
-  border-left:1px solid #d7e0eb !important;
-  padding-left:14px !important;
-}
-.channel-simple-head > div:nth-child(5),
-.channel-simple-row > .dual-bar-cell{
-  border-left:1px solid #d7e0eb !important;
-  padding-left:14px !important;
-}
-
-/* 전년대비와 그래프 사이 여백 */
-.channel-row > .cchg,
-.channel-simple-row > .cchg{
-  padding-right:12px !important;
-}
-
-/* 이전 수정에서 기타 이용 현황에 강제로 비중 자리 만든 규칙 무력화 */
-.channel-simple-row > :nth-child(1),
-.channel-simple-row > :nth-child(2),
-.channel-simple-row > :nth-child(3),
-.channel-simple-row > :nth-child(4),
-.channel-simple-row > :nth-child(5){
-  grid-column:auto !important;
-}
-.channel-simple-head > div:nth-child(3)::before{
-  content:none !important;
-}
-.channel-simple-head > div:nth-child(3){
-  font-size:inherit !important;
-}
-
-
-/* 채널별 현황 레이아웃 조정
-   1) 채널/항목 ↔ 올해 간격 축소
-   2) 상담채널/기타 이용현황의 건수 비교 그래프 폭 동일 */
-
-/* 상담 채널 */
-.channel-table-head,
-.channel-row{
-  grid-template-columns:minmax(88px,.78fr) 70px 62px 72px 78px minmax(190px,1.72fr) !important;
-  column-gap:0 !important;
-}
-
-/* 기타 이용 현황 */
-.channel-simple-head,
-.channel-simple-row{
-  grid-template-columns:minmax(88px,.78fr) 82px 82px 82px minmax(190px,1.72fr) !important;
-  column-gap:0 !important;
-}
-
-/* 첫 번째 열 오른쪽 여백 축소 */
-.channel-table-head > div:first-child,
-.channel-row > .channel-name-wrap,
-.channel-simple-head > div:first-child,
-.channel-simple-row > .channel-name-wrap{
-  padding-right:2px !important;
-}
-
-/* 올해 열도 좌측 여백 최소화 */
-.channel-table-head > div:nth-child(2),
-.channel-row > .cval,
-.channel-simple-head > div:nth-child(2),
-.channel-simple-row > .cval{
-  padding-left:0 !important;
-}
-
-/* 건수 비교 그래프 영역 폭/내부 여백 완전 통일 */
-.channel-row > .dual-bar-cell,
-.channel-simple-row > .dual-bar-cell{
-  width:100% !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-  padding-left:14px !important;
-}
-.channel-row .dual-bar-line,
-.channel-simple-row .dual-bar-line,
-.channel-row .channel-track,
-.channel-simple-row .channel-track{
-  width:100% !important;
-  min-width:0 !important;
-}
-
-/* 헤더의 건수 비교 시작점도 동일 */
-.channel-table-head > div:nth-child(6),
-.channel-simple-head > div:nth-child(5){
-  padding-left:14px !important;
-  border-left:1px solid #d7e0eb !important;
-}
-
-
-/* 기타 이용 현황 - 교재 3종 그룹 */
-.book-channel-group{
-  margin:7px 0;
-  padding:7px 8px 4px;
-  border:1px solid #dfe6ef;
-  border-radius:9px;
-  background:#f8fafc;
-}
-.book-group-label{
-  display:inline-flex;
-  align-items:center;
-  height:22px;
-  padding:0 8px;
-  margin:0 0 3px 2px;
-  border-radius:6px;
-  background:#eef3f8;
-  color:#4d5f76;
-  font-size:10px;
-  font-weight:900;
-}
-.book-channel-group .grouped-row{
-  background:transparent !important;
-}
-.book-channel-group .grouped-row:last-child{
-  border-bottom:0 !important;
-}
-.book-channel-group .grouped-row .cname{
-  font-weight:800;
-}
-
-
-/* 교재 그룹: 라벨만 유지, 외곽 박스/배경 제거 */
-.book-channel-group{
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  box-shadow:none !important;
-}
-.book-group-label{
-  display:inline-flex !important;
-  align-items:center !important;
-  height:22px !important;
-  padding:0 8px !important;
-  margin:7px 0 3px 0 !important;
-  border-radius:6px !important;
-  background:#f1f4f8 !important;
-  color:#4d5f76 !important;
-  font-size:10px !important;
-  font-weight:900 !important;
-}
-.book-channel-group .grouped-row{
-  background:#fff !important;
-  border-radius:0 !important;
-  margin:0 !important;
-  padding-left:0 !important;
-  padding-right:0 !important;
-  box-shadow:none !important;
-}
-/* 다른 기타 이용 현황 행과 동일한 가로 구분선 유지 */
-.book-channel-group .grouped-row{
-  border-bottom:1px solid #dfe6ef !important;
-}
-.book-channel-group .grouped-row:last-child{
-  border-bottom:1px solid #dfe6ef !important;
-}
-
-
-/* 교재 그룹 라벨 제거 후 일반 행과 동일하게 연속 배치 */
-.book-channel-group{
-  margin:0 !important;
-  padding:0 !important;
-}
-
-
-/* 채널별 현황: 상담채널/기타 이용현황 열 간격 완전 동일
-   기타 이용현황 비중은 공란 */
-.channel-table-head,
-.channel-row,
-.channel-simple-head,
-.channel-simple-row{
-  grid-template-columns:minmax(88px,.78fr) 70px 62px 72px 78px minmax(190px,1.72fr) !important;
-  column-gap:0 !important;
-}
-
-/* 숫자열 동일 정렬 */
-.channel-table-head > div:nth-child(2),
-.channel-table-head > div:nth-child(3),
-.channel-table-head > div:nth-child(4),
-.channel-table-head > div:nth-child(5),
-.channel-simple-head > div:nth-child(2),
-.channel-simple-head > div:nth-child(3),
-.channel-simple-head > div:nth-child(4),
-.channel-simple-head > div:nth-child(5){
-  text-align:right !important;
-}
-
-/* 비중 열 */
-.channel-row .cshare,
-.channel-simple-row .cshare{
-  text-align:right !important;
-  font-size:11px !important;
-  font-weight:800 !important;
-  color:#58677d !important;
-  white-space:nowrap !important;
-}
-.channel-simple-row .empty-share{
-  color:transparent !important;
-}
-
-/* 건수 비교 앞 구분선 동일 */
-.channel-table-head > div:nth-child(6),
-.channel-row > .dual-bar-cell,
-.channel-simple-head > div:nth-child(6),
-.channel-simple-row > .dual-bar-cell{
-  border-left:1px solid #d7e0eb !important;
-  padding-left:14px !important;
-}
-
-/* 전년대비 우측 여백 동일 */
-.channel-row > .cchg,
-.channel-simple-row > .cchg{
-  padding-right:12px !important;
-}
-
-/* 그래프 폭/내부 간격 동일 */
-.channel-row > .dual-bar-cell,
-.channel-simple-row > .dual-bar-cell{
-  width:100% !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-}
-.channel-row .dual-bar-line,
-.channel-simple-row .dual-bar-line,
-.channel-row .channel-track,
-.channel-simple-row .channel-track{
-  width:100% !important;
-  min-width:0 !important;
-}
-
-
-.channel-simple-row > :nth-child(1),
-.channel-simple-row > :nth-child(2),
-.channel-simple-row > :nth-child(3),
-.channel-simple-row > :nth-child(4),
-.channel-simple-row > :nth-child(5),
-.channel-simple-row > :nth-child(6){
-  grid-column:auto !important;
-}
-
-
-/* 메인화면 4단 재배치 */
-#overview .kpi-groups{
-  display:grid !important;
-  grid-template-columns:minmax(0,1.02fr) minmax(0,1.32fr) minmax(0,1.08fr) !important;
-  gap:10px !important;
-  margin-bottom:12px !important;
-}
-#overview .main-trend-full{
-  width:100% !important;
-  margin-bottom:12px !important;
-}
-#overview .main-trend-full .chart-card{
-  width:100% !important;
-  max-width:none !important;
-}
-#overview .main-trend-full .chartbox{
-  height:310px !important;
-  min-height:310px !important;
-}
-#overview .channel-section-full{
-  width:100% !important;
-  margin-bottom:12px !important;
-}
-#overview .channel-section-header{
-  display:flex !important;
-  justify-content:space-between !important;
-  align-items:center !important;
-  margin:0 2px 7px !important;
-}
-#overview .channel-section-header h3{
-  margin:0 !important;
-  font-size:14px !important;
-  font-weight:900 !important;
-}
-#overview .channel-section-header span{
-  font-size:10px !important;
-  color:#8a96a8 !important;
-}
-#overview .channel-split-grid{
-  display:grid !important;
-  grid-template-columns:1fr 1fr !important;
-  gap:12px !important;
-}
-#overview .channel-half-card{
-  min-width:0 !important;
-  padding:12px 14px !important;
-}
-#overview .channel-half-card .channel-table-head,
-#overview .channel-half-card .channel-row,
-#overview .channel-half-card .channel-simple-head,
-#overview .channel-half-card .channel-simple-row{
-  grid-template-columns:minmax(100px,.86fr) 78px 78px 86px minmax(190px,1.65fr) !important;
-}
-#overview .channel-half-card .dual-bar-cell,
-#overview .channel-half-card .dual-bar-line,
-#overview .channel-half-card .channel-track{
-  width:100% !important;
-  min-width:0 !important;
-}
-#overview .bottom{
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  gap:10px !important;
-  width:100% !important;
-}
-@media(max-width:1200px){
-  #overview .channel-split-grid{grid-template-columns:1fr !important;}
-  #overview .bottom{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
-}
-@media(max-width:900px){
-  #overview .kpi-groups,
-  #overview .bottom{grid-template-columns:1fr !important;}
-}
-
-
-/* 메인 일자별 막대그래프 시각 조정 */
-#overview .main-trend-full .chartbox{
-  height:310px !important;
-}
-
-
-/* 기타 이용 현황: 비중 열 삭제 */
-#overview .channel-half-card .channel-simple-head,
-#overview .channel-half-card .channel-simple-row{
-  grid-template-columns:minmax(100px,.86fr) 78px 78px 86px minmax(190px,1.65fr) !important;
-}
-#overview .channel-simple-head > div:nth-child(5),
-#overview .channel-simple-row > .dual-bar-cell{
-  border-left:1px solid #d7e0eb !important;
-  padding-left:14px !important;
-}
-
-
-/* ===== 첨부 이미지 기준 메인 2~3번째 줄 최종 정렬 ===== */
-
-/* 2번째 줄: 일자별 총 문의·답변 추이 - 전체폭, 낮은 높이 */
-#overview .main-trend-full{
-  width:100% !important;
-  margin-bottom:8px !important;
-}
-#overview .main-trend-full .chart-card{
-  width:100% !important;
-  max-width:none !important;
-  padding:12px 14px 8px !important;
-}
-#overview .main-trend-full .chart-card h3{
-  margin:0 0 3px !important;
-  font-size:14px !important;
-}
-#overview .main-trend-full .chart-card .sub{
-  margin:0 0 4px !important;
-  font-size:10px !important;
-}
-#overview .main-trend-full .chartbox{
-  height:240px !important;
-  min-height:240px !important;
-  max-height:240px !important;
-}
-
-/* 막대: 더 굵게 + 같은 일자의 두 막대 최대한 붙임 */
-#mainBar{
-  width:100% !important;
-  height:240px !important;
-  max-height:240px !important;
-}
-
-/* 3번째 줄: 상담 채널 / 기타 이용 현황 정확히 반반 */
-#overview .channel-section-full{
-  margin-bottom:10px !important;
-}
-#overview .channel-section-header{
-  display:none !important; /* 이미지처럼 공통 '채널별 현황' 제목 제거 */
-}
-#overview .channel-split-grid{
-  display:grid !important;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
-  gap:8px !important;
-  align-items:stretch !important;
-}
-#overview .channel-half-card{
-  padding:10px 12px 8px !important;
-  border-radius:10px !important;
-  min-width:0 !important;
-  height:auto !important;
-}
-
-/* 상담 채널: 비중 유지 */
-#overview .channel-half-card .channel-table-head,
-#overview .channel-half-card .channel-row{
-  grid-template-columns:minmax(95px,1.05fr) 66px 54px 66px 72px minmax(150px,1.45fr) !important;
-  column-gap:0 !important;
-}
-
-/* 기타 이용 현황: 비중 삭제 */
-#overview .channel-half-card .channel-simple-head,
-#overview .channel-half-card .channel-simple-row{
-  grid-template-columns:minmax(95px,1.05fr) 72px 72px 76px minmax(150px,1.45fr) !important;
-  column-gap:0 !important;
-}
-
-/* 양쪽 헤더/행 높이 동일 */
-#overview .channel-group-label{
-  margin:0 0 6px !important;
-}
-#overview .channel-table-head,
-#overview .channel-simple-head{
-  min-height:25px !important;
-  align-items:center !important;
-  padding-bottom:5px !important;
-}
-#overview .channel-row,
-#overview .channel-simple-row{
-  min-height:43px !important;
-  align-items:center !important;
-}
-
-/* 막대 그래프 시작점과 폭 최대한 통일 */
-#overview .channel-row > .dual-bar-cell,
-#overview .channel-simple-row > .dual-bar-cell{
-  border-left:1px solid #d7e0eb !important;
-  padding-left:10px !important;
-  width:100% !important;
-  min-width:0 !important;
-  box-sizing:border-box !important;
-}
-#overview .channel-row .dual-bar-line,
-#overview .channel-simple-row .dual-bar-line,
-#overview .channel-row .channel-track,
-#overview .channel-simple-row .channel-track{
-  width:100% !important;
-  min-width:0 !important;
-}
-
-/* 첨부 이미지처럼 막대 우측 숫자는 숨김 */
-#overview .dual-bar-line > span{
-  display:none !important;
-}
-
-/* 4번째 줄은 기존 3x2 유지 */
-#overview .bottom{
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-}
-
-
-/* 채널별 현황 공통 타이틀 복원 */
-#overview .channel-section-header{
-  display:flex !important;
-  justify-content:space-between !important;
-  align-items:center !important;
-  margin:0 2px 7px !important;
-}
-#overview .channel-section-header h3{
-  display:block !important;
-  margin:0 !important;
-  font-size:14px !important;
-  font-weight:900 !important;
-  color:#14243f !important;
-}
-#overview .channel-section-header span{
-  display:block !important;
-  font-size:10px !important;
-  color:#8a96a8 !important;
-}
-
-
-/* 메인 채널별 현황 수정
-   1) 건수 비교(올해 vs 전년) 영역 삭제
-   2) 기타 이용 현황의 교재구매 행 삭제 */
-
-/* 상담 채널: 건수 비교 헤더/그래프 숨김 */
-.channel-section-full .channel-table-head > div:nth-child(6),
-.channel-section-full .channel-row > .dual-bar-cell{
-  display:none !important;
-}
-
-/* 상담 채널: 남은 5개 열로 폭 재배치 */
-.channel-section-full .channel-table-head,
-.channel-section-full .channel-row{
-  grid-template-columns:minmax(120px,1.35fr) 86px 70px 86px 94px !important;
-  column-gap:8px !important;
-}
-
-/* 기타 이용 현황: 건수 비교 헤더/그래프 숨김 */
-.channel-section-full .channel-simple-head > div:nth-child(5),
-.channel-section-full .channel-simple-row > .dual-bar-cell{
-  display:none !important;
-}
-
-/* 기타 이용 현황: 남은 4개 열로 폭 재배치 */
-.channel-section-full .channel-simple-head,
-.channel-section-full .channel-simple-row{
-  grid-template-columns:minmax(140px,1.55fr) 90px 90px 96px !important;
-  column-gap:8px !important;
-}
-
-/* 교재구매만 화면에서 완전히 제거 - JS 데이터 연결은 유지 */
-.channel-section-full .channel-simple-row:has(#chBook){
-  display:none !important;
-}
-
-/* 교재 그룹 wrapper가 레이아웃 여백을 만들지 않도록 */
-.channel-section-full .book-channel-group{
-  margin:0 !important;
-  padding:0 !important;
-  border:0 !important;
-  background:transparent !important;
-}
-
-
-/* 채널별 현황 최종: 막대 비교 DOM 제거 후 열 재배치 */
-.channel-section-full .channel-table-head,
-.channel-section-full .channel-row{
-  grid-template-columns:minmax(150px,1.5fr) 90px 74px 90px 100px !important;
-  column-gap:10px !important;
-}
-.channel-section-full .channel-simple-head,
-.channel-section-full .channel-simple-row{
-  grid-template-columns:minmax(170px,1.7fr) 96px 96px 105px !important;
-  column-gap:10px !important;
-}
-.channel-section-full .channel-table-head > div,
-.channel-section-full .channel-simple-head > div{
-  border-left:0 !important;
-  padding-left:4px !important;
-}
-
 </style>
 </head>
 <body>
@@ -2038,8 +1412,7 @@ th{position:sticky;top:0;background:#f8fafc}
 </div>
 
 <section id="overview" class="section active">
-
-<div class="kpi-groups">
+  <div class="kpi-groups">
     <div class="kpi-group core">
       <div class="kpi-group-title">전체현황 <span style="font-size:9.5px;font-weight:800;opacity:.95">(CALL+ERMS+채팅상담+스마트러닝)</span></div>
       <div class="kpi-group-grid">
@@ -2081,68 +1454,70 @@ th{position:sticky;top:0;background:#f8fafc}
     </div>
   </div>
 
-<div class="main-trend-full">
-  <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="sub">선택 기간 일일 운영실적</div><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
-</div>
+  <div class="mid">
+    <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="sub">선택 기간 일일 운영실적</div><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
+    <div class="card side-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <h3 id="channelTitle">채널별 현황</h3>
+        <span style="font-size:9.5px;color:#8a96a8">(단위 : 건)</span>
+      </div>
 
-<div class="channel-section-full">
-  <div class="channel-section-header">
-    <h3 id="channelTitle">채널별 현황</h3>
-    <span>(단위 : 건)</span>
-  </div>
-  <div class="channel-split-grid">
-    <div class="card channel-half-card">
       <div class="channel-group-label">상담 채널</div>
       <div class="channel-table-head">
         <div>채널</div>
         <div style="text-align:right">올해</div>
-        <div style="text-align:right">비중</div>
         <div style="text-align:right">전년</div>
         <div style="text-align:right">전년대비</div>
+        <div>건수 비교 (올해 vs 전년)</div>
       </div>
 <div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">☎</div><div class="cname">인입호</div></div>
         <div class="cval" id="chPhone">-</div>
-        <div class="cshare" id="sharePhone">-</div>
         <div class="cyoy" id="yoyPhone">-</div>
         <div class="cchg" id="chgPhone">-</div>
-        
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-phone-cur" id="barPhoneCur"></div></div><span id="barPhoneValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-phone-prev" id="barPhonePrev"></div></div><span id="barPhoneValPrev">-</span></div>
+        </div>
       </div>
 <div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">✉</div><div class="cname">ERMS</div></div>
         <div class="cval" id="chErms">-</div>
-        <div class="cshare" id="shareErms">-</div>
         <div class="cyoy" id="yoyErms">-</div>
         <div class="cchg" id="chgErms">-</div>
-        
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-erms-cur" id="barErmsCur"></div></div><span id="barErmsValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-erms-prev" id="barErmsPrev"></div></div><span id="barErmsValPrev">-</span></div>
+        </div>
       </div>
 <div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">💬</div><div class="cname">채팅상담</div></div>
         <div class="cval" id="chChatConsult">-</div>
-        <div class="cshare" id="shareChatConsult">-</div>
         <div class="cyoy" id="yoyChatConsult">-</div>
         <div class="cchg" id="chgChatConsult">-</div>
-        
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-chat-cur" id="barChatConsultCur"></div></div><span id="barChatConsultValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-chat-prev" id="barChatConsultPrev"></div></div><span id="barChatConsultValPrev">-</span></div>
+        </div>
       </div>
 <div class="channel-row">
         <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div></div>
         <div class="cval" id="chSmart">-</div>
-        <div class="cshare" id="shareSmart">-</div>
         <div class="cyoy" id="yoySmart">-</div>
         <div class="cchg" id="chgSmart">-</div>
-        
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-smart-cur" id="barSmartCur"></div></div><span id="barSmartValCur">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-smart-prev" id="barSmartPrev"></div></div><span id="barSmartValPrev">-</span></div>
+        </div>
       </div>
 
-      
-      
-    </div>
-    <div class="card channel-half-card">
       <div class="channel-group-label secondary-group">기타 이용 현황</div>
       <div class="channel-simple-head">
         <div>항목</div>
         <div style="text-align:right">올해</div>
         <div style="text-align:right">전년</div>
         <div style="text-align:right">전년대비</div>
+        <div>건수 비교 (올해 vs 전년)</div>
       </div>
 
       <div class="channel-simple-row">
@@ -2150,26 +1525,20 @@ th{position:sticky;top:0;background:#f8fafc}
         <div class="cval" id="chChatUse">-</div>
         <div class="cyoy" id="yoyChatUse">-</div>
         <div class="cchg" id="chgChatUse">-</div>
-        
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-chatuse-cur" id="barChatUseCur"></div></div><span id="barChatUseCurVal">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-chatuse-prev" id="barChatUsePrev"></div></div><span id="barChatUsePrevVal">-</span></div>
+        </div>
       </div>
 
-      <div class="book-channel-group">
-
-
-        <div class="channel-simple-row grouped-row">
-          <div class="channel-name-wrap"><div class="cicon">↩</div><div class="cname">교재반품</div></div>
-          <div class="cval" id="chBookReturn">-</div>
-          <div class="cyoy" id="yoyBookReturn">-</div>
-          <div class="cchg" id="chgBookReturn">-</div>
-          
-        </div>
-
-        <div class="channel-simple-row grouped-row">
-          <div class="channel-name-wrap"><div class="cicon">⇄</div><div class="cname">교재교환</div></div>
-          <div class="cval" id="chBookExchange">-</div>
-          <div class="cyoy" id="yoyBookExchange">-</div>
-          <div class="cchg" id="chgBookExchange">-</div>
-          
+      <div class="channel-simple-row">
+        <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">교재구매</div></div>
+        <div class="cval" id="chBook">-</div>
+        <div class="cyoy" id="yoyBook">-</div>
+        <div class="cchg" id="chgBook">-</div>
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-book-cur" id="barBookCur"></div></div><span id="barBookCurVal">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-book-prev" id="barBookPrev"></div></div><span id="barBookPrevVal">-</span></div>
         </div>
       </div>
 
@@ -2178,15 +1547,17 @@ th{position:sticky;top:0;background:#f8fafc}
         <div class="cval" id="chCancel">-</div>
         <div class="cyoy" id="yoyCancel">-</div>
         <div class="cchg" id="chgCancel">-</div>
-        
+        <div class="dual-bar-cell">
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-cancel-cur" id="barCancelCur"></div></div><span id="barCancelCurVal">-</span></div>
+          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-cancel-prev" id="barCancelPrev"></div></div><span id="barCancelPrevVal">-</span></div>
+        </div>
       </div>
 
-
+      <div class="channel-note">※ 전년대비는 동일 요일 기준 증감률이며, 막대는 올해와 전년 건수를 비교합니다.</div>
     </div>
   </div>
-</div>
 
-<div class="bottom">
+  <div class="bottom">
     <div class="card mini">
       <div class="mini-head">
         <div class="mini-titlebox"><h3>답변률</h3></div>
@@ -2235,7 +1606,7 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="spark"><canvas id="spChat"></canvas></div>
     </div>
   </div>
-
+  <div style="font-size:9.5px;color:#7d8798;margin:9px 4px 0">* 모든 수치는  기준이며, 비교값은 직전 동기간 및 전년 동기간과 비교한 값입니다.</div>
 </section>
 
 <section id="call" class="section">
@@ -2416,86 +1787,7 @@ th{position:sticky;top:0;background:#f8fafc}
     </div>
   </div>
 </section>
-
-<section id="refund" class="section">
-  <div class="refund-head">
-    <div>
-      <h2>환불 현황</h2>
-      <div class="refund-desc">환불 건수·금액과 상품구분, 환불방법, 주요 사유를 한눈에 확인합니다.</div>
-    </div>
-    <div class="refund-filterbar">
-      <label>상품구분
-        <select id="refundProductFilter">
-          <option value="전체">전체</option>
-          <option value="단과">단과</option>
-          <option value="패키지">패키지</option>
-          <option value="패스">패스</option>
-        </select>
-      </label>
-      <label>환불방법
-        <select id="refundMethodFilter">
-          <option value="전체">전체</option>
-          <option value="카드취소">카드취소</option>
-          <option value="현금환불">현금환불</option>
-          <option value="캐쉬전환">캐쉬전환</option>
-        </select>
-      </label>
-    </div>
-  </div>
-
-  <div class="refund-kpis">
-    <div class="card refund-kpi">
-      <div class="rk-label">총 환불 건수</div>
-      <div class="rk-value" id="refundCount">-</div>
-      <div class="rk-compare">전년 동기간 <b id="refundCountYoy">-</b> <span id="refundCountChg">-</span></div>
-    </div>
-    <div class="card refund-kpi">
-      <div class="rk-label">총 환불 금액</div>
-      <div class="rk-value" id="refundAmount">-</div>
-      <div class="rk-compare">전년 동기간 <b id="refundAmountYoy">-</b> <span id="refundAmountChg">-</span></div>
-    </div>
-    <div class="card refund-kpi">
-      <div class="rk-label">전년대비 건수</div>
-      <div class="rk-value" id="refundCountDiff">-</div>
-      <div class="rk-compare">동일 요일 기준 전년 동기간 대비</div>
-    </div>
-    <div class="card refund-kpi">
-      <div class="rk-label">전년대비 금액</div>
-      <div class="rk-value" id="refundAmountDiff">-</div>
-      <div class="rk-compare">동일 요일 기준 전년 동기간 대비</div>
-    </div>
-  </div>
-
-  <div class="refund-main-grid">
-    <div class="card refund-chart-card">
-      <div class="refund-card-title">일자별 환불 추이</div>
-      <div class="refund-card-sub">환불 건수(막대) / 환불 금액(선)</div>
-      <div class="refund-chart-box"><canvas id="refundTrendChart"></canvas></div>
-    </div>
-    <div class="card refund-card">
-      <div class="refund-card-title">상품구분별 환불 현황</div>
-      <div class="refund-table-head"><span>상품구분</span><span>건수</span><span>금액</span><span>건수 비중</span></div>
-      <div id="refundProductRows"></div>
-    </div>
-  </div>
-
-  <div class="refund-sub-grid">
-    <div class="card refund-card">
-      <div class="refund-card-title">환불방법별 현황</div>
-      <div class="refund-table-head"><span>환불방법</span><span>건수</span><span>금액</span><span>건수 비중</span></div>
-      <div id="refundMethodRows"></div>
-    </div>
-
-    <div class="card refund-card">
-      <div class="refund-card-title">환불 사유 현황</div>
-      <div class="refund-table-head reason"><span>사유1</span><span>건수</span><span>비중</span></div>
-      <div id="refundReasonRows"></div>
-    </div>
-  </div>
-
-  <div class="refund-note">※ 전년대비는 동일 요일 기준 전년 동기간과 비교합니다. 환불 건수는 REQ_NO가 존재하면 REQ_NO 기준 고유 건수로 집계합니다.</div>
-</section>
-
+<section id="refund" class="section"><div class="statgrid"><div class="card stat"><div class="lab">환불 신청</div><div class="val" id="refundCount">-</div></div><div class="card stat"><div class="lab">환불금액</div><div class="val" id="refundAmount">-</div></div><div class="card stat"><div class="lab">평균 환불금액</div><div class="val" id="refundAvg">-</div></div></div><div class="card large"><canvas id="refundChart"></canvas></div></section>
 
 <section id="admin" class="section">
   <div id="adminLock" class="card adminbox">
@@ -2604,7 +1896,6 @@ const pct = (a,b) => b ? (a/b*100) : 0;
 let daily = [];
 let refunds = [];          // 관리자 로그인 시에만 원본 로드
 let refundDaily = [];      // 일반 조회용 일자별 환불 집계
-let refundAnalytics = [];  // 상품구분/환불방법/사유 분석용 일자별 집계
 let charts = {};
 let currentUser = null;
 
@@ -2661,7 +1952,8 @@ function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,color
   charts[id]=new Chart($(id),{
     data:{
       labels,
-      datasets:[{
+      datasets:[
+        {
           type:"bar",
           label:currentLabel,
           data:currentData.map(v=>Number(v)||0),
@@ -2858,9 +2150,6 @@ async function reload(){
   refundDaily = await fetchCollection("refundDaily");
   refundDaily.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
 
-  refundAnalytics = await fetchCollection("refundAnalyticsDaily");
-  refundAnalytics.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
-
   if(currentUser){
     refunds = await fetchCollection("refunds");
     refunds.sort((a,b)=>(a.applyDate||"").localeCompare(b.applyDate||""));
@@ -2916,9 +2205,7 @@ function periodMetrics(rows){
     phoneRate:pct(sum(rows,"phoneAns"),sum(rows,"phoneIn")),
     answerPct:pct(sum(rows,"totalA"),sum(rows,"totalQ")),
     chatUse:sum(rows,"chatUse"), cph:mean(rows,"cphDay"),
-    erms:sum(rows,"ermsCount"), smart:sum(rows,"smart"),
-    bookReturn:sum(rows,"bookReturn"),
-    bookExchange:sum(rows,"bookExchange")
+    erms:sum(rows,"ermsCount"), smart:sum(rows,"smart")
   };
 }
 
@@ -3052,120 +2339,6 @@ function weekdayAlignedLastYearRange(startStr,endStr){
   return {start:fmt(lyStart),end:fmt(lyEnd)};
 }
 
-
-function refundTrendChart(labels,counts,amounts){
-  const id="refundTrendChart";
-  if(charts[id]) charts[id].destroy();
-  charts[id]=new Chart($(id),{
-    data:{
-      labels,
-      datasets:[{type:"bar",label:"환불 건수",data:counts,backgroundColor:"#2775ea",borderRadius:4,maxBarThickness:34,yAxisID:"y"},
-        {type:"line",label:"환불 금액",data:amounts,borderColor:"#22a85a",backgroundColor:"#22a85a",borderWidth:2.2,tension:.25,pointRadius:3,fill:false,yAxisID:"y1"}
-      ]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,interaction:{mode:"index",intersect:false},
-      plugins:{legend:{position:"bottom",labels:{font:{size:10}}}},
-      scales:{
-        x:{grid:{display:false},ticks:{font:{size:10}}},
-        y:{beginAtZero:true,position:"left",grid:{color:"#e8edf4"},ticks:{font:{size:10}}},
-        y1:{beginAtZero:true,position:"right",grid:{drawOnChartArea:false},ticks:{font:{size:10},callback:v=>Number(v).toLocaleString("ko-KR")}}
-      }
-    }
-  });
-}
-function refundChangeHtml(cur,prev){
-  cur=Number(cur)||0; prev=Number(prev)||0;
-  if(prev===0) return cur>0?'<span class="up">▲ 신규</span>':'-';
-  const d=(cur-prev)/Math.abs(prev)*100;
-  return d>=0?`<span class="up">▲ ${Math.abs(d).toFixed(2)}%</span>`:`<span class="down">▼ ${Math.abs(d).toFixed(2)}%</span>`;
-}
-function parseReasonJson(v){
-  try{return v?JSON.parse(v):{}}catch(e){return{}}
-}
-function renderRefundDashboard(s,e,yoyStart,yoyEnd){
-  const prodFilter=$("refundProductFilter")?.value||"전체";
-  const methodFilter=$("refundMethodFilter")?.value||"전체";
-  const srcRows=refundAnalytics.length?refundAnalytics:refundDaily;
-
-  const curRows=srcRows.filter(r=>r.date>=s&&r.date<=e);
-  const yoyRows=srcRows.filter(r=>r.date>=yoyStart&&r.date<=yoyEnd);
-
-  const matchCount=(r,product,method)=>{
-    if(prodFilter!=="전체" && product!==prodFilter) return 0;
-    if(methodFilter!=="전체" && method!==methodFilter) return 0;
-    return 1;
-  };
-
-  // 필터가 전체면 일자 합계를 직접 사용, 필터 사용 시 교차집계 필드를 사용
-  const dailyValue=(r,kind)=>{
-    if(prodFilter==="전체" && methodFilter==="전체") return Number(r[kind])||0;
-    const key=(prodFilter==="전체"?"all":prodFilter)+"|"+(methodFilter==="전체"?"all":methodFilter);
-    const cross=(()=>{try{return JSON.parse(r.crossJson||"{}")}catch(e){return{}}})();
-    return Number(cross[key]?.[kind])||0;
-  };
-
-  const curCount=curRows.reduce((a,r)=>a+dailyValue(r,"count"),0);
-  const curAmount=curRows.reduce((a,r)=>a+dailyValue(r,"amount"),0);
-  const yoyCount=yoyRows.reduce((a,r)=>a+dailyValue(r,"count"),0);
-  const yoyAmount=yoyRows.reduce((a,r)=>a+dailyValue(r,"amount"),0);
-
-  $("refundCount").textContent=fmt(curCount)+"건";
-  $("refundAmount").textContent=money(curAmount);
-  $("refundCountYoy").textContent=fmt(yoyCount)+"건";
-  $("refundAmountYoy").textContent=money(yoyAmount);
-  $("refundCountChg").innerHTML=refundChangeHtml(curCount,yoyCount);
-  $("refundAmountChg").innerHTML=refundChangeHtml(curAmount,yoyAmount);
-
-  const countDiff=curCount-yoyCount;
-  const amountDiff=curAmount-yoyAmount;
-  $("refundCountDiff").innerHTML=`<span class="${countDiff>=0?'up':'down'}">${countDiff>=0?'+':''}${fmt(countDiff)}건</span>`;
-  $("refundAmountDiff").innerHTML=`<span class="${amountDiff>=0?'up':'down'}">${amountDiff>=0?'+':''}${money(amountDiff)}</span>`;
-
-  refundTrendChart(
-    curRows.map(r=>r.date.slice(5)),
-    curRows.map(r=>dailyValue(r,"count")),
-    curRows.map(r=>dailyValue(r,"amount"))
-  );
-
-  const aggregate=(rows,prefix,names)=>{
-    const out={}; names.forEach(n=>out[n]={count:0,amount:0});
-    rows.forEach(r=>names.forEach(n=>{
-      const k=prefix+n;
-      out[n].count+=Number(r[k+"Count"])||0;
-      out[n].amount+=Number(r[k+"Amount"])||0;
-    }));
-    return out;
-  };
-
-  const products=aggregate(curRows,"product",["단과","패키지","패스"]);
-  const methods=aggregate(curRows,"method",["카드취소","현금환불","캐쉬전환"]);
-
-  const prodTotal=Object.values(products).reduce((a,x)=>a+x.count,0);
-  $("refundProductRows").innerHTML=["단과","패키지","패스"].map(n=>{
-    const x=products[n], pctv=prodTotal?x.count/prodTotal*100:0;
-    return `<div class="refund-data-row"><span class="name">${n}</span><span class="num">${fmt(x.count)}</span><span>${money(x.amount)}</span><span>${pctv.toFixed(1)}%</span></div>`;
-  }).join("");
-
-  const methodTotal=Object.values(methods).reduce((a,x)=>a+x.count,0);
-  $("refundMethodRows").innerHTML=["카드취소","현금환불","캐쉬전환"].map(n=>{
-    const x=methods[n], pctv=methodTotal?x.count/methodTotal*100:0;
-    return `<div class="refund-data-row"><span class="name">${n}</span><span class="num">${fmt(x.count)}</span><span>${money(x.amount)}</span><span>${pctv.toFixed(1)}%</span></div>`;
-  }).join("");
-
-  const reasons={};
-  curRows.forEach(r=>{
-    const obj=parseReasonJson(r.reason1Json);
-    Object.entries(obj).forEach(([name,count])=>reasons[name]=(reasons[name]||0)+(Number(count)||0));
-  });
-  const reasonList=Object.entries(reasons).sort((a,b)=>b[1]-a[1]).slice(0,7);
-  const reasonTotal=reasonList.reduce((a,x)=>a+x[1],0);
-  $("refundReasonRows").innerHTML=(reasonList.length?reasonList:[["데이터 없음",0]]).map(([name,count])=>{
-    const p=reasonTotal?count/reasonTotal*100:0;
-    return `<div class="refund-data-row reason"><span class="name">${name}</span><span class="num">${fmt(count)}</span><span>${p.toFixed(1)}%</span></div>`;
-  }).join("");
-}
-
 async function applyFilter(){
   await reload();
 
@@ -3273,8 +2446,8 @@ async function applyFilter(){
 
 
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
-    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,maxBarThickness:34,barPercentage:1.0,categoryPercentage:0.34,borderWidth:0},
-    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3,maxBarThickness:34,barPercentage:1.0,categoryPercentage:0.34,borderWidth:0}
+    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,maxBarThickness:14,barPercentage:0.99,categoryPercentage:0.64},
+    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3,maxBarThickness:14,barPercentage:0.99,categoryPercentage:0.64}
   ]);
   if(charts["mainBar"]){
     const mb=charts["mainBar"];
@@ -3302,45 +2475,9 @@ async function applyFilter(){
   $("chPhone").textContent=fmt(channelPhone);
   $("chErms").textContent=fmt(channelErms);
   $("chSmart").textContent=fmt(channelSmart);
-
-  // 상담채널 비중: 인입호 + ERMS + 채팅상담 + 스마트러닝앱 = 100%
-  const consultChannelTotal =
-    (Number(cur.phoneIn)||0) +
-    (Number(cur.erms)||0) +
-    (Number(channelChatConsult)||0) +
-    (Number(cur.smart)||0);
-
-  const setChannelShare=(id,val)=>{
-    const el=$(id);
-    if(!el) return;
-    el.textContent=consultChannelTotal
-      ? ((Number(val)||0)/consultChannelTotal*100).toFixed(1)+"%"
-      : "0.0%";
-  };
-
-  setChannelShare("sharePhone",cur.phoneIn);
-  setChannelShare("shareErms",cur.erms);
-  setChannelShare("shareChatConsult",channelChatConsult);
-  setChannelShare("shareSmart",cur.smart);
-
   $("chChatConsult").textContent=fmt(channelChatConsult);
   $("chChatUse").textContent=fmt(channelChatUse);
   $("chBook").textContent=fmt(channelBook);
-
-  // 기타 이용 현황 - 교재 그룹 추가
-  const curBookReturn = Number(cur.bookReturn)||0;
-  const yoyBookReturn = yoy ? Number(yoy.bookReturn)||0 : 0;
-  const curBookExchange = Number(cur.bookExchange)||0;
-  const yoyBookExchange = yoy ? Number(yoy.bookExchange)||0 : 0;
-
-  $("chBookReturn").textContent=fmt(curBookReturn);
-  $("yoyBookReturn").textContent=fmt(yoyBookReturn);
-  $("chgBookReturn").innerHTML=changePct(curBookReturn,yoyBookReturn);
-
-  $("chBookExchange").textContent=fmt(curBookExchange);
-  $("yoyBookExchange").textContent=fmt(yoyBookExchange);
-  $("chgBookExchange").innerHTML=changePct(curBookExchange,yoyBookExchange);
-
   $("chCancel").textContent=fmt(channelCancel);
   const yoyChannelPhone = yoy ? yoy.phoneIn : null;
   const yoyChannelErms = yoy ? yoy.erms : null;
@@ -3615,17 +2752,19 @@ async function applyFilter(){
   // 교재
 
   // CPH
-  
-  const setSimpleCompareBar=(curId,prevId,curV,prevV)=>{
-    const max=Math.max(Number(curV)||0,Number(prevV)||0,1);
-    if($(curId)) $(curId).style.width=((Number(curV)||0)/max*100)+"%";
-    if($(prevId)) $(prevId).style.width=((Number(prevV)||0)/max*100)+"%";
-  };
-  setSimpleCompareBar("barBookReturnCur","barBookReturnPrev",curBookReturn,yoyBookReturn);
-  setSimpleCompareBar("barBookExchangeCur","barBookExchangePrev",curBookExchange,yoyBookExchange);
 
-  renderRefundDashboard(s,e,yoyStart,yoyEnd);
-renderRaw();
+  // 환불은 공개용 일자별 집계 사용
+  const rr=refundDaily.filter(r=>r.date>=s&&r.date<=e);
+  const refundCount=rr.reduce((a,r)=>a+(Number(r.count)||0),0);
+  const refundAmount=rr.reduce((a,r)=>a+(Number(r.amount)||0),0);
+  $("refundCount").textContent=fmt(refundCount);
+  $("refundAmount").textContent=money(refundAmount);
+  $("refundAvg").textContent=money(refundCount?refundAmount/refundCount:0);
+  chart("refundChart","bar",rr.map(r=>r.date.slice(5)),[
+    {label:"환불 건수",data:rr.map(r=>Number(r.count)||0),backgroundColor:"#f4b400"}
+  ]);
+
+  renderRaw();
 }
 
 function updateStatus(){
@@ -3696,24 +2835,21 @@ async function upload(file,type){
     }else{
       const rows=raw.map((o,i)=>{
         const ad=asDate(pick(o,["환불신청일"]));
-        const reqNo=String(pick(o,["REQ_NO","REQ NO","REQNO"]));
         return{
-          rid:reqNo || `${ad}|${i}`,
+          rid:`${ad}|${String(pick(o,["아이디"]))}|${i}`,
+          uid:String(pick(o,["아이디"])),
+          name:String(pick(o,["이름"])),
+          phone:String(pick(o,["연락처"])),
           applyDate:ad,
           approveDate:asDate(pick(o,["환불승인일"])),
           doneDate:asDate(pick(o,["환불완료일"])),
-          code:String(pick(o,["코드"])),
           pay:String(pick(o,["결제방법"])),
-          type:String(pick(o,["종류","상품구분"])),
+          type:String(pick(o,["종류"])),
           amount:num(pick(o,["금액"])),
           fee:num(pick(o,["수수료"])),
           refundAmount:num(pick(o,["환불금액"])),
           reason1:String(pick(o,["사유1"])),
           reason2:String(pick(o,["사유2"])),
-          receptionist:String(pick(o,["접수자"])),
-          reqNo,
-          productCode:String(pick(o,["상품코드"])),
-          productName:String(pick(o,["상품명"])),
           member:String(pick(o,["회원구분"])),
           refundMethod:String(pick(o,["환불방법"]))
         };
@@ -3721,59 +2857,18 @@ async function upload(file,type){
 
       if(!rows.length) throw new Error("환불신청일 컬럼을 인식하지 못했습니다.");
 
-      // REQ_NO가 있으면 동일 REQ_NO는 1건으로 취급
-      const uniqueMap=new Map();
-      rows.forEach((r,i)=>uniqueMap.set(r.reqNo||`ROW_${i}`,r));
-      const uniqueRows=[...uniqueMap.values()];
-
+      // 원본 저장
       await replaceCollection("refunds",rows,(r,i)=>`r_${String(i).padStart(7,"0")}`);
 
-      const dailyMap={};
-      const productNames=["단과","패키지","패스"];
-      const methodNames=["카드취소","현금환불","캐쉬전환"];
-
-      uniqueRows.forEach(r=>{
-        if(!dailyMap[r.applyDate]){
-          const base={date:r.applyDate,count:0,amount:0,reason1:{},cross:{}};
-          productNames.forEach(n=>{base["product"+n+"Count"]=0;base["product"+n+"Amount"]=0});
-          methodNames.forEach(n=>{base["method"+n+"Count"]=0;base["method"+n+"Amount"]=0});
-          dailyMap[r.applyDate]=base;
-        }
-        const d=dailyMap[r.applyDate];
-        d.count+=1;
-        d.amount+=Number(r.refundAmount)||0;
-
-        if(productNames.includes(r.type)){
-          d["product"+r.type+"Count"]+=1;
-          d["product"+r.type+"Amount"]+=Number(r.refundAmount)||0;
-        }
-        if(methodNames.includes(r.refundMethod)){
-          d["method"+r.refundMethod+"Count"]+=1;
-          d["method"+r.refundMethod+"Amount"]+=Number(r.refundAmount)||0;
-        }
-        if(r.reason1) d.reason1[r.reason1]=(d.reason1[r.reason1]||0)+1;
-
-        const crossKeys=[
-          "all|all",
-          `${r.type||"기타"}|all`,
-          `all|${r.refundMethod||"기타"}`,
-          `${r.type||"기타"}|${r.refundMethod||"기타"}`
-        ];
-        crossKeys.forEach(k=>{
-          if(!d.cross[k]) d.cross[k]={count:0,amount:0};
-          d.cross[k].count+=1;
-          d.cross[k].amount+=Number(r.refundAmount)||0;
-        });
+      // 공개 대시보드용 일자별 집계 저장
+      const map={};
+      rows.forEach(r=>{
+        if(!map[r.applyDate]) map[r.applyDate]={date:r.applyDate,count:0,amount:0};
+        map[r.applyDate].count += 1;
+        map[r.applyDate].amount += Number(r.refundAmount)||0;
       });
-
-      const analytics=Object.values(dailyMap).map(d=>{
-        const {reason1,cross,...rest}=d;
-        return {...rest,reason1Json:JSON.stringify(reason1),crossJson:JSON.stringify(cross)};
-      }).sort((a,b)=>a.date.localeCompare(b.date));
-
-      const summaries=analytics.map(r=>({date:r.date,count:r.count,amount:r.amount}));
+      const summaries=Object.values(map).sort((a,b)=>a.date.localeCompare(b.date));
       await replaceCollection("refundDaily",summaries,r=>r.date);
-      await replaceCollection("refundAnalyticsDaily",analytics,r=>r.date);
 
       await reload();
       await applyFilter();
@@ -3805,8 +2900,8 @@ function renderRaw(){
     $("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>전화 응답률</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";
     $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${r.phoneRateExcel?((Number(r.phoneRateExcel)<=1?Number(r.phoneRateExcel)*100:Number(r.phoneRateExcel)).toFixed(1)+"%"):"-"}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
   }else{
-    $("rawHead").innerHTML="<tr><th>신청일</th><th>종류</th><th>상품명</th><th>REQ_NO</th><th>환불금액</th><th>사유1</th><th>사유2</th><th>환불방법</th></tr>";
-    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.applyDate}</td><td>${r.type}</td><td>${r.productName||""}</td><td>${r.reqNo||""}</td><td>${fmt(r.refundAmount)}</td><td>${r.reason1}</td><td>${r.reason2}</td><td>${r.refundMethod}</td></tr>`).join("");
+    $("rawHead").innerHTML="<tr><th>신청일</th><th>아이디</th><th>이름</th><th>종류</th><th>환불금액</th><th>사유1</th><th>사유2</th><th>환불방법</th></tr>";
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.applyDate}</td><td>${r.uid}</td><td>${r.name}</td><td>${r.type}</td><td>${fmt(r.refundAmount)}</td><td>${r.reason1}</td><td>${r.reason2}</td><td>${r.refundMethod}</td></tr>`).join("");
   }
 }
 
@@ -3820,15 +2915,11 @@ function dailySample(){
   XLSX.writeFile(wb,"콜센터_일일운영실적_샘플.xlsx");
 }
 function refundSample(){
-  const h=["환불신청일","환불승인일","환불완료일","코드","결제방법","종류","금액","수수료","환불금액","사유1","사유2","접수자","REQ_NO","상품코드","상품명","회원구분","환불방법"];
-  const data=[
-    ["2026-08-12 09:15","2026-08-12 09:30","2026-08-12 09:35","","신용카드","패스",339000,0,339000,"수강불가","강좌 필요없음","홍길동","4319876","12245","[비환급] 2026 고3 베이직 메가패스_08.12","기타","카드취소"],
-    ["2026-08-13 14:10","2026-08-13 14:20","2026-08-13 14:25","","신용카드","패키지",280000,6400,273600,"단순변심","과목 변경","이서준","4319878","33110","2026 과탐 패키지(물리+화학)","일반","카드취소"],
-    ["2026-08-14 10:05","2026-08-14 10:15","2026-08-14 10:18","","신용카드","단과",110000,0,110000,"진도/난이도 불만","난이도 높음","박민지","4319879","21442","2026 영어 독해 마스터 단과","일반","캐쉬전환"]
-  ];
-  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,...data]);
+  const h=["아이디","이름","연락처","환불신청일","환불승인일","환불완료일","결제방법","종류","금액","수수료","환불금액","사유1","사유2","회원구분","환불방법"];
+  const r=["0227yw","조연*","","2025-08-19 08:40","2025-08-19 08:40","2025-08-19 08:40","신용카드","교재",30800,0,30800,"기타","직접-상품 변경","기타","카드취소"];
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);
   XLSX.utils.book_append_sheet(wb,ws,"환불상세");
-  XLSX.writeFile(wb,"학습지원센터_환불상세_샘플.xlsx");
+  XLSX.writeFile(wb,"콜센터_환불상세_샘플.xlsx");
 }
 
 async function login(){
@@ -3870,8 +2961,6 @@ $("dailyFile").addEventListener("change",e=>upload(e.target.files[0],"daily"));
 $("refundFile").addEventListener("change",e=>upload(e.target.files[0],"refund"));
 $("dailySampleBtn").addEventListener("click",dailySample);
 $("refundSampleBtn").addEventListener("click",refundSample);
-$("refundProductFilter").addEventListener("change",()=>applyFilter().catch(console.error));
-$("refundMethodFilter").addEventListener("change",()=>applyFilter().catch(console.error));
 $("rawType").addEventListener("change",renderRaw);
 $("rawSearch").addEventListener("input",renderRaw);
 
@@ -3896,7 +2985,6 @@ $("clearBtn").addEventListener("click",async()=>{
   await deleteCollectionDocs("daily");
   await deleteCollectionDocs("refunds");
   await deleteCollectionDocs("refundDaily");
-  await deleteCollectionDocs("refundAnalyticsDaily");
   await reload();
   location.reload();
 });
