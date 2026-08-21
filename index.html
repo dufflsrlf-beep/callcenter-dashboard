@@ -10,7 +10,13 @@
 (function () {
   try {
     const url = new URL(window.location.href);
-    if (!url.searchParams.has("v")) {
+    const navEntry = performance.getEntriesByType?.("navigation")?.[0];
+    const isReload = navEntry
+      ? navEntry.type === "reload"
+      : performance.navigation?.type === 1;
+
+    // 최초 접속(v 없음) 또는 F5/Ctrl+R 새로고침 시에만 현재 시각으로 버전 갱신
+    if (!url.searchParams.has("v") || isReload) {
       const now = new Date();
       const pad = n => String(n).padStart(2, "0");
       const version =
@@ -21,8 +27,11 @@
         pad(now.getMinutes()) +
         pad(now.getSeconds());
 
-      url.searchParams.set("v", version);
-      window.location.replace(url.toString());
+      const currentVersion = url.searchParams.get("v");
+      if (currentVersion !== version) {
+        url.searchParams.set("v", version);
+        window.location.replace(url.toString());
+      }
     }
   } catch (e) {
     console.warn("자동 버전 파라미터 적용 실패", e);
