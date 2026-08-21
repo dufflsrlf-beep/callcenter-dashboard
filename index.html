@@ -1480,14 +1480,14 @@ th{position:sticky;top:0;background:#f8fafc}
 
 /* 최종 조정: 일자별 총 문의·답변 추이 영역 높이 축소 */
 .mid > .chart-card{
-  padding:14px 16px 10px !important;
+  padding:10px 16px 10px !important;
 }
 .mid > .chart-card .chartbox{
   flex:0 0 auto !important;
   height:230px !important;
   min-height:230px !important;
   max-height:230px !important;
-  margin-top:6px !important;
+  margin-top:0 !important;
 }
 .mid > .chart-card #mainBar{
   height:230px !important;
@@ -1660,7 +1660,7 @@ th{position:sticky;top:0;background:#f8fafc}
   </div>
 
   <div class="mid">
-    <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
+    <div class="card chart-card"><h3>일자별 문의량 및 답변률 추이 ⓘ</h3><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
 
     <div class="channels-wrap">
       <div class="channels-overview">
@@ -2138,7 +2138,7 @@ if (document.getElementById("pageVersion") && pageVersionParam) {
   document.getElementById("pageVersion").textContent = "v" + pageVersionParam;
 }
 const count = v => Math.round(Number(v) || 0);
-const fmt = v => count(v).toLocaleString("ko-KR");
+const fmt = v => Math.round(Number(v)||0).toLocaleString("ko-KR");
 const money = v => "₩" + fmt(v);
 const mean = (rows,key) => rows.length ? rows.reduce((s,r)=>s+(Number(r[key])||0),0)/rows.length : 0;
 const sum = (rows,key) => rows.reduce((s,r)=>s+(Number(r[key])||0),0);
@@ -2269,7 +2269,7 @@ function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,color
           callbacks:{
             label:(ctx)=>{
               const v=ctx.parsed.y;
-              return `${ctx.dataset.label}: ${opts.percent?Number(v).toFixed(2)+"%":opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")}`;
+              return `${ctx.dataset.label}: ${opts.percent?Number(v).toFixed(1)+"%":opts.decimal?Number(v).toFixed(1):fmt(v)}`;
             }
           }
         }
@@ -2282,7 +2282,7 @@ function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,color
           grid:{color:"#e8edf4"},
           ticks:{
             font:{size:11},
-            callback:(v)=>opts.percent?Number(v).toFixed(0)+"%":opts.decimal?Number(v).toFixed(2):Number(v).toLocaleString("ko-KR")
+            callback:(v)=>opts.percent?Number(v).toFixed(1)+"%":opts.decimal?Number(v).toFixed(1):fmt(v)
           }
         }
       }
@@ -2320,6 +2320,152 @@ function chart(id,type,labels,sets){
       plugins:{legend:{position:"bottom"}},
       scales:{x:{grid:{display:false}},y:{beginAtZero:true}}
     }
+  });
+}
+
+function formatDateLabel(dateStr, dayStr){
+  const dayMap=["일","월","화","수","목","금","토"];
+  let day=String(dayStr||"").trim();
+  if(!day && dateStr){
+    const d=new Date(dateStr+"T00:00:00");
+    if(!isNaN(d)) day=dayMap[d.getDay()];
+  }
+  const mmdd=String(dateStr||"").slice(5);
+  return day ? `${mmdd}(${day})` : mmdd;
+}
+
+function renderMainInquiryAnswerChart(rows){
+  if(charts["mainBar"]) charts["mainBar"].destroy();
+
+  const labels=rows.map(r=>formatDateLabel(r.date,r.day));
+  const volumeData=rows.map(r=>count(r.totalQ));
+  const answerRateData=rows.map(r=>{
+    const raw=Number(r.answerPct);
+    const normalized = raw>0 && raw<=1 ? raw*100 : raw;
+    return normalized>0 ? normalized : pct(r.totalA,r.totalQ);
+  });
+  const maxVolume=Math.max(...volumeData, 0);
+  const yMax=Math.max(1600, Math.ceil((maxVolume*1.12)/200)*200);
+  const minRate=Math.min(...answerRateData);
+  const minIdx=answerRateData.indexOf(minRate);
+
+  const mainChartPlugin={
+    id:"mainInquiryAnswerDecor",
+    afterDatasetsDraw(chart){
+      const {ctx}=chart;
+      ctx.save();
+
+      const barMeta=chart.getDatasetMeta(0);
+      ctx.fillStyle="#1b2d47";
+      ctx.textAlign="center";
+      ctx.textBaseline="bottom";
+      ctx.font="700 11px 'Noto Sans KR','Malgun Gothic',sans-serif";
+      barMeta.data.forEach((el,idx)=>{
+        const val=volumeData[idx];
+        ctx.fillText(fmt(val), el.x, el.y-6);
+      });
+
+      const lineMeta=chart.getDatasetMeta(1);
+      ctx.fillStyle="#1b2d47";
+      ctx.font="700 11px 'Noto Sans KR','Malgun Gothic',sans-serif";
+      ctx.textBaseline="bottom";
+      lineMeta.data.forEach((pt,idx)=>{
+        const val=(Number(answerRateData[idx])||0).toFixed(1)+"%";
+        // 모든 답변률 수치는 실선/포인트 위쪽에 표시
+        ctx.fillText(val, pt.x, pt.y-10);
+      });
+      ctx.restore();
+    },
+  };
+
+  charts["mainBar"]=new Chart($("mainBar"),{
+    data:{
+      labels,
+      datasets:[
+        {
+          type:"bar",
+          label:"총 문의량 (건)",
+          data:volumeData,
+          backgroundColor:"#11376d",
+          borderRadius:4,
+          borderSkipped:false,
+          barThickness:32,
+          maxBarThickness:36,
+          categoryPercentage:0.74,
+          barPercentage:0.92,
+          yAxisID:"y"
+        },
+        {
+          type:"line",
+          label:"답변률 (%)",
+          data:answerRateData,
+          borderColor:"#f4b000",
+          backgroundColor:"#f4b000",
+          borderWidth:2.5,
+          tension:0.28,
+          fill:false,
+          pointRadius:4,
+          pointHoverRadius:4,
+          pointBackgroundColor:"#f4b000",
+          pointBorderColor:"#f4b000",
+          pointBorderWidth:0,
+          yAxisID:"y1"
+        }
+      ]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      layout:{padding:{top:18,right:8,left:4,bottom:0}},
+      plugins:{
+        legend:{
+          position:"top",
+          align:"end",
+          fullSize:true,
+          labels:{
+            usePointStyle:false,
+            boxWidth:14,
+            boxHeight:14,
+            padding:16,
+            color:"#334155",
+            font:{size:11,weight:"700"}
+          }
+        },
+        tooltip:{
+          callbacks:{
+            label:(ctx)=> ctx.dataset.type==="line"
+              ? `${ctx.dataset.label}: ${Number(ctx.parsed.y||0).toFixed(1)}%`
+              : `${ctx.dataset.label}: ${fmt(ctx.parsed.y||0)}`
+          }
+        }
+      },
+      scales:{
+        x:{
+          grid:{display:false},
+          border:{display:false},
+          ticks:{font:{size:10,weight:"700"},color:"#516074",maxRotation:0,minRotation:0,padding:8}
+        },
+        y:{
+          position:"left",
+          beginAtZero:true,
+          max:yMax,
+          ticks:{stepSize:200,color:"#516074",font:{size:10,weight:"700"},callback:(v)=>fmt(v)},
+          title:{display:true,text:"문의량 (건)",align:"start",color:"#516074",font:{size:10,weight:"700"},padding:{bottom:8}},
+          grid:{color:"#e8edf4"},
+          border:{display:false}
+        },
+        y1:{
+          position:"right",
+          min:90,
+          max:102,
+          ticks:{stepSize:2,color:"#516074",font:{size:10,weight:"700"},callback:(v)=>Number(v)>100?"":Number(v).toFixed(1)+"%"},
+          title:{display:true,text:"답변률 (%)",align:"start",color:"#516074",font:{size:10,weight:"700"},padding:{bottom:8}},
+          grid:{drawOnChartArea:false},
+          border:{display:false}
+        }
+      }
+    },
+    plugins:[mainChartPlugin]
   });
 }
 function spark(id,labels,data,color,opts={}){
@@ -2370,7 +2516,7 @@ function spark(id,labels,data,color,opts={}){
         legend:{display:false},
         tooltip:{
           callbacks:{
-            label:(ctx)=> isPercent ? ctx.parsed.y.toFixed(2)+"%" : ctx.parsed.y.toLocaleString("ko-KR")
+            label:(ctx)=> isPercent ? ctx.parsed.y.toFixed(1)+"%" : fmt(ctx.parsed.y)
           }
         }
       },
@@ -2389,7 +2535,7 @@ function spark(id,labels,data,color,opts={}){
           ticks:{
             font:{size:11},
             maxTicksLimit:5,
-            callback:(v)=>isPercent ? v+"%" : Number(v).toLocaleString("ko-KR")
+            callback:(v)=>isPercent ? v+"%" : fmt(v)
           }
         }
       }
@@ -2493,8 +2639,8 @@ function detailPpChange(cur, prev){
   cur=Number(cur)||0; prev=Number(prev)||0;
   const d=cur-prev;
   return d>=0
-    ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%p</span>`
-    : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`;
+    ? `<span class="up">▲ ${Math.abs(d).toFixed(1)}%p</span>`
+    : `<span class="down">▼ ${Math.abs(d).toFixed(1)}%p</span>`;
 }
 function setDetail(curId,yoyId,chgId,curVal,yoyVal,{type="count",digits=2}={}){
   const curEl=$(curId), yoyEl=$(yoyId), chgEl=$(chgId);
@@ -2505,8 +2651,8 @@ function setDetail(curId,yoyId,chgId,curVal,yoyVal,{type="count",digits=2}={}){
   const yoyNum=hasYoy ? Number(yoyVal) : null;
 
   if(type==="rate"){
-    curEl.textContent=curNum.toFixed(2)+"%";
-    yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(2)+"%" : '<span class="compare-na">데이터 없음</span>';
+    curEl.textContent=curNum.toFixed(1)+"%";
+    yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(1)+"%" : '<span class="compare-na">데이터 없음</span>';
     chgEl.innerHTML=hasYoy ? detailPpChange(curNum,yoyNum) : '<span class="compare-na">-</span>';
   }else if(type==="decimal"){
     curEl.textContent=curNum.toFixed(digits);
@@ -2527,12 +2673,12 @@ function diffText(cur, prev, mode="count"){
   const abs=Math.abs(d);
 
   if(mode==="rate"){
-    return `(${sign}${abs.toFixed(2)}%p)`;
+    return `(${sign}${abs.toFixed(1)}%p)`;
   }
   if(mode==="decimal"){
-    return `(${sign}${abs.toFixed(2)})`;
+    return `(${sign}${abs.toFixed(1)})`;
   }
-  return `(${sign}${Math.round(abs).toLocaleString("ko-KR")}건)`;
+  return `(${sign}${fmt(abs)}건)`;
 }
 function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
   const el=$(id);
@@ -2551,9 +2697,9 @@ function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
   if(mode==="pp"){
     const d=cur-prev;
     const changeHtml=d>=0
-      ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%p</span>`
-      : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%p</span>`;
-    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prev.toFixed(2)}%</strong></div>
+      ? `<span class="up">▲ ${Math.abs(d).toFixed(1)}%p</span>`
+      : `<span class="down">▼ ${Math.abs(d).toFixed(1)}%p</span>`;
+    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prev.toFixed(1)}%</strong></div>
                   <div class="cmp-bottom single">${changeHtml}</div>`;
     return;
   }
@@ -2563,8 +2709,8 @@ function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
     const d=cur-prev;
     const cls=d>0?"up":d<0?"down":"";
     const sign=d>0?"+":"";
-    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prev.toFixed(2)}</strong></div>
-                  <div class="cmp-bottom single"><span class="${cls}">${sign}${d.toFixed(2)}</span></div>`;
+    el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${prev.toFixed(1)}</strong></div>
+                  <div class="cmp-bottom single"><span class="${cls}">${sign}${d.toFixed(1)}</span></div>`;
     return;
   }
 
@@ -2575,10 +2721,10 @@ function setComparison(id, label, cur, prev, mode="pct", diffMode="count"){
   }else{
     const d=(cur-prev)/Math.abs(prev)*100;
     changeHtml=d>=0
-      ? `<span class="up">▲ ${Math.abs(d).toFixed(2)}%</span>`
-      : `<span class="down">▼ ${Math.abs(d).toFixed(2)}%</span>`;
+      ? `<span class="up">▲ ${Math.abs(d).toFixed(1)}%</span>`
+      : `<span class="down">▼ ${Math.abs(d).toFixed(1)}%</span>`;
   }
-  el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${Math.round(prev).toLocaleString()}건</strong></div>
+  el.innerHTML=`<div class="cmp-top"><span>${shortLabel}</span><strong>${fmt(prev)}건</strong></div>
                 <div class="cmp-bottom">${changeHtml}<span class="diff-val ${cur>=prev?'up-diff':'down-diff'}">${diffText(cur,prev,diffMode)}</span></div>`;
 }
 
@@ -2640,10 +2786,10 @@ async function applyFilter(){
   $("kpiTotalA").textContent=fmt(cur.totalA);
   $("kpiPhoneIn").textContent=fmt(cur.phoneIn);
   $("kpiPhoneAns").textContent=fmt(cur.phoneAns);
-  $("kpiPhoneRate").textContent=cur.phoneRate.toFixed(2)+"%";
-  $("kpiAnswerPct").textContent=cur.answerPct.toFixed(2)+"%";
+  $("kpiPhoneRate").textContent=cur.phoneRate.toFixed(1)+"%";
+  $("kpiAnswerPct").textContent=cur.answerPct.toFixed(1)+"%";
   $("kpiChatUse").textContent=fmt(cur.chatUse);
-  $("kpiCph").textContent=cur.cph.toFixed(2);
+  $("kpiCph").textContent=cur.cph.toFixed(1);
 
   // CPH 전용 비교표시: 공통 건수/증감률 로직과 분리
   const curCphVal = Number(cur.cph)||0;
@@ -2660,8 +2806,8 @@ async function applyFilter(){
       return;
     }
     const diff=curCphVal-baseVal;
-    vEl.textContent=baseVal.toFixed(2);
-    dEl.textContent=(diff>0?"+":"")+diff.toFixed(2);
+    vEl.textContent=baseVal.toFixed(1);
+    dEl.textContent=(diff>0?"+":"")+diff.toFixed(1);
     dEl.className="cph-diff "+(diff>0?"up":diff<0?"down":"");
   };
 
@@ -2691,8 +2837,8 @@ async function applyFilter(){
       const d=(Number(cur.cph)||0)-yoyCph;
       const cls=d>0?"up":d<0?"down":"";
       const sign=d>0?"+":"";
-      $("yrCph").innerHTML=`<div class="cmp-top"><span>전년 동기간</span><strong>${yoyCph.toFixed(2)}</strong></div>
-                            <div class="cmp-bottom single"><span class="${cls}">${sign}${d.toFixed(2)}</span></div>`;
+      $("yrCph").innerHTML=`<div class="cmp-top"><span>전년 동기간</span><strong>${yoyCph.toFixed(1)}</strong></div>
+                            <div class="cmp-bottom single"><span class="${cls}">${sign}${d.toFixed(1)}</span></div>`;
     }
   }
 
@@ -2715,20 +2861,7 @@ async function applyFilter(){
   });
 
 
-  chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
-    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,barThickness:28,maxBarThickness:30,barPercentage:1,categoryPercentage:0.72,order:2},
-    {type:"line",label:"총답변량",data:rows.map(r=>count(r.totalA)),borderColor:"#f4b400",backgroundColor:"#f4b400",borderWidth:2.5,borderDash:[],fill:false,tension:.22,pointRadius:3,pointHoverRadius:4,pointBackgroundColor:"#ffffff",pointBorderColor:"#f4b400",pointBorderWidth:2,order:1}
-  ]);
-  if(charts["mainBar"]){
-    const mb=charts["mainBar"];
-    mb.options.layout={padding:{top:4,bottom:2,left:0,right:4}};
-    mb.options.plugins.legend.position="bottom";
-    mb.options.plugins.legend.labels={boxWidth:18,boxHeight:8,font:{size:10},padding:12};
-    mb.options.scales.x.ticks={font:{size:9},maxRotation:0,minRotation:0};
-    mb.options.scales.y.ticks={font:{size:9}};
-    mb.options.scales.x.grid={display:false};
-    mb.update();
-  }
+  renderMainInquiryAnswerChart(rows);
 
   // 우측 채널 =  / 선택기간 총문의량 대비 %
 
@@ -2799,7 +2932,7 @@ async function applyFilter(){
   const rangeCph=cur.cph;
   const rangeChatConsult=sum(rows,"chatAccess");
   $("miniPhoneIn").textContent=fmt(cur.phoneIn);
-  $("miniCph").textContent=rangeCph.toFixed(2);
+  $("miniCph").textContent=rangeCph.toFixed(1);
   $("miniErms").textContent=fmt(cur.erms);
   $("miniChatConsult").textContent=fmt(rangeChatConsult);
   $("miniSmart").textContent=fmt(cur.smart);
@@ -2811,12 +2944,12 @@ async function applyFilter(){
   $("miniSmart").style.color="#1767d9";
   $("miniChat").style.color="#f4a900";
 
-  spark("spPhoneIn",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.phoneIn)||0),"#0b2b59",{zeroBased:true});
-  spark("spCph",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.cphDay)||0),"#2fa64a",{zeroBased:true});
-  spark("spErms",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.ermsCount)||0),"#7d3fc7",{zeroBased:true});
-  spark("spChatConsult",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatAccess)||0),"#f97316",{zeroBased:true});
-  spark("spSmart",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.smart)||0),"#1767d9",{zeroBased:true});
-  spark("spChat",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatUse)||0),"#f4a900",{zeroBased:true});
+  spark("spPhoneIn",rows.map(r=>formatDateLabel(r.date,r.day)),rows.map(r=>Number(r.phoneIn)||0),"#0b2b59",{zeroBased:true});
+  spark("spCph",rows.map(r=>formatDateLabel(r.date,r.day)),rows.map(r=>Number(r.cphDay)||0),"#2fa64a",{zeroBased:true});
+  spark("spErms",rows.map(r=>formatDateLabel(r.date,r.day)),rows.map(r=>Number(r.ermsCount)||0),"#7d3fc7",{zeroBased:true});
+  spark("spChatConsult",rows.map(r=>formatDateLabel(r.date,r.day)),rows.map(r=>Number(r.chatAccess)||0),"#f97316",{zeroBased:true});
+  spark("spSmart",rows.map(r=>formatDateLabel(r.date,r.day)),rows.map(r=>Number(r.smart)||0),"#1767d9",{zeroBased:true});
+  spark("spChat",rows.map(r=>formatDateLabel(r.date,r.day)),rows.map(r=>Number(r.chatUse)||0),"#f4a900",{zeroBased:true});
 
   // 좌측 상세 메뉴: 올해 기준 / 전년 동기간 / 전년대비
   const yoyLatest = yoyRows.length ? yoyRows.at(-1) : null;
@@ -2887,7 +3020,7 @@ async function applyFilter(){
     {type:"decimal",digits:2});
 
 
-  const detailLabels=rows.map(r=>r.date.slice(5));
+  const detailLabels=rows.map(r=>formatDateLabel(r.date,r.day));
 
   // Call 상세 그래프: 인입호 + 응답률
   barVsYoyChart(
@@ -3006,7 +3139,7 @@ async function applyFilter(){
 
 
   // 비교 그래프: 올해 실선 / 전년 동기간 점선
-  const currentLabels=rows.map(r=>r.date.slice(5));
+  const currentLabels=rows.map(r=>formatDateLabel(r.date,r.day));
   const yoyAt=i=>yoyRows[i]||{};
 
   // Call
@@ -3026,7 +3159,7 @@ async function applyFilter(){
   $("refundCount").textContent=fmt(refundCount);
   $("refundAmount").textContent=money(refundAmount);
   $("refundAvg").textContent=money(refundCount?refundAmount/refundCount:0);
-  chart("refundChart","bar",rr.map(r=>r.date.slice(5)),[
+  chart("refundChart","bar",rr.map(r=>formatDateLabel(r.date)),[
     {label:"환불 건수",data:rr.map(r=>Number(r.count)||0),backgroundColor:"#f4b400"}
   ]);
 
@@ -3046,11 +3179,11 @@ async function applyFilter(){
   if($("mdmWebRate")) $("mdmWebRate").textContent=mdmTotal ? mdmWebRate.toFixed(1)+"%" : "-";
 
   if(mr.length){
-    chart("mdmCountChart","bar",mr.map(r=>r.date.slice(5)),[
+    chart("mdmCountChart","bar",mr.map(r=>formatDateLabel(r.date)),[
       {label:"해제 건 수",data:mr.map(r=>Number(r.releaseCount)||0),backgroundColor:"#0d6efd",borderRadius:4,maxBarThickness:34,categoryPercentage:.72,barPercentage:.92},
       {label:"설치 건 수",data:mr.map(r=>Number(r.installCount)||0),backgroundColor:"#2fa64a",borderRadius:4,maxBarThickness:34,categoryPercentage:.72,barPercentage:.92}
     ]);
-    spark("mdmRateChart",mr.map(r=>r.date.slice(5)),mr.map(r=>Number(r.webRate)||0),"#7d3fc7",{percent:true});
+    spark("mdmRateChart",mr.map(r=>formatDateLabel(r.date)),mr.map(r=>Number(r.webRate)||0),"#7d3fc7",{percent:true});
   }else{
     ["mdmCountChart","mdmRateChart"].forEach(id=>{
       if(charts[id]){charts[id].destroy();delete charts[id];}
@@ -3225,7 +3358,7 @@ function renderRaw(){
 
   if(type==="daily"){
     $("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>전화 응답률</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";
-    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${r.phoneRateExcel?((Number(r.phoneRateExcel)<=1?Number(r.phoneRateExcel)*100:Number(r.phoneRateExcel)).toFixed(1)+"%") :"-"}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${r.phoneRateExcel?((Number(r.phoneRateExcel)<=1?Number(r.phoneRateExcel)*100:Number(r.phoneRateExcel)).toFixed(1)+"%") :"-"}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(1)}</td></tr>`).join("");
   }else if(type==="mdm"){
     $("rawHead").innerHTML="<tr><th>날짜</th><th>해제 건 수</th><th>설치 건 수</th><th>합계</th><th>웹 접수 건 수</th><th>웹 접수 비율</th></tr>";
     $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.releaseCount)}</td><td>${fmt(r.installCount)}</td><td>${fmt((Number(r.releaseCount)||0)+(Number(r.installCount)||0))}</td><td>${fmt(r.webCount)}</td><td>${Number(r.webRate||0).toFixed(1)}%</td></tr>`).join("");
