@@ -1383,6 +1383,135 @@ th{position:sticky;top:0;background:#f8fafc}
 }
 
 
+/* 메인 배치 변경: 상단 추이 그래프 아래에 채널 현황 2개 카드를 배치 */
+.mid{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:12px !important;
+}
+.mid > .chart-card,
+.mid > .channels-wrap{
+  width:100% !important;
+  max-width:none !important;
+}
+
+.channels-wrap{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.channels-overview{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.channel-split-card{
+  padding:16px 16px 12px;
+  min-width:0;
+}
+.channel-split-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.channel-split-head h3{
+  margin:0;
+  font-size:14.5px;
+  font-weight:900;
+  letter-spacing:-.35px;
+}
+.channel-period{
+  font-size:10px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+
+/* 상담 채널: 올해 다음에 비중 배치, 건수 비교 막대 제거 */
+.channel-table-head,
+.channel-row{
+  grid-template-columns:minmax(120px,1.35fr) 100px 90px 100px 110px !important;
+  column-gap:10px !important;
+}
+.channel-row .cpct{
+  text-align:right;
+  font-size:11px !important;
+  line-height:1.35 !important;
+  color:#64748b;
+  font-weight:800 !important;
+}
+.channel-table-head > div:nth-child(n+2),
+.channel-row > div:nth-child(n+2){text-align:right !important;}
+.channel-row > .cchg{padding-right:0 !important;}
+
+/* 기타 이용 현황 카드: 건수 비교 막대 제거 */
+.channel-simple-head,
+.channel-simple-row{
+  grid-template-columns:minmax(120px,1.35fr) 100px 100px 110px !important;
+  column-gap:10px !important;
+}
+.channel-simple-head > div:nth-child(n+2),
+.channel-simple-row > div:nth-child(n+2){text-align:right !important;}
+
+@media(max-width:1100px){
+  .channels-overview{grid-template-columns:1fr;}
+}
+
+/* 최종 채널표 정리: 막대 비교 컬럼 제거 후 레거시 구분선 무력화 */
+.channels-overview .channel-table-head > div,
+.channels-overview .channel-row > div,
+.channels-overview .channel-simple-head > div,
+.channels-overview .channel-simple-row > div{
+  border-left:0 !important;
+  padding-left:4px !important;
+  padding-right:4px !important;
+}
+.channels-overview .channel-table-head,
+.channels-overview .channel-row{
+  grid-template-columns:minmax(120px,1.35fr) 100px 90px 100px 110px !important;
+  column-gap:10px !important;
+}
+.channels-overview .channel-simple-head,
+.channels-overview .channel-simple-row{
+  grid-template-columns:minmax(120px,1.35fr) 100px 100px 110px !important;
+  column-gap:10px !important;
+}
+
+/* 최종 조정: 일자별 총 문의·답변 추이 영역 높이 축소 */
+.mid > .chart-card{
+  padding:14px 16px 10px !important;
+}
+.mid > .chart-card .chartbox{
+  flex:0 0 auto !important;
+  height:230px !important;
+  min-height:230px !important;
+  max-height:230px !important;
+  margin-top:6px !important;
+}
+.mid > .chart-card #mainBar{
+  height:230px !important;
+  max-height:230px !important;
+}
+@media(max-width:700px){
+  .mid > .chart-card .chartbox,
+  .mid > .chart-card #mainBar{
+    height:210px !important;
+    min-height:210px !important;
+    max-height:210px !important;
+  }
+}
+
+/* 하단 6개 차트 영역 타이틀 */
+.bottom-section-title{
+  margin:14px 2px 10px;
+  font-size:16px;
+  line-height:1.3;
+  font-weight:900;
+  color:#14243f;
+  letter-spacing:-.35px;
+}
+
 </style>
 </head>
 <body>
@@ -1456,122 +1585,103 @@ th{position:sticky;top:0;background:#f8fafc}
 
   <div class="mid">
     <div class="card chart-card"><h3>일자별 총 문의 · 답변 추이 ⓘ</h3><div class="sub">선택 기간 일일 운영실적</div><div class="chartbox"><canvas id="mainBar"></canvas></div></div>
-    <div class="card side-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-        <h3 id="channelTitle">채널별 현황</h3>
-        <span style="font-size:9.5px;color:#8a96a8">(단위 : 건)</span>
-      </div>
 
-      <div class="channel-group-label">상담 채널</div>
-      <div class="channel-table-head">
-        <div>채널</div>
-        <div style="text-align:right">올해</div>
-        <div style="text-align:right">전년</div>
-        <div style="text-align:right">전년대비</div>
-        <div>건수 비교 (올해 vs 전년)</div>
-      </div>
-<div class="channel-row">
-        <div class="channel-name-wrap"><div class="cicon">☎</div><div class="cname">인입호</div></div>
-        <div class="cval" id="chPhone">-</div>
-        <div class="cyoy" id="yoyPhone">-</div>
-        <div class="cchg" id="chgPhone">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-phone-cur" id="barPhoneCur"></div></div><span id="barPhoneValCur">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-phone-prev" id="barPhonePrev"></div></div><span id="barPhoneValPrev">-</span></div>
+    <div class="channels-wrap">
+      <div class="channels-overview">
+        <div class="card channel-split-card consult-card">
+          <div class="channel-split-head">
+            <h3>상담 채널</h3>
+          </div>
+          <div class="channel-table-head">
+            <div>채널</div>
+            <div style="text-align:right">올해</div>
+            <div style="text-align:right">비중</div>
+            <div style="text-align:right">전년</div>
+            <div style="text-align:right">전년대비</div>
+          </div>
+          <div class="channel-row">
+            <div class="channel-name-wrap"><div class="cicon">☎</div><div class="cname">인입호</div></div>
+            <div class="cval" id="chPhone">-</div>
+            <div class="cpct" id="pctPhone">-</div>
+            <div class="cyoy" id="yoyPhone">-</div>
+            <div class="cchg" id="chgPhone">-</div>
+          </div>
+          <div class="channel-row">
+            <div class="channel-name-wrap"><div class="cicon">✉</div><div class="cname">ERMS</div></div>
+            <div class="cval" id="chErms">-</div>
+            <div class="cpct" id="pctErms">-</div>
+            <div class="cyoy" id="yoyErms">-</div>
+            <div class="cchg" id="chgErms">-</div>
+          </div>
+          <div class="channel-row">
+            <div class="channel-name-wrap"><div class="cicon">💬</div><div class="cname">채팅상담</div></div>
+            <div class="cval" id="chChatConsult">-</div>
+            <div class="cpct" id="pctChatConsult">-</div>
+            <div class="cyoy" id="yoyChatConsult">-</div>
+            <div class="cchg" id="chgChatConsult">-</div>
+          </div>
+          <div class="channel-row">
+            <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div></div>
+            <div class="cval" id="chSmart">-</div>
+            <div class="cpct" id="pctSmart">-</div>
+            <div class="cyoy" id="yoySmart">-</div>
+            <div class="cchg" id="chgSmart">-</div>
+          </div>
         </div>
-      </div>
-<div class="channel-row">
-        <div class="channel-name-wrap"><div class="cicon">✉</div><div class="cname">ERMS</div></div>
-        <div class="cval" id="chErms">-</div>
-        <div class="cyoy" id="yoyErms">-</div>
-        <div class="cchg" id="chgErms">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-erms-cur" id="barErmsCur"></div></div><span id="barErmsValCur">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-erms-prev" id="barErmsPrev"></div></div><span id="barErmsValPrev">-</span></div>
-        </div>
-      </div>
-<div class="channel-row">
-        <div class="channel-name-wrap"><div class="cicon">💬</div><div class="cname">채팅상담</div></div>
-        <div class="cval" id="chChatConsult">-</div>
-        <div class="cyoy" id="yoyChatConsult">-</div>
-        <div class="cchg" id="chgChatConsult">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-chat-cur" id="barChatConsultCur"></div></div><span id="barChatConsultValCur">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-chat-prev" id="barChatConsultPrev"></div></div><span id="barChatConsultValPrev">-</span></div>
-        </div>
-      </div>
-<div class="channel-row">
-        <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">스마트러닝앱</div></div>
-        <div class="cval" id="chSmart">-</div>
-        <div class="cyoy" id="yoySmart">-</div>
-        <div class="cchg" id="chgSmart">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-smart-cur" id="barSmartCur"></div></div><span id="barSmartValCur">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-smart-prev" id="barSmartPrev"></div></div><span id="barSmartValPrev">-</span></div>
-        </div>
-      </div>
 
-      <div class="channel-group-label secondary-group">기타 이용 현황</div>
-      <div class="channel-simple-head">
-        <div>항목</div>
-        <div style="text-align:right">올해</div>
-        <div style="text-align:right">전년</div>
-        <div style="text-align:right">전년대비</div>
-        <div>건수 비교 (올해 vs 전년)</div>
-      </div>
+        <div class="card channel-split-card simple-card">
+          <div class="channel-split-head">
+            <h3>기타 이용 현황</h3>
+          </div>
+          <div class="channel-simple-head">
+            <div>항목</div>
+            <div style="text-align:right">올해</div>
+            <div style="text-align:right">전년</div>
+            <div style="text-align:right">전년대비</div>
+          </div>
 
-      <div class="channel-simple-row">
-        <div class="channel-name-wrap"><div class="cicon">💭</div><div class="cname">챗봇 이용</div></div>
-        <div class="cval" id="chChatUse">-</div>
-        <div class="cyoy" id="yoyChatUse">-</div>
-        <div class="cchg" id="chgChatUse">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-chatuse-cur" id="barChatUseCur"></div></div><span id="barChatUseCurVal">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-chatuse-prev" id="barChatUsePrev"></div></div><span id="barChatUsePrevVal">-</span></div>
-        </div>
-      </div>
+          <div class="channel-simple-row">
+            <div class="channel-name-wrap"><div class="cicon">💭</div><div class="cname">챗봇 이용</div></div>
+            <div class="cval" id="chChatUse">-</div>
+            <div class="cyoy" id="yoyChatUse">-</div>
+            <div class="cchg" id="chgChatUse">-</div>
+          </div>
 
-      <div class="channel-simple-row">
-        <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">교재구매</div></div>
-        <div class="cval" id="chBook">-</div>
-        <div class="cyoy" id="yoyBook">-</div>
-        <div class="cchg" id="chgBook">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-book-cur" id="barBookCur"></div></div><span id="barBookCurVal">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-book-prev" id="barBookPrev"></div></div><span id="barBookPrevVal">-</span></div>
-        </div>
-      </div>
+          <div class="channel-simple-row">
+            <div class="channel-name-wrap"><div class="cicon">↩</div><div class="cname">교재반품</div></div>
+            <div class="cval" id="chBookReturn">-</div>
+            <div class="cyoy" id="yoyBookReturn">-</div>
+            <div class="cchg" id="chgBookReturn">-</div>
+          </div>
 
-      <div class="channel-simple-row">
-        <div class="channel-name-wrap"><div class="cicon">×</div><div class="cname">바로취소</div></div>
-        <div class="cval" id="chCancel">-</div>
-        <div class="cyoy" id="yoyCancel">-</div>
-        <div class="cchg" id="chgCancel">-</div>
-        <div class="dual-bar-cell">
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-current bar-cancel-cur" id="barCancelCur"></div></div><span id="barCancelCurVal">-</span></div>
-          <div class="dual-bar-line"><div class="channel-track"><div class="channel-fill bar-prev bar-cancel-prev" id="barCancelPrev"></div></div><span id="barCancelPrevVal">-</span></div>
+          <div class="channel-simple-row">
+            <div class="channel-name-wrap"><div class="cicon">⇄</div><div class="cname">교재교환</div></div>
+            <div class="cval" id="chBookExchange">-</div>
+            <div class="cyoy" id="yoyBookExchange">-</div>
+            <div class="cchg" id="chgBookExchange">-</div>
+          </div>
+
+          <div class="channel-simple-row">
+            <div class="channel-name-wrap"><div class="cicon">×</div><div class="cname">바로취소</div></div>
+            <div class="cval" id="chCancel">-</div>
+            <div class="cyoy" id="yoyCancel">-</div>
+            <div class="cchg" id="chgCancel">-</div>
+          </div>
         </div>
       </div>
 
-      <div class="channel-note">※ 전년대비는 동일 요일 기준 증감률이며, 막대는 올해와 전년 건수를 비교합니다.</div>
+      <div class="channel-note">※ 전년대비는 동일 요일 기준 증감률입니다.</div>
     </div>
   </div>
 
+  <div class="bottom-section-title">일자별 추이</div>
   <div class="bottom">
     <div class="card mini">
       <div class="mini-head">
-        <div class="mini-titlebox"><h3>답변률</h3></div>
-        <div class="mini-valuebox"><div class="mv" id="miniAnswer">-</div><div class="ms"></div></div>
+        <div class="mini-titlebox"><h3>인입호</h3></div>
+        <div class="mini-valuebox"><div class="mv" id="miniPhoneIn">-</div><div class="ms"></div></div>
       </div>
-      <div class="spark"><canvas id="spAnswer"></canvas></div>
-    </div>
-
-    <div class="card mini">
-      <div class="mini-head">
-        <div class="mini-titlebox"><h3>응답률</h3></div>
-        <div class="mini-valuebox"><div class="mv" id="miniPhoneRate">-</div><div class="ms"></div></div>
-      </div>
-      <div class="spark"><canvas id="spPhoneRate"></canvas></div>
+      <div class="spark"><canvas id="spPhoneIn"></canvas></div>
     </div>
 
     <div class="card mini">
@@ -1592,6 +1702,14 @@ th{position:sticky;top:0;background:#f8fafc}
 
     <div class="card mini">
       <div class="mini-head">
+        <div class="mini-titlebox"><h3>채팅상담</h3></div>
+        <div class="mini-valuebox"><div class="mv" id="miniChatConsult">-</div><div class="ms"></div></div>
+      </div>
+      <div class="spark"><canvas id="spChatConsult"></canvas></div>
+    </div>
+
+    <div class="card mini">
+      <div class="mini-head">
         <div class="mini-titlebox"><h3>스마트러닝앱</h3></div>
         <div class="mini-valuebox"><div class="mv" id="miniSmart">-</div><div class="ms"></div></div>
       </div>
@@ -1606,7 +1724,7 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="spark"><canvas id="spChat"></canvas></div>
     </div>
   </div>
-  <div style="font-size:9.5px;color:#7d8798;margin:9px 4px 0">* 모든 수치는  기준이며, 비교값은 직전 동기간 및 전년 동기간과 비교한 값입니다.</div>
+  <div style="font-size:9.5px;color:#7d8798;margin:9px 4px 0">※ 건수 지표는 선택 기간 합계, CPH는 운영일 평균 기준이며, 비교값은 직전 동기간 및 전년 동기간과 비교한 값입니다.</div>
 </section>
 
 <section id="call" class="section">
@@ -2204,7 +2322,7 @@ function periodMetrics(rows){
     phoneIn:sum(rows,"phoneIn"), phoneAns:sum(rows,"phoneAns"),
     phoneRate:pct(sum(rows,"phoneAns"),sum(rows,"phoneIn")),
     answerPct:pct(sum(rows,"totalA"),sum(rows,"totalQ")),
-    chatUse:sum(rows,"chatUse"), cph:mean(rows,"cphDay"),
+    chatUse:sum(rows,"chatUse"), cph:mean(rows.filter(r=>Number(r.cphDay)>0),"cphDay"),
     erms:sum(rows,"ermsCount"), smart:sum(rows,"smart")
   };
 }
@@ -2446,8 +2564,8 @@ async function applyFilter(){
 
 
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
-    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,maxBarThickness:14,barPercentage:0.99,categoryPercentage:0.64},
-    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3,maxBarThickness:14,barPercentage:0.99,categoryPercentage:0.64}
+    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,barThickness:24,maxBarThickness:26,barPercentage:1,categoryPercentage:0.70},
+    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3,barThickness:24,maxBarThickness:26,barPercentage:1,categoryPercentage:0.70}
   ]);
   if(charts["mainBar"]){
     const mb=charts["mainBar"];
@@ -2461,30 +2579,38 @@ async function applyFilter(){
   }
 
   // 우측 채널 =  / 선택기간 총문의량 대비 %
-  $("channelTitle").textContent=`채널별 현황 (${s} ~ ${e})`;
 
   const channelPhone=cur.phoneIn;
   const channelErms=cur.erms;
   const channelSmart=cur.smart;
   const channelChatConsult=sum(rows,"chatAccess");
   const channelChatUse=cur.chatUse;
-  const channelBook=sum(rows,"bookBuy");
+  const channelBookReturn=sum(rows,"bookReturn");
+  const channelBookExchange=sum(rows,"bookExchange");
   const channelCancel=sum(rows,"cancel");
   const tq=cur.totalQ;
+  const channelShare=v => tq ? (pct(v,tq).toFixed(1)+"%") : "-";
 
   $("chPhone").textContent=fmt(channelPhone);
   $("chErms").textContent=fmt(channelErms);
   $("chSmart").textContent=fmt(channelSmart);
   $("chChatConsult").textContent=fmt(channelChatConsult);
   $("chChatUse").textContent=fmt(channelChatUse);
-  $("chBook").textContent=fmt(channelBook);
+  $("chBookReturn").textContent=fmt(channelBookReturn);
+  $("chBookExchange").textContent=fmt(channelBookExchange);
   $("chCancel").textContent=fmt(channelCancel);
+
+  $("pctPhone").textContent=channelShare(channelPhone);
+  $("pctErms").textContent=channelShare(channelErms);
+  $("pctChatConsult").textContent=channelShare(channelChatConsult);
+  $("pctSmart").textContent=channelShare(channelSmart);
   const yoyChannelPhone = yoy ? yoy.phoneIn : null;
   const yoyChannelErms = yoy ? yoy.erms : null;
   const yoyChannelSmart = yoy ? yoy.smart : null;
   const yoyChannelChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
   const yoyChannelChatUse = yoy ? yoy.chatUse : null;
-  const yoyChannelBook = yoyRows.length ? sum(yoyRows,"bookBuy") : null;
+  const yoyChannelBookReturn = yoyRows.length ? sum(yoyRows,"bookReturn") : null;
+  const yoyChannelBookExchange = yoyRows.length ? sum(yoyRows,"bookExchange") : null;
   const yoyChannelCancel = yoyRows.length ? sum(yoyRows,"cancel") : null;
 
   const setChannelYoy=(yoyId,chgId,curVal,yoyVal)=>{
@@ -2502,53 +2628,33 @@ async function applyFilter(){
   setChannelYoy("yoySmart","chgSmart",channelSmart,yoyChannelSmart);
   setChannelYoy("yoyChatConsult","chgChatConsult",channelChatConsult,yoyChannelChatConsult);
   setChannelYoy("yoyChatUse","chgChatUse",channelChatUse,yoyChannelChatUse);
-  setChannelYoy("yoyBook","chgBook",channelBook,yoyChannelBook);
+  setChannelYoy("yoyBookReturn","chgBookReturn",channelBookReturn,yoyChannelBookReturn);
+  setChannelYoy("yoyBookExchange","chgBookExchange",channelBookExchange,yoyChannelBookExchange);
   setChannelYoy("yoyCancel","chgCancel",channelCancel,yoyChannelCancel);
 
-  const setDualBars=(curBarId,prevBarId,curValId,prevValId,curVal,prevVal)=>{
-    const c=Number(curVal)||0;
-    const p=Number(prevVal)||0;
-    const max=Math.max(c,p,1);
-    const curEl=$(curBarId), prevEl=$(prevBarId);
-    if(curEl) curEl.style.width=(c/max*100).toFixed(2)+"%";
-    if(prevEl) prevEl.style.width=(p/max*100).toFixed(2)+"%";
-    if($(curValId)) $(curValId).textContent=fmt(c);
-    if($(prevValId)) $(prevValId).textContent=(prevVal===null||prevVal===undefined)?"-":fmt(p);
-  };
-
-  setDualBars("barPhoneCur","barPhonePrev","barPhoneValCur","barPhoneValPrev",channelPhone,yoyChannelPhone);
-  setDualBars("barErmsCur","barErmsPrev","barErmsValCur","barErmsValPrev",channelErms,yoyChannelErms);
-  setDualBars("barChatConsultCur","barChatConsultPrev","barChatConsultValCur","barChatConsultValPrev",channelChatConsult,yoyChannelChatConsult);
-  setDualBars("barSmartCur","barSmartPrev","barSmartValCur","barSmartValPrev",channelSmart,yoyChannelSmart);
-
-  setDualBars("barChatUseCur","barChatUsePrev","barChatUseCurVal","barChatUsePrevVal",channelChatUse,yoyChannelChatUse);
-  setDualBars("barBookCur","barBookPrev","barBookCurVal","barBookPrevVal",channelBook,yoyChannelBook);
-  setDualBars("barCancelCur","barCancelPrev","barCancelCurVal","barCancelPrevVal",channelCancel,yoyChannelCancel);
 
 
 
-
-  // 하단 = 선택기간 기준
-  const rangeAnswerPct=cur.answerPct;
+  // 하단 = 선택기간 기준 (인입호 → CPH → ERMS → 채팅상담 → 스마트러닝앱 → 챗봇 이용)
   const rangeCph=cur.cph;
-  $("miniAnswer").textContent=rangeAnswerPct.toFixed(2)+"%";
-  $("miniPhoneRate").textContent=cur.phoneRate.toFixed(2)+"%";
+  const rangeChatConsult=sum(rows,"chatAccess");
+  $("miniPhoneIn").textContent=fmt(cur.phoneIn);
   $("miniCph").textContent=rangeCph.toFixed(2);
   $("miniErms").textContent=fmt(cur.erms);
+  $("miniChatConsult").textContent=fmt(rangeChatConsult);
   $("miniSmart").textContent=fmt(cur.smart);
   $("miniChat").textContent=fmt(cur.chatUse);
-  $("miniAnswer").style.color="#f4a900";
-  $("miniPhoneRate").style.color="#2fa64a";
-  $("miniCph").style.color="#0b2b59";
+  $("miniPhoneIn").style.color="#0b2b59";
+  $("miniCph").style.color="#2fa64a";
   $("miniErms").style.color="#7d3fc7";
+  $("miniChatConsult").style.color="#f97316";
   $("miniSmart").style.color="#1767d9";
   $("miniChat").style.color="#f4a900";
 
-
-  spark("spAnswer",rows.map(r=>r.date.slice(5)),rows.map(r=>pct(r.totalA,r.totalQ)),"#f4a900",{percent:true});
-  spark("spPhoneRate",rows.map(r=>r.date.slice(5)),rows.map(r=>pct(r.phoneAns,r.phoneIn)),"#2fa64a",{percent:true});
-  spark("spCph",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.cphDay)||0),"#0b2b59",{zeroBased:true});
+  spark("spPhoneIn",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.phoneIn)||0),"#0b2b59",{zeroBased:true});
+  spark("spCph",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.cphDay)||0),"#2fa64a",{zeroBased:true});
   spark("spErms",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.ermsCount)||0),"#7d3fc7",{zeroBased:true});
+  spark("spChatConsult",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatAccess)||0),"#f97316",{zeroBased:true});
   spark("spSmart",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.smart)||0),"#1767d9",{zeroBased:true});
   spark("spChat",rows.map(r=>r.date.slice(5)),rows.map(r=>Number(r.chatUse)||0),"#f4a900",{zeroBased:true});
 
