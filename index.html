@@ -1530,6 +1530,64 @@ th{position:sticky;top:0;background:#f8fafc}
   color:#7b8798;
 }
 
+
+
+/* MDM 원격 현황 */
+.mdm-kpis{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:12px;
+}
+.mdm-kpi{
+  padding:15px 16px;
+  min-height:106px;
+}
+.mdm-kpi .lab{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+}
+.mdm-kpi .val{
+  margin-top:10px;
+  font-size:25px;
+  line-height:1.1;
+  font-weight:900;
+  color:#10213d;
+}
+.mdm-chart-grid{
+  display:grid;
+  grid-template-columns:1.25fr .75fr;
+  gap:12px;
+}
+.mdm-chart-card{
+  padding:16px 16px 12px;
+  min-width:0;
+}
+.mdm-chart-card h3{
+  margin:0;
+  font-size:14px;
+  font-weight:900;
+}
+.mdm-chart-box{
+  height:285px;
+  margin-top:10px;
+}
+.mdm-note{
+  margin:8px 2px 0;
+  font-size:11px;
+  line-height:1.4;
+  color:#7b8798;
+}
+@media(max-width:1200px){
+  .mdm-kpis{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .mdm-chart-grid{grid-template-columns:1fr;}
+}
+@media(max-width:700px){
+  .mdm-kpis{grid-template-columns:1fr 1fr;}
+  .mdm-chart-box{height:240px;}
+}
+
 </style>
 </head>
 <body>
@@ -1543,7 +1601,7 @@ th{position:sticky;top:0;background:#f8fafc}
     <button data-target="chat">💬　<span>챗봇 이용</span></button>
     <button data-target="book">▣　<span>교재 구매</span></button>
     <button data-target="cph">♟　<span>CPH 현황</span></button>
-    <button data-target="refund">↺　<span>환불 현황</span></button>
+    <button data-target="mdm">▣　<span>MDM 원격</span></button>
     <div class="sep"></div>
     <button data-target="admin">🔒　<span>관리자</span></button>
   </div>
@@ -1666,6 +1724,13 @@ th{position:sticky;top:0;background:#f8fafc}
           </div>
 
           <div class="channel-simple-row">
+            <div class="channel-name-wrap"><div class="cicon">×</div><div class="cname">바로취소</div></div>
+            <div class="cval" id="chCancel">-</div>
+            <div class="cyoy" id="yoyCancel">-</div>
+            <div class="cchg" id="chgCancel">-</div>
+          </div>
+
+          <div class="channel-simple-row">
             <div class="channel-name-wrap"><div class="cicon">↩</div><div class="cname">교재반품</div></div>
             <div class="cval" id="chBookReturn">-</div>
             <div class="cyoy" id="yoyBookReturn">-</div>
@@ -1680,11 +1745,21 @@ th{position:sticky;top:0;background:#f8fafc}
           </div>
 
           <div class="channel-simple-row">
-            <div class="channel-name-wrap"><div class="cicon">×</div><div class="cname">바로취소</div></div>
-            <div class="cval" id="chCancel">-</div>
-            <div class="cyoy" id="yoyCancel">-</div>
-            <div class="cchg" id="chgCancel">-</div>
+            <div class="channel-name-wrap"><div class="cicon">▣</div><div class="cname">MDM원격</div></div>
+            <div class="cval" id="chMdmRemote">-</div>
+            <div class="cyoy" id="yoyMdmRemote">-</div>
+            <div class="cchg" id="chgMdmRemote">-</div>
           </div>
+
+          
+
+          
+
+          
+
+          
+
+          
         </div>
       </div>
 
@@ -1924,6 +1999,35 @@ th{position:sticky;top:0;background:#f8fafc}
   </div>
 </section>
 <section id="refund" class="section"><div class="statgrid"><div class="card stat"><div class="lab">환불 신청</div><div class="val" id="refundCount">-</div></div><div class="card stat"><div class="lab">환불금액</div><div class="val" id="refundAmount">-</div></div><div class="card stat"><div class="lab">평균 환불금액</div><div class="val" id="refundAvg">-</div></div></div><div class="card large"><canvas id="refundChart"></canvas></div></section>
+<section id="mdm" class="section">
+  <div class="detail-head">
+    <div>
+      <div class="detail-title">MDM 원격</div>
+      <div class="detail-period" id="mdmPeriod"></div>
+    </div>
+  </div>
+
+  <div class="mdm-kpis">
+    <div class="card mdm-kpi"><div class="lab">총 처리 건수</div><div class="val" id="mdmTotal">-</div></div>
+    <div class="card mdm-kpi"><div class="lab">해제 건 수</div><div class="val" id="mdmRelease">-</div></div>
+    <div class="card mdm-kpi"><div class="lab">설치 건 수</div><div class="val" id="mdmInstall">-</div></div>
+    <div class="card mdm-kpi"><div class="lab">웹 접수 건 수</div><div class="val" id="mdmWebCount">-</div></div>
+    <div class="card mdm-kpi"><div class="lab">웹 접수 비율</div><div class="val" id="mdmWebRate">-</div></div>
+  </div>
+
+  <div class="mdm-chart-grid">
+    <div class="card mdm-chart-card">
+      <h3>일자별 해제 · 설치 추이</h3>
+      <div class="mdm-chart-box"><canvas id="mdmCountChart"></canvas></div>
+    </div>
+    <div class="card mdm-chart-card">
+      <h3>일자별 웹 접수 비율</h3>
+      <div class="mdm-chart-box"><canvas id="mdmRateChart"></canvas></div>
+    </div>
+  </div>
+  <div class="mdm-note">※ 총 처리 건수는 해제 건 수와 설치 건 수의 합계이며, 웹 접수 비율은 웹 접수 건 수 ÷ 총 처리 건 수 기준입니다.</div>
+</section>
+
 
 <section id="admin" class="section">
   <div id="adminLock" class="card adminbox">
@@ -1965,6 +2069,16 @@ th{position:sticky;top:0;background:#f8fafc}
           </div>
           <div id="refundStatus" class="status">Firestore 확인 중...</div>
         </div>
+
+        <div class="card upload">
+          <h3>③ MDM 원격 Excel</h3>
+          <div class="drop">
+            <input id="mdmFile" type="file" accept=".xlsx,.xls,.csv">
+            <div style="margin-top:9px"><button class="btn secondary" id="mdmSampleBtn">샘플 Excel</button></div>
+          </div>
+          <div id="mdmStatus" class="status">Firestore 확인 중...</div>
+          <div class="status">※ 컬럼: 날짜 / 해제 건 수 / 설치 건 수 / 합계 / 웹 접수 건 수 / 웹 접수 비율</div>
+        </div>
       </div>
 
       <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:13px">
@@ -1972,6 +2086,7 @@ th{position:sticky;top:0;background:#f8fafc}
           <select id="rawType">
             <option value="daily">일일 운영실적</option>
             <option value="refund">환불 상세</option>
+            <option value="mdm">MDM 원격</option>
           </select>
           <input id="rawSearch" placeholder="검색">
         </div>
@@ -2032,6 +2147,7 @@ const pct = (a,b) => b ? (a/b*100) : 0;
 let daily = [];
 let refunds = [];          // 관리자 로그인 시에만 원본 로드
 let refundDaily = [];      // 일반 조회용 일자별 환불 집계
+let mdmData = [];          // MDM 원격 일자별 현황
 let charts = {};
 let currentUser = null;
 
@@ -2081,6 +2197,21 @@ function asDate(v){
 }
 
 
+
+function mdmAsDate(v){
+  const full=asDate(v);
+  if(full) return full;
+
+  // MDM 원본이 "01월 03일"처럼 연도 없이 들어오는 경우
+  const str=String(v||"").trim();
+  const m=str.match(/^(\d{1,2})\s*월\s*(\d{1,2})\s*일?$/);
+  if(!m) return "";
+
+  const baseYear=(daily.length && daily.at(-1)?.date)
+    ? Number(String(daily.at(-1).date).slice(0,4))
+    : new Date().getFullYear();
+  return `${baseYear}-${m[1].padStart(2,"0")}-${m[2].padStart(2,"0")}`;
+}
 
 function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,colorCur,opts={}){
   if(charts[id]) charts[id].destroy();
@@ -2285,6 +2416,9 @@ async function reload(){
 
   refundDaily = await fetchCollection("refundDaily");
   refundDaily.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+
+  mdmData = await fetchCollection("mdm");
+  mdmData.sort((a,b)=>(a.date||"").localeCompare(b.date||""));
 
   if(currentUser){
     refunds = await fetchCollection("refunds");
@@ -2582,8 +2716,8 @@ async function applyFilter(){
 
 
   chart("mainBar","bar",rows.map(r=>r.date.slice(5)),[
-    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,barThickness:24,maxBarThickness:26,barPercentage:1,categoryPercentage:0.70},
-    {label:"총답변량",data:rows.map(r=>count(r.totalA)),backgroundColor:"#f4b400",borderRadius:3,barThickness:24,maxBarThickness:26,barPercentage:1,categoryPercentage:0.70}
+    {label:"총문의량",data:rows.map(r=>count(r.totalQ)),backgroundColor:"#0b2b59",borderRadius:3,barThickness:28,maxBarThickness:30,barPercentage:1,categoryPercentage:0.72,order:2},
+    {type:"line",label:"총답변량",data:rows.map(r=>count(r.totalA)),borderColor:"#f4b400",backgroundColor:"#f4b400",borderWidth:2.5,borderDash:[],fill:false,tension:.22,pointRadius:3,pointHoverRadius:4,pointBackgroundColor:"#ffffff",pointBorderColor:"#f4b400",pointBorderWidth:2,order:1}
   ]);
   if(charts["mainBar"]){
     const mb=charts["mainBar"];
@@ -2603,6 +2737,8 @@ async function applyFilter(){
   const channelSmart=cur.smart;
   const channelChatConsult=sum(rows,"chatAccess");
   const channelChatUse=cur.chatUse;
+  const mdmRowsOverview=mdmData.filter(r=>r.date>=s&&r.date<=e);
+  const channelMdmRemote=mdmRowsOverview.reduce((total,r)=>total+(Number(r.releaseCount)||0)+(Number(r.installCount)||0),0);
   const channelBookReturn=sum(rows,"bookReturn");
   const channelBookExchange=sum(rows,"bookExchange");
   const channelCancel=sum(rows,"cancel");
@@ -2614,6 +2750,7 @@ async function applyFilter(){
   $("chSmart").textContent=fmt(channelSmart);
   $("chChatConsult").textContent=fmt(channelChatConsult);
   $("chChatUse").textContent=fmt(channelChatUse);
+  $("chMdmRemote").textContent=fmt(channelMdmRemote);
   $("chBookReturn").textContent=fmt(channelBookReturn);
   $("chBookExchange").textContent=fmt(channelBookExchange);
   $("chCancel").textContent=fmt(channelCancel);
@@ -2627,6 +2764,10 @@ async function applyFilter(){
   const yoyChannelSmart = yoy ? yoy.smart : null;
   const yoyChannelChatConsult = yoyRows.length ? sum(yoyRows,"chatAccess") : null;
   const yoyChannelChatUse = yoy ? yoy.chatUse : null;
+  const yoyMdmRowsOverview=mdmData.filter(r=>r.date>=yoyStart&&r.date<=yoyEnd);
+  const yoyChannelMdmRemote = yoyMdmRowsOverview.length
+    ? yoyMdmRowsOverview.reduce((total,r)=>total+(Number(r.releaseCount)||0)+(Number(r.installCount)||0),0)
+    : null;
   const yoyChannelBookReturn = yoyRows.length ? sum(yoyRows,"bookReturn") : null;
   const yoyChannelBookExchange = yoyRows.length ? sum(yoyRows,"bookExchange") : null;
   const yoyChannelCancel = yoyRows.length ? sum(yoyRows,"cancel") : null;
@@ -2646,6 +2787,7 @@ async function applyFilter(){
   setChannelYoy("yoySmart","chgSmart",channelSmart,yoyChannelSmart);
   setChannelYoy("yoyChatConsult","chgChatConsult",channelChatConsult,yoyChannelChatConsult);
   setChannelYoy("yoyChatUse","chgChatUse",channelChatUse,yoyChannelChatUse);
+  setChannelYoy("yoyMdmRemote","chgMdmRemote",channelMdmRemote,yoyChannelMdmRemote);
   setChannelYoy("yoyBookReturn","chgBookReturn",channelBookReturn,yoyChannelBookReturn);
   setChannelYoy("yoyBookExchange","chgBookExchange",channelBookExchange,yoyChannelBookExchange);
   setChannelYoy("yoyCancel","chgCancel",channelCancel,yoyChannelCancel);
@@ -2888,6 +3030,34 @@ async function applyFilter(){
     {label:"환불 건수",data:rr.map(r=>Number(r.count)||0),backgroundColor:"#f4b400"}
   ]);
 
+  // MDM 원격 = 선택기간 기준
+  const mr=mdmData.filter(r=>r.date>=s&&r.date<=e);
+  const mdmRelease=sum(mr,"releaseCount");
+  const mdmInstall=sum(mr,"installCount");
+  const mdmTotal=mdmRelease+mdmInstall;
+  const mdmWebCount=sum(mr,"webCount");
+  const mdmWebRate=pct(mdmWebCount,mdmTotal);
+
+  if($("mdmPeriod")) $("mdmPeriod").textContent=`${s} ~ ${e}`;
+  if($("mdmTotal")) $("mdmTotal").textContent=fmt(mdmTotal);
+  if($("mdmRelease")) $("mdmRelease").textContent=fmt(mdmRelease);
+  if($("mdmInstall")) $("mdmInstall").textContent=fmt(mdmInstall);
+  if($("mdmWebCount")) $("mdmWebCount").textContent=fmt(mdmWebCount);
+  if($("mdmWebRate")) $("mdmWebRate").textContent=mdmTotal ? mdmWebRate.toFixed(1)+"%" : "-";
+
+  if(mr.length){
+    chart("mdmCountChart","bar",mr.map(r=>r.date.slice(5)),[
+      {label:"해제 건 수",data:mr.map(r=>Number(r.releaseCount)||0),backgroundColor:"#0d6efd",borderRadius:4,maxBarThickness:34,categoryPercentage:.72,barPercentage:.92},
+      {label:"설치 건 수",data:mr.map(r=>Number(r.installCount)||0),backgroundColor:"#2fa64a",borderRadius:4,maxBarThickness:34,categoryPercentage:.72,barPercentage:.92}
+    ]);
+    spark("mdmRateChart",mr.map(r=>r.date.slice(5)),mr.map(r=>Number(r.webRate)||0),"#7d3fc7",{percent:true});
+  }else{
+    ["mdmCountChart","mdmRateChart"].forEach(id=>{
+      if(charts[id]){charts[id].destroy();delete charts[id];}
+      const c=$(id); if(c){const ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);}
+    });
+  }
+
   renderRaw();
 }
 
@@ -2903,6 +3073,15 @@ function updateStatus(){
     $("refundStatus").innerHTML=`Firestore 환불 집계 <b>${cnt}건</b> · ${refundDaily[0].date} ~ ${refundDaily.at(-1).date}`;
   }else{
     $("refundStatus").textContent="Firestore에 등록된 환불 데이터 없음";
+  }
+
+  if($("mdmStatus")){
+    if(mdmData.length){
+      const total=mdmData.reduce((a,r)=>a+(Number(r.releaseCount)||0)+(Number(r.installCount)||0),0);
+      $("mdmStatus").innerHTML=`Firestore MDM 등록 <b>${mdmData.length}일 / ${fmt(total)}건</b> · ${mdmData[0].date} ~ ${mdmData.at(-1).date}`;
+    }else{
+      $("mdmStatus").textContent="Firestore에 등록된 MDM 원격 데이터 없음";
+    }
   }
 }
 
@@ -2956,7 +3135,7 @@ async function upload(file,type){
       setDefaultRecent7Days();
       await applyFilter();
       alert(`${rows.length}일 데이터를 Firestore에 교체 등록했습니다.\n날짜 확인: ${firstDate} ~ ${lastDate}\n※ Excel 원본의 첫/마지막 날짜와 반드시 동일한지 확인해 주세요.`);
-    }else{
+    }else if(type==="refund"){
       const rows=raw.map((o,i)=>{
         const ad=asDate(pick(o,["환불신청일"]));
         return{
@@ -2997,6 +3176,29 @@ async function upload(file,type){
       await reload();
       await applyFilter();
       alert(`${rows.length}건 환불 데이터를 Firestore에 교체 등록했습니다.`);
+    }else if(type==="mdm"){
+      const rows=raw.map(o=>{
+        const releaseCount=num(pick(o,["해제 건 수","해제건수","해제"]));
+        const installCount=num(pick(o,["설치 건 수","설치건수","설치"]));
+        const parsedTotal=num(pick(o,["합계","총 처리 건 수","총처리건수"]));
+        const total=(parsedTotal>0 || (releaseCount+installCount)===0) ? parsedTotal : (releaseCount+installCount);
+        const webCount=num(pick(o,["웹 접수 건 수","웹접수건수","웹 접수","웹접수"]));
+        return {
+          date:mdmAsDate(pick(o,["날짜","일자"])),
+          releaseCount,
+          installCount,
+          total,
+          webCount,
+          webRate:total ? webCount/total*100 : 0
+        };
+      }).filter(r=>r.date);
+
+      if(!rows.length) throw new Error("날짜 컬럼을 인식하지 못했습니다. 날짜는 YYYY-MM-DD 또는 01월 03일 형식을 사용할 수 있습니다.");
+      rows.sort((a,b)=>a.date.localeCompare(b.date));
+      await replaceCollection("mdm",rows,r=>r.date);
+      await reload();
+      await applyFilter();
+      alert(`${rows.length}일 MDM 원격 데이터를 Firestore에 교체 등록했습니다.`);
     }
   }catch(e){
     console.error(e);
@@ -3016,13 +3218,17 @@ function renderRaw(){
     return;
   }
 
-  const rows=(type==="daily"?daily:refunds)
+  const sourceRows=type==="daily" ? daily : type==="mdm" ? mdmData : refunds;
+  const rows=sourceRows
     .filter(r=>JSON.stringify(r).toLowerCase().includes(q))
     .slice().reverse().slice(0,200);
 
   if(type==="daily"){
     $("rawHead").innerHTML="<tr><th>일자</th><th>총문의</th><th>총답변</th><th>인입호</th><th>전화 응답률</th><th>응답호</th><th>ERMS</th><th>스마트러닝</th><th>챗봇접속</th><th>챗봇이용</th><th>교재구매</th><th>CPH</th></tr>";
-    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${r.phoneRateExcel?((Number(r.phoneRateExcel)<=1?Number(r.phoneRateExcel)*100:Number(r.phoneRateExcel)).toFixed(1)+"%"):"-"}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.totalQ)}</td><td>${fmt(r.totalA)}</td><td>${fmt(r.phoneIn)}</td><td>${r.phoneRateExcel?((Number(r.phoneRateExcel)<=1?Number(r.phoneRateExcel)*100:Number(r.phoneRateExcel)).toFixed(1)+"%") :"-"}</td><td>${fmt(r.phoneAns)}</td><td>${fmt(r.ermsCount)}</td><td>${fmt(r.smart)}</td><td>${fmt(r.chatAccess)}</td><td>${fmt(r.chatUse)}</td><td>${fmt(r.bookBuy)}</td><td>${Number(r.cphDay||0).toFixed(2)}</td></tr>`).join("");
+  }else if(type==="mdm"){
+    $("rawHead").innerHTML="<tr><th>날짜</th><th>해제 건 수</th><th>설치 건 수</th><th>합계</th><th>웹 접수 건 수</th><th>웹 접수 비율</th></tr>";
+    $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.date}</td><td>${fmt(r.releaseCount)}</td><td>${fmt(r.installCount)}</td><td>${fmt((Number(r.releaseCount)||0)+(Number(r.installCount)||0))}</td><td>${fmt(r.webCount)}</td><td>${Number(r.webRate||0).toFixed(1)}%</td></tr>`).join("");
   }else{
     $("rawHead").innerHTML="<tr><th>신청일</th><th>아이디</th><th>이름</th><th>종류</th><th>환불금액</th><th>사유1</th><th>사유2</th><th>환불방법</th></tr>";
     $("rawBody").innerHTML=rows.map(r=>`<tr><td>${r.applyDate}</td><td>${r.uid}</td><td>${r.name}</td><td>${r.type}</td><td>${fmt(r.refundAmount)}</td><td>${r.reason1}</td><td>${r.reason2}</td><td>${r.refundMethod}</td></tr>`).join("");
@@ -3044,6 +3250,14 @@ function refundSample(){
   const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);
   XLSX.utils.book_append_sheet(wb,ws,"환불상세");
   XLSX.writeFile(wb,"콜센터_환불상세_샘플.xlsx");
+}
+function mdmSample(){
+  const h=["날짜","해제 건 수","설치 건 수","합계","웹 접수 건 수","웹 접수 비율"];
+  const r=["01월 03일",43,0,43,38,0.884];
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet([h,r]);
+  if(ws["F2"]) ws["F2"].z="0.0%";
+  XLSX.utils.book_append_sheet(wb,ws,"MDM원격");
+  XLSX.writeFile(wb,"MDM_원격_샘플.xlsx");
 }
 
 async function login(){
@@ -3083,8 +3297,10 @@ $("logoutBtn").addEventListener("click",logout);
 $("adminPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 $("dailyFile").addEventListener("change",e=>upload(e.target.files[0],"daily"));
 $("refundFile").addEventListener("change",e=>upload(e.target.files[0],"refund"));
+$("mdmFile").addEventListener("change",e=>upload(e.target.files[0],"mdm"));
 $("dailySampleBtn").addEventListener("click",dailySample);
 $("refundSampleBtn").addEventListener("click",refundSample);
+$("mdmSampleBtn").addEventListener("click",mdmSample);
 $("rawType").addEventListener("change",renderRaw);
 $("rawSearch").addEventListener("input",renderRaw);
 
@@ -3105,10 +3321,11 @@ function setDefaultRecent7Days(){
 
 $("clearBtn").addEventListener("click",async()=>{
   if(!currentUser) return alert("관리자 로그인이 필요합니다.");
-  if(!confirm("Firestore의 일일 운영실적과 환불 데이터를 모두 삭제할까요?")) return;
+  if(!confirm("Firestore의 일일 운영실적, 환불, MDM 원격 데이터를 모두 삭제할까요?")) return;
   await deleteCollectionDocs("daily");
   await deleteCollectionDocs("refunds");
   await deleteCollectionDocs("refundDaily");
+  await deleteCollectionDocs("mdm");
   await reload();
   location.reload();
 });
