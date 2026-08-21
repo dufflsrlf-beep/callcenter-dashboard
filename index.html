@@ -3631,19 +3631,6 @@ async function applyFilter(){
 
   $("chCancel").textContent=fmt(channelCancel);
 
-  const curBookReturn = Number(cur.bookReturn)||0;
-  const yoyBookReturn = yoy ? Number(yoy.bookReturn)||0 : 0;
-  const curBookExchange = Number(cur.bookExchange)||0;
-  const yoyBookExchange = yoy ? Number(yoy.bookExchange)||0 : 0;
-
-  if($("chBookReturn")) $("chBookReturn").textContent=fmt(curBookReturn);
-  if($("yoyBookReturn")) $("yoyBookReturn").textContent=fmt(yoyBookReturn);
-  if($("chgBookReturn")) $("chgBookReturn").innerHTML=changePct(curBookReturn,yoyBookReturn);
-
-  if($("chBookExchange")) $("chBookExchange").textContent=fmt(curBookExchange);
-  if($("yoyBookExchange")) $("yoyBookExchange").textContent=fmt(yoyBookExchange);
-  if($("chgBookExchange")) $("chgBookExchange").innerHTML=changePct(curBookExchange,yoyBookExchange);
-
   const yoyChannelPhone = yoy ? yoy.phoneIn : null;
   const yoyChannelErms = yoy ? yoy.erms : null;
   const yoyChannelSmart = yoy ? yoy.smart : null;
@@ -4132,9 +4119,17 @@ function refundSample(){
 
 async function login(){
   try{
-    await signInWithEmailAndPassword(auth,$("adminEmail").value.trim(),$("adminPassword").value);
+    const email=$("adminEmail")?.value?.trim()||"";
+    const password=$("adminPassword")?.value||"";
+    if(!email || !password){
+      if($("loginStatus")) $("loginStatus").textContent="이메일과 비밀번호를 입력해 주세요.";
+      return;
+    }
+    if($("loginStatus")) $("loginStatus").textContent="로그인 확인 중...";
+    await signInWithEmailAndPassword(auth,email,password);
   }catch(e){
     console.error(e);
+    if($("loginStatus")) $("loginStatus").textContent="로그인 실패: 이메일 또는 비밀번호를 확인해 주세요.";
     alert("로그인 실패: 이메일 또는 비밀번호를 확인해 주세요.");
   }
 }
@@ -4144,8 +4139,8 @@ async function logout(){
 
 function syncAuthUI(){
   const logged=!!currentUser;
-  $("adminLock").classList.toggle("hidden",logged);
-  $("adminPanel").classList.toggle("hidden",!logged);
+  if($("adminLock")) $("adminLock").classList.toggle("hidden",logged);
+  if($("adminPanel")) $("adminPanel").classList.toggle("hidden",!logged);
   if(logged){
     $("adminUserText").textContent=`로그인: ${currentUser.email}`;
   }
@@ -4162,9 +4157,9 @@ $("searchBtn").addEventListener("click",()=>applyFilter().catch(e=>{
   console.error(e);
   alert("조회 오류: "+(e?.message||e));
 }));
-$("loginBtn").addEventListener("click",login);
-$("logoutBtn").addEventListener("click",logout);
-$("adminPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+if($("loginBtn")) $("loginBtn").addEventListener("click",login);
+if($("logoutBtn")) $("logoutBtn").addEventListener("click",logout);
+if($("adminPassword")) $("adminPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 $("dailyFile").addEventListener("change",e=>upload(e.target.files[0],"daily"));
 $("refundFile").addEventListener("change",e=>upload(e.target.files[0],"refund"));
 $("dailySampleBtn").addEventListener("click",dailySample);
