@@ -2275,7 +2275,7 @@ function barVsYoyChart(id,labels,currentData,yoyData,currentLabel,yoyLabel,color
         }
       },
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:11}}},
+        x:{grid:{display:false},ticks:{font:{size:11},color:dateTickColor}},
         y:{
           beginAtZero:true,
           suggestedMax:opts.percent?100:undefined,
@@ -2303,7 +2303,7 @@ function compareLineChart(id, labels, datasets){
         legend:{position:"bottom",labels:{boxWidth:18,boxHeight:8,font:{size:11},padding:12}}
       },
       scales:{
-        x:{grid:{display:false},ticks:{font:{size:11}}},
+        x:{grid:{display:false},ticks:{font:{size:11},color:dateTickColor}},
         y:{beginAtZero:true,grid:{color:"#e8edf4"},ticks:{font:{size:11}}}
       }
     }
@@ -2318,7 +2318,7 @@ function chart(id,type,labels,sets){
       responsive:true,
       maintainAspectRatio:false,
       plugins:{legend:{position:"bottom"}},
-      scales:{x:{grid:{display:false}},y:{beginAtZero:true}}
+      scales:{x:{grid:{display:false},ticks:{color:dateTickColor}},y:{beginAtZero:true}}
     }
   });
 }
@@ -2332,6 +2332,29 @@ function formatDateLabel(dateStr, dayStr){
   }
   const mmdd=String(dateStr||"").slice(5);
   return day ? `${mmdd}(${day})` : mmdd;
+}
+
+// 2026 대한민국 공휴일/대체공휴일 + 주말 날짜 라벨 강조
+const RED_DATE_MMDD_2026 = new Set([
+  "01-01",
+  "02-16","02-17","02-18",
+  "03-01","03-02",
+  "05-05","05-24","05-25",
+  "06-03","06-06",
+  "08-15","08-17",
+  "09-24","09-25","09-26",
+  "10-03","10-05","10-09",
+  "12-25"
+]);
+function isRedDateLabel(label){
+  const s=Array.isArray(label)?label.join(""):String(label||"");
+  if(/\((토|일)\)/.test(s)) return true;
+  const m=s.match(/(\d{2}-\d{2})/);
+  return !!(m && RED_DATE_MMDD_2026.has(m[1]));
+}
+function dateTickColor(ctx){
+  const raw=(ctx && ctx.tick) ? ctx.tick.label : "";
+  return isRedDateLabel(raw) ? "#e53935" : "#516074";
 }
 
 function renderMainInquiryAnswerChart(rows){
@@ -2443,7 +2466,7 @@ function renderMainInquiryAnswerChart(rows){
         x:{
           grid:{display:false},
           border:{display:false},
-          ticks:{font:{size:10,weight:"700"},color:"#516074",maxRotation:0,minRotation:0,padding:8}
+          ticks:{font:{size:10,weight:"700"},color:dateTickColor,maxRotation:0,minRotation:0,padding:8}
         },
         y:{
           position:"left",
@@ -2523,7 +2546,7 @@ function spark(id,labels,data,color,opts={}){
       scales:{
         x:{
           grid:{display:false},
-          ticks:{font:{size:11},maxRotation:0,minRotation:0,autoSkip:true,maxTicksLimit:9}
+          ticks:{font:{size:11},color:dateTickColor,maxRotation:0,minRotation:0,autoSkip:true,maxTicksLimit:9}
         },
         y:{
           display:true,
