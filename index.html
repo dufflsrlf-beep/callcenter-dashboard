@@ -2284,6 +2284,12 @@ th{position:sticky;top:0;background:#f8fafc}
   border:0 !important;
 }
 
+
+/* 좌측 메뉴 페이지 전환 보강 */
+.main .section{display:none !important;}
+.main .section.active{display:block !important;}
+.menu button[data-target]{cursor:pointer !important;pointer-events:auto !important;}
+
 </style>
 </head>
 <body>
@@ -4217,5 +4223,50 @@ document.querySelectorAll(".menu button[data-target]").forEach(b=>b.addEventList
 })();
 </script>
 
+
+
+<script>
+(function(){
+  function activateMenuButton(btn){
+    if(!btn) return;
+    const target = btn.getAttribute("data-target");
+    if(!target) return;
+
+    document.querySelectorAll(".menu button[data-target]").forEach(function(x){
+      x.classList.remove("active");
+    });
+    btn.classList.add("active");
+
+    document.querySelectorAll(".section").forEach(function(sec){
+      sec.classList.remove("active");
+    });
+
+    const section = document.getElementById(target);
+    if(section){
+      section.classList.add("active");
+      window.scrollTo({top:0, behavior:"auto"});
+    }
+
+    // 숨겨진 상태에서 만들어진 Chart.js 차트가 있으면 메뉴 진입 후 리사이즈
+    setTimeout(function(){
+      try{
+        if(window.charts && typeof window.charts === "object"){
+          Object.values(window.charts).forEach(function(c){
+            if(c && typeof c.resize === "function") c.resize();
+          });
+        }
+      }catch(e){}
+    },80);
+  }
+
+  // 이벤트 위임 방식이라 다른 JS 오류가 있어도 메뉴 클릭 동작 유지
+  document.addEventListener("click", function(e){
+    const btn = e.target.closest(".menu button[data-target]");
+    if(!btn) return;
+    e.preventDefault();
+    activateMenuButton(btn);
+  }, true);
+})();
+</script>
 
 </body></html>
