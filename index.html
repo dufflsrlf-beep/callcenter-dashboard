@@ -1975,17 +1975,17 @@ th{position:sticky;top:0;background:#f8fafc}
       <div class="metric-card-title">CPH 평균</div>
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="cphAvgCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="cphAvgYoy">-</span></div>
-      <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="cphAvgChg">-</span></div>
+      <div class="metric-line"><span class="metric-label">전년차이</span><span class="metric-change" id="cphAvgChg">-</span></div>
     </div><div class="metric-card">
       <div class="metric-card-title">월간누적 CPH</div>
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="cphMonthCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="cphMonthYoy">-</span></div>
-      <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="cphMonthChg">-</span></div>
+      <div class="metric-line"><span class="metric-label">전년차이</span><span class="metric-change" id="cphMonthChg">-</span></div>
     </div><div class="metric-card">
       <div class="metric-card-title">연간누적 CPH</div>
       <div class="metric-line"><span class="metric-label">올해 기준</span><span class="metric-value" id="cphYearCur">-</span></div>
       <div class="metric-line"><span class="metric-label">전년 동기간</span><span class="metric-value metric-prev" id="cphYearYoy">-</span></div>
-      <div class="metric-line"><span class="metric-label">전년대비</span><span class="metric-change" id="cphYearChg">-</span></div>
+      <div class="metric-line"><span class="metric-label">전년차이</span><span class="metric-change" id="cphYearChg">-</span></div>
     </div>
   </div>
   
@@ -2677,6 +2677,17 @@ function setDetail(curId,yoyId,chgId,curVal,yoyVal,{type="count",digits=2}={}){
     curEl.textContent=curNum.toFixed(1)+"%";
     yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(1)+"%" : '<span class="compare-na">데이터 없음</span>';
     chgEl.innerHTML=hasYoy ? detailPpChange(curNum,yoyNum) : '<span class="compare-na">-</span>';
+  }else if(type==="cph"){
+    curEl.textContent=curNum.toFixed(digits);
+    yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(digits) : '<span class="compare-na">데이터 없음</span>';
+    if(hasYoy){
+      const d=curNum-yoyNum;
+      const cls=d>0?"up":d<0?"down":"";
+      const arrow=d>0?"▲":d<0?"▼":"";
+      chgEl.innerHTML=`<span class="${cls}">${arrow}${arrow?" ":""}${Math.abs(d).toFixed(digits)}</span>`;
+    }else{
+      chgEl.innerHTML='<span class="compare-na">-</span>';
+    }
   }else if(type==="decimal"){
     curEl.textContent=curNum.toFixed(digits);
     yoyEl.innerHTML=hasYoy ? yoyNum.toFixed(digits) : '<span class="compare-na">데이터 없음</span>';
@@ -3032,15 +3043,15 @@ async function applyFilter(){
   // CPH 현황
   const yoyLatestDetail = yoyAvailable ? yoyRows.at(-1) : null;
   setDetail("cphAvgCur","cphAvgYoy","cphAvgChg",
-    cur.cph, yoyAvailable ? yoy.cph : null, {type:"decimal",digits:2});
+    cur.cph, yoyAvailable ? yoy.cph : null, {type:"cph",digits:1});
   setDetail("cphMonthCur","cphMonthYoy","cphMonthChg",
     Number(latest.cphMonth)||0,
     yoyLatestDetail ? Number(yoyLatestDetail.cphMonth)||0 : null,
-    {type:"decimal",digits:2});
+    {type:"cph",digits:1});
   setDetail("cphYearCur","cphYearYoy","cphYearChg",
     Number(latest.cphYear)||0,
     yoyLatestDetail ? Number(yoyLatestDetail.cphYear)||0 : null,
-    {type:"decimal",digits:2});
+    {type:"cph",digits:1});
 
 
   const detailLabels=rows.map(r=>formatDateLabel(r.date,r.day));
